@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="mundo-apos-claude" name="inema-course"/>
+<title>2.5 Verificar y demostrar | El Mundo Después de Claude</title>
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'blue' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark')?'dark':'light'));
+      html.setAttribute('data-font', p.font||'inter'); html.setAttribute('data-accent', p.accent||'blue');
+      var s=html.style, scale=(+p.fontScale||100);
+      s.setProperty('--inema-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
+      s.setProperty('--measure',(+p.lineWidth||68)+'ch'); s.setProperty('--lh-body',(+p.leading||1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC={emerald:[152,76,45],blue:[217,91,60],purple:[258,90,66],amber:[38,92,50],teal:[174,72,41],rose:[350,89,60]};
+      var a=ACC[p.accent]||ACC.blue; s.setProperty('--accent-h',a[0]+''); s.setProperty('--accent-s',a[1]+'%'); s.setProperty('--accent-l',a[2]+'%'); s.setProperty('--accent','hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode:'class', theme:{ extend:{ colors:{ primary:'#FACC15', dark:{900:'#111827',800:'#1f2937',700:'#374151',600:'#4b5563'} } } } }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 5rem; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* acento blue (T2) */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+    /* nav: emerald/purple */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "mundo-apos-claude",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "A virada: de usuario a maestro", "topics": 6, "href": "curso/trilha1/modulo-1-1.html" },
+        { "id": "1-2", "title": "Anatomia de um agente", "topics": 6, "href": "curso/trilha1/modulo-1-2.html" },
+        { "id": "1-3", "title": "Skills, MCP e o ecossistema", "topics": 6, "href": "curso/trilha1/modulo-1-3.html" },
+        { "id": "1-4", "title": "Contexto, memoria e o harness", "topics": 6, "href": "curso/trilha1/modulo-1-4.html" },
+        { "id": "1-5", "title": "O diferencial humano", "topics": 6, "href": "curso/trilha1/modulo-1-5.html" }
+      ]},
+      { "n": "2", "title": "Pratica", "modules": [
+        { "id": "2-1", "title": "Seu primeiro build dirigido", "topics": 6, "href": "curso/trilha2/modulo-2-1.html" },
+        { "id": "2-2", "title": "Construindo com skills", "topics": 6, "href": "curso/trilha2/modulo-2-2.html" },
+        { "id": "2-3", "title": "Conectando o mundo (MCP)", "topics": 6, "href": "curso/trilha2/modulo-2-3.html" },
+        { "id": "2-4", "title": "Agentes que fazem o trabalho", "topics": 6, "href": "curso/trilha2/modulo-2-4.html" },
+        { "id": "2-5", "title": "Verificar e provar", "topics": 6, "href": "curso/trilha2/modulo-2-5.html" }
+      ]},
+      { "n": "3", "title": "Jarvis & Arsenal", "modules": [
+        { "id": "3-1", "title": "Arquitetura de um Jarvis", "topics": 6, "href": "curso/trilha3/modulo-3-1.html" },
+        { "id": "3-2", "title": "OpenClaw, Hermes e sistemas agenticos", "topics": 6, "href": "curso/trilha3/modulo-3-2.html" },
+        { "id": "3-3", "title": "Skills prontas", "topics": 6, "href": "curso/trilha3/modulo-3-3.html" },
+        { "id": "3-4", "title": "Agentes e workflows prontos", "topics": 6, "href": "curso/trilha3/modulo-3-4.html" },
+        { "id": "3-5", "title": "Automacao e gatilhos", "topics": 6, "href": "curso/trilha3/modulo-3-5.html" },
+        { "id": "3-6", "title": "Seu Jarvis ao vivo", "topics": 6, "href": "curso/trilha3/modulo-3-6.html" }
+      ]}
+    ]
+  }
+  </script>
+<link href="https://inematds.github.io/mundo-apos-claude/curso/trilha2/modulo-2-5.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/en/curso/trilha2/modulo-2-5.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/es/curso/trilha2/modulo-2-5.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha2/modulo-2-5.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha2/modulo-2-5.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-2-5.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<a class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg" href="#conteudo">Saltar al contenido</a>
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🎼</span><span class="font-bold text-lg hidden sm:inline">El mundo después de Claude</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10" href="index.html"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Práctica</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Jarvis</span></a>
+<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-inema-journey-open="" type="button"><span aria-hidden="true">◷</span><span>Mi recorrido</span><span class="hidden" data-inema-journey-badge=""></span></button>
+<button aria-label="Alternar tema claro/oscuro" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav aria-label="Ruta de navegación" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-blue-400" href="../../index.html">Inicio</a><span>/</span>
+<a class="hover:text-blue-400" href="index.html">Ruta 2</a><span>/</span>
+<span class="text-blue-400">Módulo 2.5</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">MÓDULO 2.5</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">✅ Verificar y demostrar</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">Construir es la mitad del trabajo. La otra mitad es <strong class="text-blue-400">probar que funcionó</strong> — medir, probar y transformar el resultado en un <strong class="text-primary">caso</strong> que abre puertas. Aquí es donde la Trilha 2 se convierte en reputación.</p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">6</div><div class="text-xs text-neutral-400">Temas</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">~50</div><div class="text-xs text-neutral-400">Minutos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">Práctico</div><div class="text-xs text-neutral-400">Nivel</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">Práctica</div><div class="text-xs text-neutral-400">Tipo</div></div>
+</div>
+<div class="mt-6 max-w-md">
+<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progreso de este módulo</span><span class="text-sm font-bold text-blue-400"><span class="inema-meter-pct">0%</span></span></div>
+<div aria-label="Progreso del módulo 2.5" aria-valuemax="100" aria-valuemin="0" class="inema-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-inema-meter="modulo:2-5" role="progressbar"><div class="h-full bg-blue-500 rounded-full transition-all" data-inema-meter-fill="" style="width:0%"></div></div>
+<p class="text-xs text-neutral-500 mt-1.5"><span class="inema-meter-count">0 de 6</span> secciones leídas</p>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid lg:grid-cols-[220px_1fr] gap-10">
+<!-- TOC -->
+<nav aria-label="Índice del módulo" class="hidden lg:block sticky top-24 self-start" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-3">Sección <span class="inema-toc-pos">1</span> de <span class="inema-toc-total">6</span></p>
+<ul class="space-y-1.5 text-sm">
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-1">1. Definir el número antes</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-2">2. Probar de verdad</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-3">3. Medir antes y después</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-4">4. Tu primer caso</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-5">5. Mostrar el resultado</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-6">6. Repetir y crear un historial</a></li>
+</ul>
+</nav>
+<main class="min-w-0 inema-prose" id="conteudo">
+<!-- "Novo aqui?" -->
+<div class="bg-primary/10 border border-primary/30 rounded-2xl p-6 mb-12">
+<h2 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> ¿Eres nuevo aquí? Tres palabras antes de empezar</h2>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-primary">KPI</strong> — el número que importa: lo que quieres cambiar (tiempo invertido, ventas, errores). Es tu "marcador".</li>
+<li><strong class="text-primary">Estudio de caso</strong> — un relato breve de un trabajo real: el problema, lo que hiciste y el número que cambió.</li>
+<li><strong class="text-primary">Trayectoria</strong> — tu historial: la lista de resultados que demuestra que cumples de verdad, no por suerte.</li>
+</ul>
+</div>
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-2-5#topico-1" id="topico-1">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🎯 Definir el número de antemano (el KPI)</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar una duda en este tema" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tengo una duda</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-5-t1-p1">Tiene una trampa común: construimos algo, nos parece bueno y seguimos adelante. Pero que parezca bueno no es una prueba. La primera pregunta —hecha <strong>antes</strong> para empezar: es sencillo: <strong class="text-blue-400">¿qué número quiero mover?</strong></p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-5-t1-p2">Ese número es tu <strong>KPI</strong> (indicador clave). Pueden ser los minutos que dedicas a una tarea, la cantidad de errores por semana, las horas en fila, las ventas cerradas. Si lo eliges pronto, se convierte en el objetivo. Sin un objetivo, nunca sabrás si acertaste: solo "creerás" que mejoró.</p>
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">🔑</span> La idea central</h3>
+<p class="text-neutral-300 mb-3">Un buen KPI es <strong>un solo número</strong>, fácil de medir y que realmente importa:</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span><strong>Malo:</strong> "ser más productivo" → vago, no se puede medir.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span><strong>Bueno:</strong> "reducir el tiempo del informe semanal de 2h a 30min" → claro y medible.</span></li>
+</ul>
+</div>
+<!-- SVG ilustrativo: alvo / KPI -->
+<figure class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Un blanco con una flecha clavada en el centro: definir el número correcto antes de empezar y apuntar al centro." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 200">
+<defs>
+<pattern height="20" id="m25t1dots" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#60a5fa" opacity="0.10" r="1"></circle></pattern>
+<radialgradient cx="50%" cy="50%" id="m25t1glow" r="50%"><stop offset="0%" stop-color="#60a5fa" stop-opacity="0.45"></stop><stop offset="100%" stop-color="#60a5fa" stop-opacity="0"></stop></radialgradient>
+<filter height="160%" id="m25t1soft" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.6"></fegaussianblur></filter>
+</defs>
+<rect fill="url(#m25t1dots)" height="200" width="480"></rect>
+<circle cx="150" cy="100" fill="url(#m25t1glow)" r="60"></circle>
+<circle cx="150" cy="100" fill="#102a4c" r="56" stroke="#60a5fa" stroke-width="2"></circle>
+<circle cx="150" cy="100" fill="none" opacity="0.7" r="38" stroke="#38bdf8" stroke-width="2"></circle>
+<circle cx="150" cy="100" fill="none" r="20" stroke="#60a5fa" stroke-width="2"></circle>
+<circle cx="150" cy="100" fill="#60a5fa" r="6"></circle>
+<g filter="url(#m25t1soft)"><path d="M250 40 L156 96" marker-end="url(#m25t1arr)" stroke="#38bdf8" stroke-width="3"></path></g>
+<text fill="#9ca3af" font-size="12" text-anchor="middle" x="150" y="180">define el objetivo antes de disparar</text>
+<text fill="#60a5fa" font-size="13" font-weight="600" text-anchor="middle" x="350" y="80">KPI = 1 número</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="350" y="102">tiempo · errores · ventas</text>
+<defs>
+<marker id="m25t1arr" markerheight="9" markerwidth="9" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8"></path></marker>
+</defs>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">Apunta primero: el KPI es el centro del blanco. Después disparas (construyes) y mides si acertaste.</figcaption>
+</figure>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Consejo práctico</h3>
+<p class="text-neutral-300">Antes de pedirle cualquier cosa a la IA, completa la frase: <strong>"sabré que funcionó cuando &lt;número&gt; sea &lt;valor-alvo&gt;"</strong>. Si no puedes completarlo, todavía no estás listo para construir: estás listo para pensar un poco más.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Conceptos clave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 KPI = <strong>un número</strong> que importa</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Elegir <strong>antes</strong> para empezar</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Medible &gt; vago</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Sin objetivo, no hay prueba</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como leído</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-2-5#topico-2" id="topico-2">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🧪 Probar de verdad (no confiar en que «parece» funcionar)</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar una duda en este tema" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tengo una duda</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-5-t2-p1">La IA es muy buena entregando cosas que <em>parecen</em> ciertas. Texto bien escrito, hoja de cálculo bonita, código que se abre. Pero «parece correcto» y «es correcto» son cosas diferentes, y la única forma de descubrirlo es <strong class="text-blue-400">probar de verdad</strong>, con casos reales.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-5-t2-p2">Probar de verdad es usar el resultado en el mundo real: ejecutar la hoja de cálculo con tus números reales, enviarte primero el correo electrónico a ti mismo, pasar el caso más difícil por el agente. Incluye a propósito el caso extraño: ahí es donde las cosas se rompen.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">✓ Prueba real</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Usa tus propios datos y casos reales</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Incluye el caso difícil a propósito</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Compara el resultado con la realidad</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Ejecuta más de una vez</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Confiar en el "parece"</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Lo acepta porque «se ve bonito»</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Solo mira el caso fácil</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>No verifica los números</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Ejecútalo una vez y confía</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Consejo práctico</h3>
+<p class="text-neutral-300">Haz tú mismo el cálculo de un caso «a mano» y compáralo con lo que entregó la IA. Si coinciden, genial. Si no, acabas de detectar un error que te habría causado problemas después. <strong>Comprobar un caso vale por diez «parece que está bien».</strong></p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Conceptos clave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 "Parece" ≠ "está"</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Casos <strong>reales</strong>, no fáciles</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Incluye el caso extraño</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Verifica contra la realidad</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como leído</span></button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-2-5#topico-3" id="topico-3">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">📊 Medir el antes y el después</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar una duda en este tema" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tengo una duda</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-5-t3-p1">Definiste la cifra (tema 1) e hiciste la prueba (tema 2). Ahora viene la prueba más convincente que existe: la <strong class="text-blue-400">diferencia entre el antes y el después</strong>. Anota cómo era antes de que lo cambiaras y cómo quedó después. Esa diferencia es tu resultado: en números, no en opiniones.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-5-t3-p2">La regla de oro: <strong>mide el «antes» pronto</strong>, antes de construir, porque después no puedes volver atrás en el tiempo. Un «antes» anotado vale oro; un «antes» recordado de memoria se convierte en una suposición.</p>
+<!-- SVG OBRIGATORIO: barra antes/depois subindo com check -->
+<figure class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Gráfico de barras: la barra del «antes» es baja y la del «después» es mucho más alta, con una marca de verificación verde azulado que confirma la mejora." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 220">
+<defs>
+<pattern height="20" id="m25t3dots" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#60a5fa" opacity="0.10" r="1"></circle></pattern>
+<radialgradient cx="50%" cy="50%" id="m25t3glow" r="50%"><stop offset="0%" stop-color="#60a5fa" stop-opacity="0.5"></stop><stop offset="100%" stop-color="#60a5fa" stop-opacity="0"></stop></radialgradient>
+<filter height="160%" id="m25t3soft" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+</defs>
+<rect fill="url(#m25t3dots)" height="220" width="480"></rect>
+<!-- eixo -->
+<line stroke="#374151" stroke-width="2" x1="70" x2="430" y1="180" y2="180"></line>
+<!-- barra ANTES (baixa) -->
+<rect fill="#102a4c" height="60" opacity="0.75" rx="6" stroke="#60a5fa" stroke-width="2" width="70" x="120" y="120"></rect>
+<text fill="#9ca3af" font-size="12" text-anchor="middle" x="155" y="200">antes</text>
+<text fill="#9ca3af" font-size="12" font-weight="600" text-anchor="middle" x="155" y="110">2h</text>
+<!-- seta de subida -->
+<g filter="url(#m25t3soft)"><path d="M205 130 L285 60" marker-end="url(#m25t3up)" stroke="#38bdf8" stroke-dasharray="5 4" stroke-width="3"></path></g>
+<!-- barra DEPOIS (alta = melhor resultado) -->
+<circle cx="325" cy="100" fill="url(#m25t3glow)" r="70"></circle>
+<rect fill="#0b3550" height="130" rx="6" stroke="#38bdf8" stroke-width="2" width="70" x="290" y="50"></rect>
+<text fill="#e5e7eb" font-size="12" font-weight="600" text-anchor="middle" x="325" y="200">después</text>
+<text fill="#60a5fa" font-size="12" font-weight="600" text-anchor="middle" x="325" y="40">30min</text>
+<!-- check -->
+<circle cx="370" cy="62" fill="#0b3550" r="16" stroke="#38bdf8" stroke-width="2"></circle>
+<path d="M362 62 L368 69 L380 55" fill="none" stroke="#60a5fa" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">La barra subió y el visto confirmó: 2h se convirtieron en 30min. <em>Esa</em> una imagen convence más que cualquier adjetivo.</figcaption>
+</figure>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">📈</span> El número que importa en el mercado</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Solo <strong>~6%</strong> de las empresas realmente son buenas usando IA...</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>...y cerca de <strong>~30%</strong> de los proyectos de IA terminan <strong>abandonados</strong>.</span></li>
+</ul>
+<p class="text-neutral-400 text-sm mt-3">La mayoría abandona precisamente porque <strong>nunca midió</strong> si valió la pena. Quien mide y demuestra queda entre la minoría a la que le va bien: esa brecha es tu ventaja.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Conceptos clave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Antes vs. después = resultado</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Anota el "antes" <strong>temprano</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Número &gt; opinión</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Medir te pone entre la minoría a la que le va bien</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como leído</span></button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-2-5#topico-4" id="topico-4">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">📁 Crear tu primer case study</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar una duda en este tema" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tengo una duda</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-5-t4-p1">Ahora tienes todo para contar la historia: el problema, lo que hiciste y el número que cambió. Eso es un <strong class="text-blue-400">estudio de caso</strong> — y no tiene que ser largo. Tres frases bien escritas valen más que una página imprecisa.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-5-t4-p2">La estructura que siempre funciona es <strong>problema → acción → número</strong>. «Tenía el problema X. Hice Y guiando a la IA. El número Z cambió de A a B». Listo: eso es una prueba, no una promesa.</p>
+<!-- CODE BOX copy-run: molde de case study -->
+<div class="bg-dark-800 border border-blue-500/30 rounded-xl p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-2 flex items-center"><span class="mr-2">📝</span> Plantilla de caso de estudio (copia y completa)</h3>
+<p class="text-neutral-300 text-sm mb-2"><strong>Objetivo:</strong> escribir tu primer caso en 5 minutos. Pega la plantilla en un bloc de notas (o pídele a la IA que la pula) y reemplaza cada &lt;parte&gt; con tus datos.</p>
+<pre class="bg-dark-900 border border-dark-600 rounded-lg p-4 overflow-x-auto text-sm font-mono text-neutral-200 whitespace-pre-wrap">CASE STUDY — &lt;título curto, ex: "Relatório semanal em 1/4 do tempo"&gt;
+
+PROBLEMA
+No meu trabalho de &lt;sua função&gt;, a tarefa &lt;qual tarefa&gt;
+me tomava &lt;número antes&gt; por &lt;período, ex: semana&gt;.
+
+AÇÃO
+Dirigi a IA para &lt;o que você mandou ela fazer&gt;,
+usando &lt;skill / agente / automação que você montou&gt;.
+
+NÚMERO
+&lt;o KPI&gt; saiu de &lt;valor antes&gt; para &lt;valor depois&gt;
+— uma melhora de &lt;diferença, ex: 75%&gt;.
+
+COMO VERIFIQUEI
+Testei com &lt;casos reais&gt; e comparei &lt;antes&gt; com &lt;depois&gt;.</pre>
+<p class="text-neutral-400 text-sm mt-3"><strong>Cómo saber si funcionó:</strong> al terminar, léelo en voz alta. Si una persona desconocida entiende el beneficio <em>sin que se lo expliques</em> y hay una cifra concreta, el caso está listo.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Consejo práctico</h3>
+<p class="text-neutral-300">Guarda una <strong>captura de pantalla</strong> del antes y del después junto con el caso. Una imagen con un número es la prueba más difícil de discutir y la más fácil de mostrar.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Conceptos clave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Problema → acción → número</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Corto &gt; largo</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Prueba, no promesa</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Guarda la captura de pantalla</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como leído</span></button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-2-5#topico-5" id="topico-5">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">📣 Mostrar el resultado (portafolio / LinkedIn)</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar una duda en este tema" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tengo una duda</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-5-t5-p1">Una prueba guardada en un cajón no abre ninguna puerta. El paso que mucha gente se salta —y que separa a quienes crecen de quienes se quedan estancados— es <strong class="text-blue-400">mostrar el resultado</strong> en un lugar donde las personas adecuadas lo vean.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-5-t5-p2">Puede ser una publicación en LinkedIn, un portafolio sencillo o incluso un mensaje directo a tu jefe. El contenido es tu caso: problema, acción, cifra. No estás presumiendo: estás mostrando una evidencia. La evidencia es respetable.</p>
+<figure class="rounded-2xl overflow-hidden border border-blue-500/30 mb-6">
+<img alt="Una pantalla que muestra un caso de resultado: un gráfico con la barra en ascenso, una cifra destacada y un sello de verificado: la prueba lista para publicarse." class="w-full h-auto" loading="lazy" src="../../../curso/trilha2/assets/img/verify-prove.png"/>
+<figcaption class="text-xs text-neutral-500 px-4 py-3 bg-dark-800">El resultado se convierte en una muestra de tu trabajo: un número claro, una prueba visible, listo para mostrar en el portafolio o en LinkedIn.</figcaption>
+</figure>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">✓ Cómo presentarlo bien</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Empieza con la cifra ("de 2h a 30min")</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Explica el problema en una frase</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Muestra la captura de pantalla del antes y el después</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Invita a quienes tienen el mismo problema</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Lo que hunde la publicación</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Solo adjetivos ("¡quedó increíble!")</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Sin ningún número</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Jerga técnica que nadie entiende</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Esperar a que «esté perfecto» para publicar</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Consejo práctico</h3>
+<p class="text-neutral-300">Toma el caso de estudio del tema 4 y pídele a la IA: <strong>"convierte este caso en una publicación corta de LinkedIn, empezando por la cifra y con lenguaje sencillo"</strong>. Revisas, ajustas la voz y publicas. El trabajo duro (medir y demostrar) ya está hecho.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Conceptos clave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Mostrar &gt; guardar</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Lidera con el número</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Evidencia, no vanidad</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Publica antes de que esté «perfecto»</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como leído</span></button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-2-5#topico-6" id="topico-6">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🔁 Repetir para crear un historial</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar una duda en este tema" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tengo una duda</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-5-t6-p1">Un caso demuestra que puedes hacerlo. <strong class="text-blue-400">Tres, cuatro, cinco casos</strong> demuestran que no fue suerte — demuestran que tú <em>tiene un método</em>. Este es el último salto de la Ruta 2: volver a girar la rueda, a propósito, para crear <strong>historial</strong>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-5-t6-p2">Cada nuevo caso es más rápido que el anterior, porque reutilizas las skills y las plantillas que preparaste. En poco tiempo tienes un <strong>historial de experiencia</strong> — y esto es lo que abre la puerta a la Trilha 3, donde montas tu Jarvis.</p>
+<!-- SVG: ciclo / repetir -->
+<figure class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Tres casos apilados como escalones ascendentes, cada uno con una marca de verificación, que muestran un historial creciente de resultados." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 200">
+<defs>
+<pattern height="20" id="m25t6dots" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#60a5fa" opacity="0.10" r="1"></circle></pattern>
+<radialgradient cx="50%" cy="50%" id="m25t6glow" r="50%"><stop offset="0%" stop-color="#60a5fa" stop-opacity="0.45"></stop><stop offset="100%" stop-color="#60a5fa" stop-opacity="0"></stop></radialgradient>
+<filter height="160%" id="m25t6soft" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.6"></fegaussianblur></filter>
+</defs>
+<rect fill="url(#m25t6dots)" height="200" width="480"></rect>
+<!-- degraus -->
+<rect fill="#102a4c" height="40" opacity="0.8" rx="8" stroke="#60a5fa" stroke-width="2" width="90" x="70" y="130"></rect>
+<text fill="#9ca3af" font-size="12" text-anchor="middle" x="115" y="155">caso 1</text>
+<rect fill="#102a4c" height="70" rx="8" stroke="#60a5fa" stroke-width="2" width="90" x="180" y="100"></rect>
+<text fill="#cbd5e1" font-size="12" text-anchor="middle" x="225" y="155">caso 2</text>
+<g filter="url(#m25t6soft)"><circle cx="335" cy="80" fill="url(#m25t6glow)" r="60"></circle></g>
+<rect fill="#0b3550" height="110" rx="8" stroke="#38bdf8" stroke-width="2" width="90" x="290" y="60"></rect>
+<text fill="#e5e7eb" font-size="12" font-weight="600" text-anchor="middle" x="335" y="155">caso 3</text>
+<!-- checks -->
+<g fill="none" stroke="#60a5fa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5">
+<path d="M104 148 L112 156 L126 140"></path>
+<path d="M214 118 L222 126 L236 110"></path>
+<path d="M324 78 L332 86 L346 70"></path>
+</g>
+<!-- seta de subida -->
+<path d="M400 150 L420 60" marker-end="url(#m25t6up)" stroke="#38bdf8" stroke-width="3"></path>
+<text fill="#60a5fa" font-size="12" font-weight="600" text-anchor="end" x="430" y="50">historial ↑</text>
+<defs>
+<marker id="m25t6up" markerheight="9" markerwidth="9" orient="auto" refx="4" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8"></path></marker>
+<marker id="m25t3up" markerheight="9" markerwidth="9" orient="auto" refx="4" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8"></path></marker>
+</defs>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">Cada caso es un peldaño con su visto bueno. Apilados, se convierten en un historial: tu reputación va creciendo.</figcaption>
+</figure>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-2-5#q1">
+<p class="font-medium mb-4">✋ Antes de seguir — ¿qué convierte un build en un resultado que vale la pena?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A) Que se haya visto bonito y parezca correcto.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">B) Definir un número de antemano, probar de verdad y mostrar el antes y el después en un caso.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">C) Construir la mayor cantidad de cosas posible, sin detenerse a medir.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="flex justify-start mt-8">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como leído</span></button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎓</span> Resumen del módulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Define el número de antemano</strong><span class="text-neutral-400"> — sin KPI, no hay pruebas.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Prueba real</strong><span class="text-neutral-400"> — «parece correcto» no basta.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Mide el antes y el después</strong><span class="text-neutral-400"> — la diferencia está en tu resultado.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Arma y muestra el caso</strong><span class="text-neutral-400"> — y repite para crear un historial.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-blue-400 mb-2">🏁 ¡Terminaste la Ruta 2!</h3>
+<p class="text-neutral-300">Sabes guiar a la IA para construir, conectar, delegar y, ahora, <strong>probar</strong>. La siguiente ruta lleva esto a otro nivel: <strong class="text-purple-400">🤖 Ruta 3 — Jarvis &amp; Arsenal</strong>, donde creas tu asistente personal y recibes recursos listos para usar.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Volver a la Ruta</a>
+<a class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors" href="../trilha3/index.html">Siguiente: Ruta 3 · Jarvis →</a>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>🎼 El mundo después de Claude · Módulo 2.5 — <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<script>
+    function toggleTopic(button){
+      var topicItem=button.closest('.topic-item');
+      var explanation=topicItem.querySelector('.topic-explanation');
+      var moduleCard=button.closest('.bg-dark-800')||document;
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(function(exp){ if(exp!==explanation) exp.classList.remove('active'); });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active')?'true':'false');
+    }
+    (function(){
+      var themeToggle=document.getElementById('theme-toggle');
+      var d=document.getElementById('theme-toggle-dark-icon');
+      var l=document.getElementById('theme-toggle-light-icon');
+      var html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ l.classList.remove('hidden'); d.classList.add('hidden'); } else { d.classList.remove('hidden'); l.classList.add('hidden'); } }
+      sync();
+      themeToggle.addEventListener('click',function(){
+        html.classList.toggle('dark');
+        var isDark=html.classList.contains('dark');
+        localStorage.setItem('theme', isDark?'dark':'light');
+        try{ var p=JSON.parse(localStorage.getItem('inema.prefs')||'{}'); p.theme=isDark?'inema-dark':'claro'; localStorage.setItem('inema.prefs',JSON.stringify(p)); }catch(e){}
+        html.style.colorScheme=isDark?'dark':'light';
+        if(isDark) html.removeAttribute('data-theme');
+        sync();
+      });
+    })();
+    function openModal(id){ var m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(function(m){ m.classList.add('hidden'); }); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+  </script>
+<script src="../../../assets/learn.js"></script>
+<script>
+    if(window.INEMA&&typeof window.INEMA.init==='function'){ window.INEMA.init(); }
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-2-5#q1', {
+          answer: 1,
+          explain: {
+            0: 'Não — "bonito" e "parece certo" são justamente o que engana. Prova é número, não aparência.',
+            1: 'Isso! Definir o número antes, testar de verdade e mostrar o antes/depois num case é o que transforma um build em resultado.',
+            2: 'Não — construir muito sem medir é exatamente como ~30% dos projetos de IA acabam abandonados. Medir é o que faz valer.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

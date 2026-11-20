@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="mundo-apos-claude" name="inema-course"/>
+<title>3.2 OpenClaw, Hermes, and agentic systems | The World After Claude</title>
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'purple' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark')?'dark':'light'));
+      html.setAttribute('data-font', p.font||'inter'); html.setAttribute('data-accent', p.accent||'purple');
+      var s=html.style, scale=(+p.fontScale||100);
+      s.setProperty('--inema-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
+      s.setProperty('--measure',(+p.lineWidth||68)+'ch'); s.setProperty('--lh-body',(+p.leading||1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC={emerald:[152,76,45],blue:[217,91,60],purple:[258,90,66],amber:[38,92,50],teal:[174,72,41],rose:[350,89,60]};
+      var a=ACC[p.accent]||ACC.purple; s.setProperty('--accent-h',a[0]+''); s.setProperty('--accent-s',a[1]+'%'); s.setProperty('--accent-l',a[2]+'%'); s.setProperty('--accent','hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode:'class', theme:{ extend:{ colors:{ primary:'#FACC15', dark:{900:'#111827',800:'#1f2937',700:'#374151',600:'#4b5563'} } } } }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 5rem; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "mundo-apos-claude",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "A virada: de usuario a maestro", "topics": 6, "href": "curso/trilha1/modulo-1-1.html" },
+        { "id": "1-2", "title": "Anatomia de um agente", "topics": 6, "href": "curso/trilha1/modulo-1-2.html" },
+        { "id": "1-3", "title": "Skills, MCP e o ecossistema", "topics": 6, "href": "curso/trilha1/modulo-1-3.html" },
+        { "id": "1-4", "title": "Contexto, memoria e o harness", "topics": 6, "href": "curso/trilha1/modulo-1-4.html" },
+        { "id": "1-5", "title": "O diferencial humano", "topics": 6, "href": "curso/trilha1/modulo-1-5.html" }
+      ]},
+      { "n": "2", "title": "Pratica", "modules": [
+        { "id": "2-1", "title": "Seu primeiro build dirigido", "topics": 6, "href": "curso/trilha2/modulo-2-1.html" },
+        { "id": "2-2", "title": "Construindo com skills", "topics": 6, "href": "curso/trilha2/modulo-2-2.html" },
+        { "id": "2-3", "title": "Conectando o mundo (MCP)", "topics": 6, "href": "curso/trilha2/modulo-2-3.html" },
+        { "id": "2-4", "title": "Agentes que fazem o trabalho", "topics": 6, "href": "curso/trilha2/modulo-2-4.html" },
+        { "id": "2-5", "title": "Verificar e provar", "topics": 6, "href": "curso/trilha2/modulo-2-5.html" }
+      ]},
+      { "n": "3", "title": "Jarvis & Arsenal", "modules": [
+        { "id": "3-1", "title": "Arquitetura de um Jarvis", "topics": 6, "href": "curso/trilha3/modulo-3-1.html" },
+        { "id": "3-2", "title": "OpenClaw, Hermes e sistemas agenticos", "topics": 6, "href": "curso/trilha3/modulo-3-2.html" },
+        { "id": "3-3", "title": "Skills prontas", "topics": 6, "href": "curso/trilha3/modulo-3-3.html" },
+        { "id": "3-4", "title": "Agentes e workflows prontos", "topics": 6, "href": "curso/trilha3/modulo-3-4.html" },
+        { "id": "3-5", "title": "Automacao e gatilhos", "topics": 6, "href": "curso/trilha3/modulo-3-5.html" },
+        { "id": "3-6", "title": "Seu Jarvis ao vivo", "topics": 6, "href": "curso/trilha3/modulo-3-6.html" }
+      ]}
+    ]
+  }
+  </script>
+<link href="https://inematds.github.io/mundo-apos-claude/curso/trilha3/modulo-3-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/en/curso/trilha3/modulo-3-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/es/curso/trilha3/modulo-3-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/modulo-3-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-3-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha3/modulo-3-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-lg" href="#conteudo">Skip to content</a>
+<!-- NAV -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🎼</span><span class="font-bold text-lg hidden sm:inline">The World After Claude</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Practice</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="index.html"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Jarvis</span></a>
+<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-inema-journey-open="" type="button"><span aria-hidden="true">◷</span><span>My journey</span><span class="hidden" data-inema-journey-badge=""></span></button>
+<button aria-label="Toggle light/dark theme" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav aria-label="Navigation trail" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-purple-400" href="../../index.html">Start</a><span>/</span>
+<a class="hover:text-purple-400" href="index.html">Track 3</a><span>/</span>
+<span class="text-purple-400">Module 3.2</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">MODULE 3.2</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🔭 OpenClaw, Hermes, and agentic systems</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">You don’t need to build your Jarvis from scratch. There are already <strong class="text-purple-400">ready-made systems</strong> — and INEMA has courses dedicated to several of them. This module is a <strong class="text-primary">overview</strong>: what each one is, how they differ, and how to choose yours without getting lost.</p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">6</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">~50</div><div class="text-xs text-neutral-400">Minutes</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Advanced</div><div class="text-xs text-neutral-400">Level</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Theory</div><div class="text-xs text-neutral-400">Type</div></div>
+</div>
+<div class="mt-6 max-w-md">
+<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progress in this module</span><span class="text-sm font-bold text-purple-400"><span class="inema-meter-pct">0%</span></span></div>
+<div aria-label="Module 3.2 progress" aria-valuemax="100" aria-valuemin="0" class="inema-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-inema-meter="modulo:3-2" role="progressbar"><div class="h-full bg-purple-500 rounded-full transition-all" data-inema-meter-fill="" style="width:0%"></div></div>
+<p class="text-xs text-neutral-500 mt-1.5"><span class="inema-meter-count">0 of 6</span> sections read</p>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid lg:grid-cols-[220px_1fr] gap-10">
+<!-- TOC -->
+<nav aria-label="Module index" class="hidden lg:block sticky top-24 self-start" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-3">Section <span class="inema-toc-pos">1</span> of <span class="inema-toc-total">6</span></p>
+<ul class="space-y-1.5 text-sm">
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-1">1. Ready-made systems</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-2">2. Hermes</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-3">3. OpenClaw</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-4">4. Other paths</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-5">5. How to choose</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-6">6. Where to start</a></li>
+</ul>
+</nav>
+<main class="min-w-0 inema-prose" id="conteudo">
+<!-- "Novo aqui?" -->
+<div class="bg-primary/10 border border-primary/30 rounded-2xl p-6 mb-12">
+<h2 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> New here? Three words before you start</h2>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-primary">Agentic system</strong> — a ready-made “Jarvis” package: brain + memory + skills already set up, which you just configure.</li>
+<li><strong class="text-primary">Self-hosted</strong> — “hosted by you”: it runs on your machine or server instead of on a third-party website.</li>
+<li><strong class="text-primary">Docker</strong> — a way to “package” a program so it runs the same on any computer without installation headaches.</li>
+</ul>
+</div>
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-3-2#topico-1" id="topico-1">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🧱 Ready-made agentic systems: what they are</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t1-p1">In module 3.1, you saw that a Jarvis has four pieces: a brain, memory, skills, and triggers. Setting all of that up by hand takes work. The good news: <strong class="text-purple-400">other people have already put together</strong> and made them ready for you to use. These kits are the <strong>ready-made agentic systems</strong>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t1-p2">Imagine an apartment: you can buy the land and build it brick by brick, or get a <strong>furnished apartment</strong> and just adjust the decor. A ready-made agentic system is like a furnished apartment—the walls are already up; you just configure what’s yours.</p>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-4 flex items-center"><span class="mr-2">🔑</span> The central idea</h3>
+<p class="text-neutral-300 mb-3">The difference between <strong>build</strong> e <strong>set up</strong>:</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>From scratch:</strong> more control, more time, more things that can break.</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Ready:</strong> gets started quickly, trading a little control for speed.</span></li>
+</ul>
+</div>
+<!-- SVG 1: orbe de peças prontas -->
+<figure class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="An AI core already comes with four pieces assembled around it: brain, memory, skills, and triggers. You just configure it." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 200">
+<defs>
+<radialgradient cx="50%" cy="50%" id="m32g1" r="50%"><stop offset="0%" stop-color="#c084fc" stop-opacity="0.55"></stop><stop offset="100%" stop-color="#c084fc" stop-opacity="0"></stop></radialgradient>
+<filter height="160%" id="m32soft1" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+<pattern height="20" id="m32dots1" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#c084fc" opacity="0.10" r="1"></circle></pattern>
+</defs>
+<rect fill="url(#m32dots1)" height="200" width="480"></rect>
+<line opacity="0.55" stroke="#38bdf8" stroke-width="2" x1="240" x2="110" y1="100" y2="50"></line>
+<line opacity="0.55" stroke="#38bdf8" stroke-width="2" x1="240" x2="370" y1="100" y2="50"></line>
+<line opacity="0.55" stroke="#38bdf8" stroke-width="2" x1="240" x2="110" y1="100" y2="150"></line>
+<line opacity="0.55" stroke="#38bdf8" stroke-width="2" x1="240" x2="370" y1="100" y2="150"></line>
+<g filter="url(#m32soft1)"><circle cx="240" cy="100" fill="url(#m32g1)" r="40"></circle></g>
+<circle cx="240" cy="100" fill="#2e1065" r="26" stroke="#c084fc" stroke-width="2"></circle><text font-size="18" text-anchor="middle" x="240" y="106">📦</text>
+<rect fill="#1f1240" height="36" rx="9" stroke="#c084fc" stroke-width="2" width="68" x="76" y="32"></rect><text fill="#e9d5ff" font-size="10" text-anchor="middle" x="110" y="55">🧠 brain</text>
+<rect fill="#1f1240" height="36" rx="9" stroke="#c084fc" stroke-width="2" width="68" x="336" y="32"></rect><text fill="#e9d5ff" font-size="10" text-anchor="middle" x="370" y="55">💾 memory</text>
+<rect fill="#1f1240" height="36" rx="9" stroke="#c084fc" stroke-width="2" width="68" x="76" y="132"></rect><text fill="#e9d5ff" font-size="10" text-anchor="middle" x="110" y="155">🧰 skills</text>
+<rect fill="#1f1240" height="36" rx="9" stroke="#c084fc" stroke-width="2" width="68" x="336" y="132"></rect><text fill="#e9d5ff" font-size="10" text-anchor="middle" x="370" y="155">⚡ triggers</text>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">A ready-made system arrives with all four pieces in place. Your job is no longer to <em>build</em> and becomes <em>set up</em>.</figcaption>
+</figure>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-4">✓ When to use a ready-made one</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>You want quick results, not a project</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Your needs are common (reply, remember, schedule)</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>There’s an INEMA course teaching that system</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ When to build from scratch</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>You need something very specific or unusual</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Total control matters more than speed</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>You want to learn how each piece works inside</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Ready-made kit = <strong>furnished apartment</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 You <strong>sets up</strong>, don't build</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Speed vs. control</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 It can save months</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-3-2#topico-2" id="topico-2">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🪶 Hermes (Nous Research): open AI for building assistants</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t2-p1">O <strong class="text-purple-400">Hermes</strong> is a family of AI models <strong>open</strong>, created by <strong>Nous Research</strong>. "Open" means it's public and you can run your own copy — including on your own server (self-hosted). It's one of the most widely used foundations for anyone who wants a Jarvis that doesn't depend on just one company.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t2-p2">Think of Hermes as the <strong>engine</strong> of the car. It isn’t the whole car — it’s the part that thinks and responds. Around it, you build the memory, skills, and triggers. It’s a great path for anyone who values privacy and control.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">🎓</span> Explore these INEMA courses in more depth</h3>
+<p class="text-neutral-300 mb-3">This module is just an overview. To actually build an assistant with Hermes, INEMA has two dedicated courses:</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><a class="text-sky-400 hover:text-sky-300" href="https://inematds.github.io/hermes21c/" target="_blank">Hermes 21C</a> — the introductory course on the Hermes model and how to get started.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><a class="text-sky-400 hover:text-sky-300" href="https://inematds.github.io/agentehermes" target="_blank">Hermes Agent</a> — how to turn Hermes into an agent that executes tasks.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">If “privacy” and “running on my machine” matter to you, Hermes is usually the place to start. Start with the <a class="text-sky-400 hover:text-sky-300" href="https://inematds.github.io/hermes21c/" target="_blank">Hermes 21C</a> before the Hermes Agent—one is the foundation for the other.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 AI <strong>open</strong> (Nous Research)</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Runs <strong>self-hosted</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 It’s the "engine," not the whole car</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Strong on privacy/control</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-3-2#topico-3" id="topico-3">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🐾 OpenClaw: autonomous multi-channel assistant</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t3-p1">O <strong class="text-purple-400">OpenClaw</strong> it’s an AI assistant <strong>autonomous</strong> e <strong>multi-channel</strong>. Autonomous: it doesn’t just wait for instructions — it takes initiative to complete a task. Multichannel: you can talk to it in several places (messages, email, etc.), not just in one little window. It usually runs via <strong>Docker</strong>, that way of packaging everything so it's easy to install.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t3-p2">If Hermes is the engine, OpenClaw is closer to the <strong>assembled car</strong>: already comes with the “serve multiple channels” part handled. It’s a good option when you want a Jarvis that talks to you wherever you already are.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">🎓</span> Explore this INEMA course in more depth</h3>
+<p class="text-neutral-300 mb-3">Here, this is just an overview. To get OpenClaw running in practice, with Docker and everything, follow:</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><a class="text-sky-400 hover:text-sky-300" href="https://inematds.github.io/docker-openclaw/" target="_blank">Docker OpenClaw</a> — the INEMA course that teaches you how to deploy OpenClaw via Docker, step by step.</span></li>
+</ul>
+</div>
+<!-- SVG 2: comparacao de 3 sistemas/orbs lado a lado -->
+<figure class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Three systems side by side: Hermes as a self-hosted engine, OpenClaw as a multi-channel assistant via Docker, and a third orb representing other paths." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 220">
+<defs>
+<radialgradient cx="50%" cy="50%" id="m32g2" r="50%"><stop offset="0%" stop-color="#c084fc" stop-opacity="0.5"></stop><stop offset="100%" stop-color="#c084fc" stop-opacity="0"></stop></radialgradient>
+<filter height="160%" id="m32soft2" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="2"></fegaussianblur></filter>
+<pattern height="20" id="m32dots2" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#c084fc" opacity="0.10" r="1"></circle></pattern>
+</defs>
+<rect fill="url(#m32dots2)" height="220" width="480"></rect>
+<!-- Hermes -->
+<g filter="url(#m32soft2)"><circle cx="90" cy="100" fill="url(#m32g2)" r="40"></circle></g>
+<circle cx="90" cy="100" fill="#2e1065" r="30" stroke="#c084fc" stroke-width="2"></circle><text font-size="20" text-anchor="middle" x="90" y="106">🪶</text>
+<text fill="#c084fc" font-size="13" font-weight="600" text-anchor="middle" x="90" y="158">Hermes</text>
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="90" y="176">open · self-hosted</text>
+<text fill="#38bdf8" font-size="10" text-anchor="middle" x="90" y="190">thinking engine</text>
+<!-- OpenClaw -->
+<g filter="url(#m32soft2)"><circle cx="240" cy="100" fill="url(#m32g2)" r="40"></circle></g>
+<circle cx="240" cy="100" fill="#2e1065" r="30" stroke="#c084fc" stroke-width="2"></circle><text font-size="20" text-anchor="middle" x="240" y="106">🐾</text>
+<text fill="#c084fc" font-size="13" font-weight="600" text-anchor="middle" x="240" y="158">OpenClaw</text>
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="240" y="176">autonomous · multi-channel</text>
+<text fill="#38bdf8" font-size="10" text-anchor="middle" x="240" y="190">via Docker</text>
+<!-- Outros -->
+<g filter="url(#m32soft2)"><circle cx="390" cy="100" fill="url(#m32g2)" r="40"></circle></g>
+<circle cx="390" cy="100" fill="#1f1240" r="30" stroke="#c084fc" stroke-dasharray="4 4" stroke-width="2"></circle><text font-size="20" text-anchor="middle" x="390" y="106">🗺️</text>
+<text fill="#c084fc" font-size="13" font-weight="600" text-anchor="middle" x="390" y="158">Others</text>
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="390" y="176">several projects</text>
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="390" y="190">broad overview</text>
+<line opacity="0.45" stroke="#38bdf8" stroke-dasharray="3 4" stroke-width="2" x1="130" x2="200" y1="100" y2="100"></line>
+<line opacity="0.45" stroke="#38bdf8" stroke-dasharray="3 4" stroke-width="2" x1="280" x2="350" y1="100" y2="100"></line>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">Three useful families side by side: Hermes (the engine), OpenClaw (the ready-made multi-channel assistant), and the rest of the landscape. None is “the best” — it depends on what you need.</figcaption>
+</figure>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">"Docker" seems intimidating from a distance, but the course <a class="text-sky-400 hover:text-sky-300" href="https://inematds.github.io/docker-openclaw/" target="_blank">Docker OpenClaw</a> treats you as a beginner: it’s more “copy, paste, and run” than programming. If your goal is to talk to Jarvis on your phone, this is the way to go.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 <strong>Autonomous</strong> (takes initiative)</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 <strong>Multi-channel</strong> (says where you are)</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Runs via <strong>Docker</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 More "assembled car" than engine</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-3-2#topico-4" id="topico-4">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🗺️ Other paths: the landscape</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t4-p1">Hermes and OpenClaw are two paths with an INEMA course, but the landscape is broader. There are other ways to have a Jarvis—and the goal here <strong>isn’t about memorizing names</strong>, but for you to recognize the <strong class="text-purple-400">families</strong> and not be intimidated when you hear about them.</p>
+<figure class="rounded-2xl overflow-hidden border border-purple-500/30 mb-6">
+<img alt="Several connected AI cores, representing the ecosystem of ready-to-use agentic systems for building a Jarvis." class="w-full h-auto" loading="lazy" src="../../../curso/trilha3/assets/img/agentic-systems.png"/>
+<figcaption class="text-xs text-neutral-500 px-4 py-3 bg-dark-800">The agentic systems ecosystem: many paths lead to a Jarvis. The fun is choosing one, not collecting them all.</figcaption>
+</figure>
+<div class="space-y-5 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">A</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">🪶 Open models (like Hermes)</h4><p class="text-neutral-300 text-sm">Public AI that you run yourself. More control and privacy, but it takes a little more hands-on work.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">B</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">🐾 Ready-made assistants (like OpenClaw)</h4><p class="text-neutral-300 text-sm">Kits that already handle channels and automation. They get you started quickly, trading some control for convenience.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">C</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">☁️ Cloud platforms</h4><p class="text-neutral-300 text-sm">Services that host Jarvis for you. Easiest to get started with; less privacy, recurring cost.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">D</span></div>
+<div class="flex-1 bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl p-5 border border-purple-500/30"><h4 class="font-semibold mb-1 text-purple-400">🧩 Build from scratch <span class="text-xs bg-purple-500/20 px-2 py-0.5 rounded-full ml-1">SEEN IN 3.1</span></h4><p class="text-neutral-300 text-sm">All four pieces at your fingertips. Maximum control, more work — good for those who want to learn how it works under the hood.</p></div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">🎯</span> The pattern to watch for</h3>
+<p class="text-neutral-300">All these paths are the same <strong>four pieces</strong> put together in different ways. Anyone who understood module 3.1 can understand any new system: just ask, “where are the brain, memory, skills, and triggers?”</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Recognize <strong>families</strong>, not names</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Open · ready-made · cloud · from scratch</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 They’re the same 4 building blocks</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Map before choosing</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-3-2#topico-5" id="topico-5">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">⚖️ How to choose yours</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t5-p1">There’s no “best system”—there’s the best <strong class="text-purple-400">for you</strong>. The choice comes down to four simple questions about what you need: privacy, channels, ease of use, and cost. Answer those four, and the path practically chooses itself.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t5-p2">Watch out for a trap: the temptation to want “the most powerful.” The most powerful is usually the most work. To get started, <strong>ease beats power</strong> almost always.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-4">✓ Good selection criteria</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>"Do my data need to stay with me?" → Hermes/self-hosted weighs more heavily</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>"Do I want to talk through multiple channels?" → OpenClaw weighs more heavily</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>"Is there an INEMA course that teaches this?" → you can go further on your own</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>"How much can I spend per month?" → rules out expensive options</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Misleading criteria</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"Which one is the most powerful?" — power ≠ useful to you</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"Which one is most trendy?" — trends pass; your needs remain</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"Which one has the most features?" — a feature you don’t use is dead weight</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Write it in one line: <em>"I want a Jarvis that [does what], where [privacy or convenience] matters more, talking to me through [channel], spending up to [amount]."</em> This single sentence already points to the right system.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 There is no "best"; there is "yours"</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 4 questions: privacy, channels, ease of use, cost</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Ease &gt; power (at first)</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 INEMA course = go further</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-3-2#topico-6" id="topico-6">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🚪 Where to start without getting lost</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t6-p1">The biggest trap at this stage isn't technical: it's the <strong class="text-purple-400">option paralysis</strong>. There are so many ways that you feel like trying them all—and then you finish none. The antidote is simple: <strong>choose ONE</strong> and complete the corresponding INEMA course.</p>
+<div class="space-y-3 mb-6">
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-purple-400 text-xl">1️⃣</span><div><strong class="text-purple-400">Define your statement of need</strong> <span class="text-neutral-300 text-sm">(the one from topic 5). It points to the system.</span></div></div>
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-purple-400 text-xl">2️⃣</span><div><strong class="text-purple-400">Choose ONE path</strong> <span class="text-neutral-300 text-sm">— privacy/control → Hermes; ready-made multi-channel setup → OpenClaw.</span></div></div>
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-purple-400 text-xl">3️⃣</span><div><strong class="text-purple-400">Follow the INEMA course for that path</strong> <span class="text-neutral-300 text-sm">from start to finish, without skipping to another one.</span></div></div>
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-purple-400 text-xl">4️⃣</span><div><strong class="text-purple-400">Only afterward</strong> <span class="text-neutral-300 text-sm">once you have something running, consider trying another.</span></div></div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">🎓</span> Your next steps (INEMA courses)</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Hermes path: <a class="text-sky-400 hover:text-sky-300" href="https://inematds.github.io/hermes21c/" target="_blank">Hermes 21C</a> → <a class="text-sky-400 hover:text-sky-300" href="https://inematds.github.io/agentehermes" target="_blank">Hermes Agent</a>.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>OpenClaw path: <a class="text-sky-400 hover:text-sky-300" href="https://inematds.github.io/docker-openclaw/" target="_blank">Docker OpenClaw</a>.</span></li>
+</ul>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-3-2#q1">
+<p class="font-medium mb-4">✋ Before you continue — what's the best way to get started with agentic systems?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A) Test all the systems at once so you don’t miss anything.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">B) Always choose the most powerful option, no matter the cost.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">C) Define your need, choose ONE path, and follow its INEMA course to the end.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6 mt-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Enemy = option paralysis</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Choosing <strong>one</strong> and follow</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 INEMA course from start to finish</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Focus beats collecting tools</div>
+</div>
+</div>
+<div class="flex justify-start mt-8">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎓</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Ready-made Jarvis assistants exist</strong><span class="text-neutral-400"> — you configure it instead of building it from scratch.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Hermes</strong><span class="text-neutral-400"> — open AI (Nous Research), self-hosted; Hermes 21C and Agente Hermes courses.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">OpenClaw</strong><span class="text-neutral-400"> — a multi-channel autonomous assistant via Docker; Docker OpenClaw course.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Choose based on your needs</strong><span class="text-neutral-400"> — and start with ONE path, without getting lost.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-purple-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">3.3 — 🧰 Ready-made skills: a library to copy, paste, and adapt for your Jarvis.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the Track</a>
+<a class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors" href="modulo-3-3.html">Next: 3.3 Ready-made skills →</a>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>🎼 The World After Claude · Module 3.2 — <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<script>
+    function toggleTopic(button){
+      var topicItem=button.closest('.topic-item');
+      var explanation=topicItem.querySelector('.topic-explanation');
+      var moduleCard=button.closest('.bg-dark-800')||document;
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(function(exp){ if(exp!==explanation) exp.classList.remove('active'); });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active')?'true':'false');
+    }
+    (function(){
+      var themeToggle=document.getElementById('theme-toggle');
+      var d=document.getElementById('theme-toggle-dark-icon');
+      var l=document.getElementById('theme-toggle-light-icon');
+      var html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ l.classList.remove('hidden'); d.classList.add('hidden'); } else { d.classList.remove('hidden'); l.classList.add('hidden'); } }
+      sync();
+      themeToggle.addEventListener('click',function(){
+        html.classList.toggle('dark');
+        var isDark=html.classList.contains('dark');
+        localStorage.setItem('theme', isDark?'dark':'light');
+        try{ var p=JSON.parse(localStorage.getItem('inema.prefs')||'{}'); p.theme=isDark?'inema-dark':'claro'; localStorage.setItem('inema.prefs',JSON.stringify(p)); }catch(e){}
+        html.style.colorScheme=isDark?'dark':'light';
+        if(isDark) html.removeAttribute('data-theme');
+        sync();
+      });
+    })();
+    function openModal(id){ var m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(function(m){ m.classList.add('hidden'); }); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+  </script>
+<script src="../../../assets/learn.js"></script>
+<script>
+    if(window.INEMA&&typeof window.INEMA.init==='function'){ window.INEMA.init(); }
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-3-2#q1', {
+          answer: 2,
+          explain: {
+            0: 'Não — testar tudo ao mesmo tempo é a receita da paralisia de opções; você não termina nenhum.',
+            1: 'Não — o mais poderoso costuma ser o mais trabalhoso. Pra começar, facilidade vence potência.',
+            2: 'Isso! Defina sua necessidade, escolha UM caminho e siga o curso INEMA dele até o fim.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

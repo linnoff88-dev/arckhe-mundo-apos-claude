@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="mundo-apos-claude" name="inema-course"/>
+<title>2.1 Your first guided build | The World After Claude</title>
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'blue' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark')?'dark':'light'));
+      html.setAttribute('data-font', p.font||'inter'); html.setAttribute('data-accent', p.accent||'blue');
+      var s=html.style, scale=(+p.fontScale||100);
+      s.setProperty('--inema-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
+      s.setProperty('--measure',(+p.lineWidth||68)+'ch'); s.setProperty('--lh-body',(+p.leading||1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC={emerald:[152,76,45],blue:[217,91,60],purple:[258,90,66],amber:[38,92,50],teal:[174,72,41],rose:[350,89,60]};
+      var a=ACC[p.accent]||ACC.blue; s.setProperty('--accent-h',a[0]+''); s.setProperty('--accent-s',a[1]+'%'); s.setProperty('--accent-l',a[2]+'%'); s.setProperty('--accent','hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode:'class', theme:{ extend:{ colors:{ primary:'#FACC15', dark:{900:'#111827',800:'#1f2937',700:'#374151',600:'#4b5563'} } } } }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 5rem; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* acento blue (T2) */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+    /* nav: emerald/purple */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "mundo-apos-claude",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "A virada: de usuario a maestro", "topics": 6, "href": "curso/trilha1/modulo-1-1.html" },
+        { "id": "1-2", "title": "Anatomia de um agente", "topics": 6, "href": "curso/trilha1/modulo-1-2.html" },
+        { "id": "1-3", "title": "Skills, MCP e o ecossistema", "topics": 6, "href": "curso/trilha1/modulo-1-3.html" },
+        { "id": "1-4", "title": "Contexto, memoria e o harness", "topics": 6, "href": "curso/trilha1/modulo-1-4.html" },
+        { "id": "1-5", "title": "O diferencial humano", "topics": 6, "href": "curso/trilha1/modulo-1-5.html" }
+      ]},
+      { "n": "2", "title": "Pratica", "modules": [
+        { "id": "2-1", "title": "Seu primeiro build dirigido", "topics": 6, "href": "curso/trilha2/modulo-2-1.html" },
+        { "id": "2-2", "title": "Construindo com skills", "topics": 6, "href": "curso/trilha2/modulo-2-2.html" },
+        { "id": "2-3", "title": "Conectando o mundo (MCP)", "topics": 6, "href": "curso/trilha2/modulo-2-3.html" },
+        { "id": "2-4", "title": "Agentes que fazem o trabalho", "topics": 6, "href": "curso/trilha2/modulo-2-4.html" },
+        { "id": "2-5", "title": "Verificar e provar", "topics": 6, "href": "curso/trilha2/modulo-2-5.html" }
+      ]},
+      { "n": "3", "title": "Jarvis & Arsenal", "modules": [
+        { "id": "3-1", "title": "Arquitetura de um Jarvis", "topics": 6, "href": "curso/trilha3/modulo-3-1.html" },
+        { "id": "3-2", "title": "OpenClaw, Hermes e sistemas agenticos", "topics": 6, "href": "curso/trilha3/modulo-3-2.html" },
+        { "id": "3-3", "title": "Skills prontas", "topics": 6, "href": "curso/trilha3/modulo-3-3.html" },
+        { "id": "3-4", "title": "Agentes e workflows prontos", "topics": 6, "href": "curso/trilha3/modulo-3-4.html" },
+        { "id": "3-5", "title": "Automacao e gatilhos", "topics": 6, "href": "curso/trilha3/modulo-3-5.html" },
+        { "id": "3-6", "title": "Seu Jarvis ao vivo", "topics": 6, "href": "curso/trilha3/modulo-3-6.html" }
+      ]}
+    ]
+  }
+  </script>
+<link href="https://inematds.github.io/mundo-apos-claude/curso/trilha2/modulo-2-1.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/en/curso/trilha2/modulo-2-1.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/es/curso/trilha2/modulo-2-1.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha2/modulo-2-1.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-2-1.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha2/modulo-2-1.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg" href="#conteudo">Skip to content</a>
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🎼</span><span class="font-bold text-lg hidden sm:inline">The World After Claude</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10" href="index.html"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Practice</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Jarvis</span></a>
+<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-inema-journey-open="" type="button"><span aria-hidden="true">◷</span><span>My journey</span><span class="hidden" data-inema-journey-badge=""></span></button>
+<button aria-label="Toggle light/dark theme" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav aria-label="Navigation trail" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-blue-400" href="../../index.html">Start</a><span>/</span>
+<a class="hover:text-blue-400" href="index.html">Track 2</a><span>/</span>
+<span class="text-blue-400">Module 2.1</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">MODULE 2.1</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🚀 Your first guided build</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">Enough theory. Here, you'll go from a <strong class="text-blue-400">real pain point</strong> of your day and end with something <strong class="text-primary">working</strong> — without writing a single line of code. You just direct; the AI executes.</p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">6</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">~55</div><div class="text-xs text-neutral-400">Minutes</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">Practical</div><div class="text-xs text-neutral-400">Level</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">Practice</div><div class="text-xs text-neutral-400">Type</div></div>
+</div>
+<div class="mt-6 max-w-md">
+<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progress in this module</span><span class="text-sm font-bold text-blue-400"><span class="inema-meter-pct">0%</span></span></div>
+<div aria-label="Module 2.1 progress" aria-valuemax="100" aria-valuemin="0" class="inema-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-inema-meter="modulo:2-1" role="progressbar"><div class="h-full bg-blue-500 rounded-full transition-all" data-inema-meter-fill="" style="width:0%"></div></div>
+<p class="text-xs text-neutral-500 mt-1.5"><span class="inema-meter-count">0 of 6</span> sections read</p>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid lg:grid-cols-[220px_1fr] gap-10">
+<!-- TOC -->
+<nav aria-label="Module index" class="hidden lg:block sticky top-24 self-start" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-3">Section <span class="inema-toc-pos">1</span> of <span class="inema-toc-total">6</span></p>
+<ul class="space-y-1.5 text-sm">
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-1">1. A small, real problem</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-2">2. Describe the outcome</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-3">3. Context and examples</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-4">4. Ask, review, repeat</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-5">5. Your first result</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-6">6. Beginner mistakes</a></li>
+</ul>
+</nav>
+<main class="min-w-0 inema-prose" id="conteudo">
+<!-- "Novo aqui?" -->
+<div class="bg-primary/10 border border-primary/30 rounded-2xl p-6 mb-12">
+<h2 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> New here? Three words before you start</h2>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-primary">Build</strong> — “build” in English. In our case, it means putting together something useful (a spreadsheet, a template, a mini-automation) with AI’s help.</li>
+<li><strong class="text-primary">Directed</strong> — you’re in charge. You say what you want and check; the AI does the grunt work.</li>
+<li><strong class="text-primary">Iterate</strong> — ask, look at the result, point out what to change, and ask again. This is the cycle that makes everything better.</li>
+</ul>
+</div>
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-2-1#topico-1" id="topico-1">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🎯 Choose a small, real problem</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-1-t1-p1">The number one mistake beginners make is wanting to build their “dream system” right away. Don’t do that. Choose a <strong class="text-blue-400">a concrete pain point in your day</strong> — that annoying task that repeats every week and eats up 20, 30 minutes. Small, real, yours.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-1-t1-p2">Why keep it small? Because a small problem has <strong>a quick win</strong> built in. You finish, see it working, and learn the whole process in a single cycle. That learning is worth more than the result itself—it’s what you’ll repeat later for bigger problems.</p>
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">🔑</span> The central idea</h3>
+<p class="text-neutral-300 mb-3">A good first problem fits in one sentence and passes these three tests:</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span><strong>Repeat:</strong> you do this every week (or every day).</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span><strong>Bothers you:</strong> it’s tedious, mechanical, and makes you procrastinate.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span><strong>Of course:</strong> you can explain what “done” means in one sentence.</span></li>
+</ul>
+</div>
+<!-- SVG ilustrativo (obrigatorio) -->
+<figure class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Scope comparison: on the left, a huge, vague problem that’s hard to finish; on the right, a small, clear problem that delivers a quick win." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 210">
+<defs>
+<pattern height="20" id="m21dots" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#60a5fa" opacity="0.10" r="1"></circle></pattern>
+<radialgradient cx="50%" cy="50%" id="m21glow" r="50%"><stop offset="0%" stop-color="#60a5fa" stop-opacity="0.45"></stop><stop offset="100%" stop-color="#60a5fa" stop-opacity="0"></stop></radialgradient>
+<filter height="160%" id="m21soft" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+</defs>
+<rect fill="url(#m21dots)" height="210" width="480"></rect>
+<!-- GRANDE -->
+<text fill="#9ca3af" font-size="13" font-weight="600" text-anchor="middle" x="120" y="28">BIG · vague</text>
+<circle cx="120" cy="110" fill="#1f2937" r="56" stroke="#6b7280" stroke-dasharray="5 5" stroke-width="2"></circle><text font-size="26" text-anchor="middle" x="120" y="116">🌫️</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="120" y="190">"redo everything" — it never ends</text>
+<!-- divisor -->
+<line stroke="#374151" stroke-dasharray="3 4" stroke-width="1.5" x1="240" x2="240" y1="40" y2="180"></line>
+<!-- PEQUENO -->
+<text fill="#60a5fa" font-size="13" font-weight="600" text-anchor="middle" x="360" y="28">SMALL · clear</text>
+<g filter="url(#m21soft)"><circle cx="360" cy="110" fill="url(#m21glow)" r="34"></circle></g>
+<circle cx="360" cy="110" fill="#102a4c" r="24" stroke="#60a5fa" stroke-width="2"></circle><text font-size="18" text-anchor="middle" x="360" y="117">🎯</text>
+<text fill="#38bdf8" font-size="14" text-anchor="middle" x="360" y="150">✅</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="360" y="190">"summarize 1 email" — done today</text>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">Compare the size: the cloud on the left never closes; you can hit the target on the right <em>today</em>. Always start on the right.</figcaption>
+</figure>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Make a list of 5 tedious tasks from your week. Cross out the ones that depend on lots of people or systems you don’t control. Is there one simple task left that’s yours alone? <strong>This is your first build.</strong></p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 <strong>Real pain point</strong>, not a dream project</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Scope <strong>small</strong> = complete cycle</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 A quick win teaches the process</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Fits in <strong>one sentence</strong></div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-2-1#topico-2" id="topico-2">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🎬 Describe the result—“what good looks like”</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-1-t2-p1">AI can’t read your mind. It hits the target when you <strong class="text-blue-400">describes the target</strong>. "What good looks like" means saying, before you ask, what you expect to receive at the end: the <strong>format</strong>, o <strong>tone</strong>, o <strong>size</strong> and, if possible, a <strong>example</strong> what would be perfect.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-1-t2-p2">Think of a bricklayer: "build a wall" could produce any wall. "Build a 2-meter wall with exposed brick and a niche in the middle" produces the one you want. The difference isn't effort — it's <strong>clarity about the goal</strong>. The clearer the “done” looks in your mind, the better the first result.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">✓ A clearly targeted request</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Specifies the format (“a 3-column table”)</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Specifies the tone (“informal, for a client”)</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Specifies the length (“no more than 5 lines”)</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Show an example of what perfect would look like</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Untargeted request</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"Help me with this"</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Doesn’t specify the format or size</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Leaves the tone in the dark</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Expect the AI to "guess"</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Before making a request, write just one sentence: <strong>"In the end, I want ___, in the format ___, with a ___ tone."</strong> If you can’t complete it, you’re not ready to ask yet—and that’s okay. Clarity first, request second.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 <strong>Clear target</strong> guides the AI</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Say <strong>format</strong> and tone</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 One <strong>example</strong> is worth a thousand words</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Clarity &gt; effort</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-2-1#topico-3" id="topico-3">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🧾 Provide context and examples</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-1-t3-p1">Context is what separates one result <strong>generic</strong> of a <strong class="text-blue-400">custom-made</strong>. AI is brilliant, but it only knows its own world — it doesn’t know yours. You need to feed it supporting material: an example of what already exists, your rules, your data.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-1-t3-p2">Imagine asking a new employee to "reply to this customer" without showing them any old emails or company rules. They guess. Now paste in 2 emails you've already sent and say "use this tone": they get it right on the first try. AI works the same way — <strong>an example is worth more than an explanation</strong>.</p>
+<!-- SVG ilustrativo 2 (obrigatorio) -->
+<figure class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Diagram: three inputs — example, rules, and data — feed the AI in the center, which delivers a tailored result instead of a generic one." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 200">
+<defs>
+<pattern height="20" id="m21dots2" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#60a5fa" opacity="0.10" r="1"></circle></pattern>
+<radialgradient cx="50%" cy="50%" id="m21glow2" r="50%"><stop offset="0%" stop-color="#60a5fa" stop-opacity="0.5"></stop><stop offset="100%" stop-color="#60a5fa" stop-opacity="0"></stop></radialgradient>
+<filter height="160%" id="m21soft2" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+</defs>
+<rect fill="url(#m21dots2)" height="200" width="480"></rect>
+<!-- 3 entradas -->
+<rect fill="#102a4c" height="34" rx="8" stroke="#60a5fa" stroke-width="2" width="120" x="20" y="34"></rect><text fill="#60a5fa" font-size="12" text-anchor="middle" x="80" y="56">📄 example</text>
+<rect fill="#102a4c" height="34" rx="8" stroke="#60a5fa" stroke-width="2" width="120" x="20" y="84"></rect><text fill="#60a5fa" font-size="12" text-anchor="middle" x="80" y="106">📐 rules</text>
+<rect fill="#102a4c" height="34" rx="8" stroke="#60a5fa" stroke-width="2" width="120" x="20" y="134"></rect><text fill="#60a5fa" font-size="12" text-anchor="middle" x="80" y="156">📊 data</text>
+<!-- setas pra IA -->
+<path d="M140 51 L210 95" marker-end="url(#m21a)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M140 101 L210 100" marker-end="url(#m21a)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M140 151 L210 105" marker-end="url(#m21a)" stroke="#38bdf8" stroke-width="2"></path>
+<!-- IA central -->
+<g filter="url(#m21soft2)"><circle cx="248" cy="100" fill="url(#m21glow2)" r="36"></circle></g>
+<circle cx="248" cy="100" fill="#0b3550" r="28" stroke="#60a5fa" stroke-width="2"></circle><text font-size="22" text-anchor="middle" x="248" y="107">🧠</text>
+<!-- saida sob medida -->
+<path d="M284 100 L360 100" marker-end="url(#m21a)" stroke="#60a5fa" stroke-width="2"></path>
+<rect fill="#0b3550" height="44" rx="10" stroke="#38bdf8" stroke-width="2" width="100" x="364" y="78"></rect><text fill="#38bdf8" font-size="12" text-anchor="middle" x="414" y="105">✅ tailor-made</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="248" y="160">the more context, the more it feels “like you”</text>
+<defs><marker id="m21a" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#60a5fa"></path></marker></defs>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">Follow the arrows: <em>example + rules + data</em> go in, and what comes out already feels like you. Without context, you get something generic.</figcaption>
+</figure>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Before asking for anything, gather 1 example of “good” + your 3 main rules. Paste them into the chat with the phrase <strong>"use this as a reference:"</strong>. That extra minute saves several rounds of corrections later.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 <strong>Reference material</strong> sets the tone</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Yours <strong>rules</strong> avoid generic results</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Yours <strong>data</strong> make custom</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Example &gt; explanation</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-2-1#topico-4" id="topico-4">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🔁 Ask, Review, Ask Again (Iterate)</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-1-t4-p1">Here’s the secret many people miss: <strong class="text-blue-400">the first result is almost never the final one</strong> — and that’s okay. The magic isn’t in the first try; it’s in the cycle of improvement. You look at what you got, point out exactly what’s off, and ask again.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-1-t4-p2">The trick is to give <strong>specific feedback</strong>, not vague. Instead of “I didn't like it,” say “it's too formal; make it lighter and cut the second paragraph.” AI doesn't get offended or tired—it adjusts right away. Two or three rounds usually take it from “okay” to “perfect.”</p>
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">🔄</span> The iteration cycle</h3>
+<div class="space-y-4">
+<div class="flex items-start space-x-3"><span class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 font-bold flex items-center justify-center text-sm">1</span><div><strong class="text-neutral-100">Ask</strong><span class="text-neutral-400 text-sm"> — you describe the goal and send it off.</span></div></div>
+<div class="flex items-start space-x-3"><span class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 font-bold flex items-center justify-center text-sm">2</span><div><strong class="text-neutral-100">Review</strong><span class="text-neutral-400 text-sm"> — you look at it critically: what’s good? What’s off?</span></div></div>
+<div class="flex items-start space-x-3"><span class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 font-bold flex items-center justify-center text-sm">3</span><div><strong class="text-neutral-100">Ask again</strong><span class="text-neutral-400 text-sm"> — specific feedback, then run it again.</span></div></div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">When something is almost good, don’t start over from scratch. Say <strong>"keep everything, just change ___"</strong>. This preserves what already worked and focuses the AI on the exact point — saving time and keeping it from “ruining” the rest.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 <strong>Iterate</strong> &gt; get it right the first time</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Feedback <strong>specific</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 "Keep it, just change ___"</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 2–3 rounds are usually enough</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-2-1#topico-5" id="topico-5">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">✨ Your first result in action</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-1-t5-p1">There’s a huge difference between “I planned something” and “I have something that works.” <strong class="text-blue-400">Something running is worth more than a thousand plans.</strong> It doesn’t need to be beautiful or complete—it needs to <strong>exist and work</strong>, even a simple one.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-1-t5-p2">Why does this matter so much? Because the real result gives you honest feedback that no plan can. You use it, see where it gets stuck, and improve based on what’s concrete. It’s also your first <strong>proof</strong> that you can build — and that confidence changes everything.</p>
+<figure class="rounded-2xl overflow-hidden border border-blue-500/30 mb-6">
+<img alt="A futuristic workbench where a simple piece has just been assembled and lights up — the image of your first guided build moving from plan to operation." class="w-full h-auto" loading="lazy" src="../../../curso/trilha2/assets/img/build-first.png"/>
+<figcaption class="text-xs text-neutral-500 px-4 py-3 bg-dark-800">Your first build: small, simple, but <strong>on</strong> — actually working. This is where everything grows from.</figcaption>
+</figure>
+<!-- EXPERIMENTE AGORA (copy-run) -->
+<div class="bg-dark-800 border border-blue-500/30 rounded-xl p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-2 flex items-center"><span class="mr-2">🧪</span> Try it now (5 minutes)</h3>
+<p class="text-neutral-300 text-sm mb-2"><strong>Goal:</strong> leave here with your first guided build—a small “assistant” ready to use. Paste the text below into Claude or ChatGPT, replacing the parts between &lt; &gt;.</p>
+<pre class="bg-dark-900 border border-dark-600 rounded-lg p-4 overflow-x-auto text-sm font-mono text-neutral-200 whitespace-pre-wrap">Quero construir uma coisa pequena e útil pro meu dia.
+
+PROBLEMA (a dor que se repete):
+&lt;ex: toda semana resumo 10 e-mails de clientes na mão&gt;
+
+RESULTADO QUE QUERO (o "como é o bom"):
+&lt;ex: um resumo de 3 linhas por e-mail, em tom informal&gt;
+
+REFERÊNCIA (use como exemplo):
+&lt;cole 1 exemplo do que seria perfeito&gt;
+
+Faça uma primeira versão. Depois me pergunte 1 coisa
+que ajudaria a deixar mais "a minha cara".</pre>
+<p class="text-neutral-400 text-sm mt-3"><strong>How to know it worked:</strong> you receive one <em>first usable version</em> and the AI ends by asking 1 follow-up question. Then you just review it and ask again — you’ve just completed a guided build.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 <strong>Working</strong> &gt; planned</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Simple and <strong>real</strong> enough</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 The concrete gives honest feedback</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 First proof = trust</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-2-1#topico-6" id="topico-6">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">⚠️ Common mistakes beginners make</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-1-t6-p1">Knowing the pitfalls saves hours. Almost every beginner stumbles over the same three obstacles: <strong class="text-blue-400">make a vague request</strong>, <strong class="text-blue-400">trying to do everything at once</strong> e <strong class="text-blue-400">accept the first result without checking</strong>. All three are easy to fix.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">✓ The right approach</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Ask with a goal, format, and example</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Break it down: one small piece at a time</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Check before using the result</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Iterate with specific feedback</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ The three pitfalls</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span><strong>Vague request</strong> — “give me a hand”</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span><strong>Large scope</strong> — all at once</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span><strong>Don't verify</strong> — trust blindly</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Starting from scratch with every adjustment</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">🎯</span> The cure for the three stones</h3>
+<p class="text-neutral-300">Just reverse each mistake: <strong>vague → describe the target</strong>; <strong>big → break it into small pieces</strong>; <strong>not checking → always review before using</strong>. They’re the same habits from the previous topics. Repeat them until they become automatic.</p>
+</div>
+<div class="space-y-3 mb-6">
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-blue-400 text-xl">🎯</span><div><strong class="text-blue-400">Remember:</strong> <span class="text-neutral-300 text-sm">AI works fast, but you’re the one who makes sure it was worth it. Checking is part of the work, not an extra.</span></div></div>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-2-1#q1">
+<p class="font-medium mb-4">✋ Before you continue — what's the best way to start your first build?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A) Choose the most ambitious project possible to impress.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">B) Pick a small, real problem, describe what “good” looks like, and iterate until it works.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">C) Send a vague request and use the first result you get.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="flex justify-start mt-8">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎓</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Start small with something real</strong><span class="text-neutral-400"> — a pain point you can describe in one sentence makes for a quick win.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Describe “what good looks like”</strong><span class="text-neutral-400"> — format, tone, and examples guide the AI.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Provide context</strong><span class="text-neutral-400"> — examples, rules, and data make everything fit your needs.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Iterate and check</strong><span class="text-neutral-400"> — the magic is in the cycle, and something running beats a thousand plans.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-blue-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">2.2 — 🧩 Building with skills: package your way of doing things into a "recipe" that AI repeats the same way every time.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the Track</a>
+<a class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors" href="modulo-2-2.html">Next: 2.2 Building with skills →</a>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>🎼 The World After Claude · Module 2.1 — <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<script>
+    function toggleTopic(button){
+      var topicItem=button.closest('.topic-item');
+      var explanation=topicItem.querySelector('.topic-explanation');
+      var moduleCard=button.closest('.bg-dark-800')||document;
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(function(exp){ if(exp!==explanation) exp.classList.remove('active'); });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active')?'true':'false');
+    }
+    (function(){
+      var themeToggle=document.getElementById('theme-toggle');
+      var d=document.getElementById('theme-toggle-dark-icon');
+      var l=document.getElementById('theme-toggle-light-icon');
+      var html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ l.classList.remove('hidden'); d.classList.add('hidden'); } else { d.classList.remove('hidden'); l.classList.add('hidden'); } }
+      sync();
+      themeToggle.addEventListener('click',function(){
+        html.classList.toggle('dark');
+        var isDark=html.classList.contains('dark');
+        localStorage.setItem('theme', isDark?'dark':'light');
+        try{ var p=JSON.parse(localStorage.getItem('inema.prefs')||'{}'); p.theme=isDark?'inema-dark':'claro'; localStorage.setItem('inema.prefs',JSON.stringify(p)); }catch(e){}
+        html.style.colorScheme=isDark?'dark':'light';
+        if(isDark) html.removeAttribute('data-theme');
+        sync();
+      });
+    })();
+    function openModal(id){ var m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(function(m){ m.classList.add('hidden'); }); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+  </script>
+<script src="../../../assets/learn.js"></script>
+<script>
+    if(window.INEMA&&typeof window.INEMA.init==='function'){ window.INEMA.init(); }
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-2-1#q1', {
+          answer: 1,
+          explain: {
+            0: 'Não — projeto ambicioso demais trava no começo. Comece pequeno pra ter uma vitória rápida e aprender o processo.',
+            1: 'Isso! Dor pequena e real, alvo claro ("como é o bom") e iteração até funcionar — esse é o build dirigido.',
+            2: 'Não — pedido vago gera resultado genérico, e usar sem conferir é a armadilha clássica. Descreva o alvo e revise.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

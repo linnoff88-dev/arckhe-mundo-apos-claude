@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="mundo-apos-claude" name="inema-course"/>
+<title>1.5 The human advantage | The World After Claude</title>
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark')?'dark':'light'));
+      html.setAttribute('data-font', p.font||'inter'); html.setAttribute('data-accent', p.accent||'emerald');
+      var s=html.style, scale=(+p.fontScale||100);
+      s.setProperty('--inema-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
+      s.setProperty('--measure',(+p.lineWidth||68)+'ch'); s.setProperty('--lh-body',(+p.leading||1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC={emerald:[152,76,45],blue:[217,91,60],purple:[258,90,66],amber:[38,92,50],teal:[174,72,41],rose:[350,89,60]};
+      var a=ACC[p.accent]||ACC.emerald; s.setProperty('--accent-h',a[0]+''); s.setProperty('--accent-s',a[1]+'%'); s.setProperty('--accent-l',a[2]+'%'); s.setProperty('--accent','hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode:'class', theme:{ extend:{ colors:{ primary:'#FACC15', dark:{900:'#111827',800:'#1f2937',700:'#374151',600:'#4b5563'} } } } }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 5rem; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "mundo-apos-claude",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "A virada: de usuario a maestro", "topics": 6, "href": "curso/trilha1/modulo-1-1.html" },
+        { "id": "1-2", "title": "Anatomia de um agente", "topics": 6, "href": "curso/trilha1/modulo-1-2.html" },
+        { "id": "1-3", "title": "Skills, MCP e o ecossistema", "topics": 6, "href": "curso/trilha1/modulo-1-3.html" },
+        { "id": "1-4", "title": "Contexto, memoria e o harness", "topics": 6, "href": "curso/trilha1/modulo-1-4.html" },
+        { "id": "1-5", "title": "O diferencial humano", "topics": 6, "href": "curso/trilha1/modulo-1-5.html" }
+      ]},
+      { "n": "2", "title": "Pratica", "modules": [
+        { "id": "2-1", "title": "Seu primeiro build dirigido", "topics": 6, "href": "curso/trilha2/modulo-2-1.html" },
+        { "id": "2-2", "title": "Construindo com skills", "topics": 6, "href": "curso/trilha2/modulo-2-2.html" },
+        { "id": "2-3", "title": "Conectando o mundo (MCP)", "topics": 6, "href": "curso/trilha2/modulo-2-3.html" },
+        { "id": "2-4", "title": "Agentes que fazem o trabalho", "topics": 6, "href": "curso/trilha2/modulo-2-4.html" },
+        { "id": "2-5", "title": "Verificar e provar", "topics": 6, "href": "curso/trilha2/modulo-2-5.html" }
+      ]},
+      { "n": "3", "title": "Jarvis & Arsenal", "modules": [
+        { "id": "3-1", "title": "Arquitetura de um Jarvis", "topics": 6, "href": "curso/trilha3/modulo-3-1.html" },
+        { "id": "3-2", "title": "OpenClaw, Hermes e sistemas agenticos", "topics": 6, "href": "curso/trilha3/modulo-3-2.html" },
+        { "id": "3-3", "title": "Skills prontas", "topics": 6, "href": "curso/trilha3/modulo-3-3.html" },
+        { "id": "3-4", "title": "Agentes e workflows prontos", "topics": 6, "href": "curso/trilha3/modulo-3-4.html" },
+        { "id": "3-5", "title": "Automacao e gatilhos", "topics": 6, "href": "curso/trilha3/modulo-3-5.html" },
+        { "id": "3-6", "title": "Seu Jarvis ao vivo", "topics": 6, "href": "curso/trilha3/modulo-3-6.html" }
+      ]}
+    ]
+  }
+  </script>
+<link href="https://inematds.github.io/mundo-apos-claude/curso/trilha1/modulo-1-5.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/en/curso/trilha1/modulo-1-5.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/es/curso/trilha1/modulo-1-5.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha1/modulo-1-5.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-1-5.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha1/modulo-1-5.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-emerald-600 focus:text-white focus:rounded-lg" href="#conteudo">Skip to content</a>
+<!-- NAV -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🎼</span><span class="font-bold text-lg hidden sm:inline">The World After Claude</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10" href="index.html"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Practice</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Jarvis</span></a>
+<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-inema-journey-open="" type="button"><span aria-hidden="true">◷</span><span>My journey</span><span class="hidden" data-inema-journey-badge=""></span></button>
+<button aria-label="Toggle light/dark theme" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav aria-label="Navigation trail" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-emerald-400" href="../../index.html">Start</a><span>/</span>
+<a class="hover:text-emerald-400" href="index.html">Track 1</a><span>/</span>
+<span class="text-emerald-400">Module 1.5</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">MODULE 1.5</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🩺 The human advantage: diagnose &gt; build</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">AI already builds almost everything. But there’s one part no one can outsource: <strong class="text-emerald-400">find the right problem</strong> e <strong class="text-emerald-400">prove that the solution worked</strong>. This module shows why diagnosing is worth more than building — and how to charge for it.</p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">6</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">~50</div><div class="text-xs text-neutral-400">Minutes</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Basic</div><div class="text-xs text-neutral-400">Level</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Practice</div><div class="text-xs text-neutral-400">Type</div></div>
+</div>
+<div class="mt-6 max-w-md">
+<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progress in this module</span><span class="text-sm font-bold text-emerald-400"><span class="inema-meter-pct">0%</span></span></div>
+<div aria-label="Module 1.5 progress" aria-valuemax="100" aria-valuemin="0" class="inema-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-inema-meter="modulo:1-5" role="progressbar"><div class="h-full bg-emerald-500 rounded-full transition-all" data-inema-meter-fill="" style="width:0%"></div></div>
+<p class="text-xs text-neutral-500 mt-1.5"><span class="inema-meter-count">0 of 6</span> sections read</p>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid lg:grid-cols-[220px_1fr] gap-10">
+<!-- TOC -->
+<nav aria-label="Module index" class="hidden lg:block sticky top-24 self-start" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-3">Section <span class="inema-toc-pos">1</span> of <span class="inema-toc-total">6</span></p>
+<ul class="space-y-1.5 text-sm">
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-1">1. Doctor vs. pharmacist</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-2">2. Start with the constraint</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-3">3. KPI: the target number</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-4">4. Check whether it worked</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-5">5. Proof &gt; diploma</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-6">6. The expiration date</a></li>
+</ul>
+</nav>
+<main class="min-w-0 inema-prose" id="conteudo">
+<!-- "Novo aqui?" -->
+<div class="bg-primary/10 border border-primary/30 rounded-2xl p-6 mb-12">
+<h2 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> New here? Three words before you start</h2>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-primary">Diagnose</strong> — figure out what the real problem is before rushing off to build a solution.</li>
+<li><strong class="text-primary">Bottleneck</strong> — the point that’s holding back the result; fixing it unlocks everything else.</li>
+<li><strong class="text-primary">KPI</strong> — a target number that tells you whether it worked (e.g., “2 hours saved per day”). We’ll go into detail in topic 3.</li>
+</ul>
+</div>
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-1-5#topico-1" id="topico-1">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🩺 Doctor vs. pharmacist</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t1-p1">O <strong class="text-emerald-400">pharmacist</strong> delivers what you <strong>asks</strong>: you show up with the recipe in hand, and it gives you the box. The <strong class="text-emerald-400">doctor</strong> does something else — it figures out what you <strong>needs</strong>. You show up saying “I have a headache,” and it investigates: blood pressure? Vision? Stress? Only then does it prescribe.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t1-p2">It’s no coincidence that the doctor earns much more than the pharmacist. The difference isn’t the medicine—it’s <strong>you’re the one who finds the right problem</strong>. In the post-Claude world, AI is like a supercharged pharmacist: you ask, it delivers. Its value isn’t in execution (it does that better and more cheaply). It’s in <strong class="text-emerald-400">diagnose</strong>.</p>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center"><span class="mr-2">🔑</span> The central idea</h3>
+<p class="text-neutral-300 mb-3">Anyone can ask for a medicine. Few know what the illness is. AI has lowered the cost of “asking for the medicine”—so all the value has shifted to <strong>find out what the illness is</strong>.</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Pharmacist (execute):</strong> "I want a website." → it delivers a website.</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Doctor (diagnose):</strong> "Why don’t you sell?" → maybe you don’t even need a website.</span></li>
+</ul>
+</div>
+<!-- IMAGEM PNG médico x farmacêutico -->
+<figure class="rounded-2xl overflow-hidden border border-emerald-500/30 mb-6">
+<img alt="On one side, a pharmacist hands over the box the customer asked for; on the other, a doctor examines the patient to find the real cause — a metaphor for executing versus diagnosing." class="w-full h-auto" loading="lazy" src="../../../curso/trilha1/assets/img/doctor-pharmacist.png"/>
+<figcaption class="text-xs text-neutral-500 px-4 py-3 bg-dark-800">The pharmacist delivers what you ask for; the doctor figures out what you need. AI is the pharmacist—you’re the doctor.</figcaption>
+</figure>
+<!-- SVG principal: comparação médico x farmacêutico -->
+<figure class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Comparison: the pharmacist receives a request and delivers the product without investigating; the doctor receives a symptom, investigates the cause, and only then prescribes—that’s why the doctor is worth more." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 210">
+<defs>
+<pattern height="20" id="m15dots" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#34d399" opacity="0.10" r="1"></circle></pattern>
+<filter height="160%" id="m15soft" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+<marker id="m15a1" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#6b7280"></path></marker>
+<marker id="m15a2" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#34d399"></path></marker>
+</defs>
+<rect fill="url(#m15dots)" height="210" width="480"></rect>
+<!-- FARMACEUTICO -->
+<text fill="#9ca3af" font-size="13" font-weight="600" text-anchor="middle" x="120" y="26">PHARMACIST · executes</text>
+<rect fill="#1f2937" height="36" rx="8" stroke="#6b7280" stroke-width="2" width="60" x="30" y="50"></rect><text fill="#9ca3af" font-size="10" text-anchor="middle" x="60" y="73">request</text>
+<path d="M94 68 L142 68" marker-end="url(#m15a1)" stroke="#6b7280" stroke-width="2"></path>
+<circle cx="168" cy="68" fill="#1f2937" r="18" stroke="#6b7280" stroke-width="2"></circle><text font-size="15" text-anchor="middle" x="168" y="73">💊</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="120" y="120">delivers what was requested · cheap</text>
+<text fill="#6b7280" font-size="11" text-anchor="middle" x="120" y="186">↳ low value</text>
+<!-- divisor -->
+<line stroke="#374151" stroke-dasharray="3 4" stroke-width="1.5" x1="240" x2="240" y1="38" y2="180"></line>
+<!-- MEDICO -->
+<text fill="#34d399" font-size="13" font-weight="600" text-anchor="middle" x="360" y="26">DOCTOR · diagnoses</text>
+<rect fill="#1f2937" height="36" rx="8" stroke="#38bdf8" stroke-width="2" width="60" x="270" y="50"></rect><text fill="#38bdf8" font-size="10" text-anchor="middle" x="300" y="73">symptom</text>
+<path d="M334 68 L370 68" marker-end="url(#m15a2)" stroke="#34d399" stroke-width="2"></path>
+<g filter="url(#m15soft)"><circle cx="398" cy="68" fill="#0b3b2e" r="18" stroke="#34d399" stroke-width="2"></circle></g>
+<text font-size="15" text-anchor="middle" x="398" y="73">🩺</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="360" y="120">investigates the cause → the right recipe</text>
+<text fill="#38bdf8" font-size="11" text-anchor="middle" x="360" y="148">✅ solves the real problem</text>
+<text fill="#34d399" font-size="12" font-weight="600" text-anchor="middle" x="360" y="186">↳ high value</text>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">Notice: the pharmacist goes straight from the request to the product. The doctor inserts a step in between— <em>investigate</em> — and this is the step that pays the bills.</figcaption>
+</figure>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Diagnose (very valuable)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Ask, "what's the real problem?"</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Investigates before proposing a solution</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Knows when the answer is “you don’t even need this”</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Just executing (it’s become a commodity)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Does exactly what was asked, without thinking</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Delivers quickly, but maybe the wrong thing</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Competes with AI on price (and loses)</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Ask for the remedy &gt; cheap</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Finding the problem &gt; valuable</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Your role: <strong>doctor</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Diagnose &gt; execute</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-1-5#topico-2" id="topico-2">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🚧 Start with the constraint: find the bottleneck</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t2-p1">With AI, you can automate <em>anything</em>. And that’s exactly the trap: you spend a weekend automating something that changes nothing in the end. The secret isn’t automating a lot — it’s finding the <strong class="text-emerald-400">bottleneck</strong>, the point holding back the result.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t2-p2">Think of a kinked garden hose: water only flows again when you straighten the right spot. Scrubbing the rest of the hose won't help. <strong>Solve the right bottleneck</strong> it’s what unlocks the result — everything else is activity that looks like work but isn’t.</p>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center"><span class="mr-2">🔑</span> Real example</h3>
+<p class="text-neutral-300 mb-3">A store wants to sell more. Where’s the bottleneck?</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Wrong:</strong> automate Instagram posting (seems useful, but there are already plenty of people doing it).</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Right:</strong> 80% of customers abandon their carts. <em>This</em> it’s the bottleneck. Fix it.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Before building, complete the sentence: <strong>"If I solved ONLY one thing and it unlocked everything else, it would be ___."</strong> This thing is the bottleneck. Start with it—not with the easiest thing to automate.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Bottleneck = what gets stuck</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Solve the right problem &gt; automate everything</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Activity ≠ progress</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Smooth out the right spot</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-1-5#topico-3" id="topico-3">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">📊 KPI: choose the target number FIRST</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t3-p1">KPI sounds intimidating because it seems like something from an expensive consulting firm. But it's simple: <strong class="text-emerald-400">A KPI is just a target number</strong>. The acronym means “key indicator,” but what matters to you is: what number tells you it worked? Time saved, more sales, fewer errors.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t3-p2">The trick is choosing the number <strong>before building</strong>. If you decide only afterward, you can always come up with an excuse that it “worked.” With the number chosen at the start, either it moved or it didn’t. <strong>Without a number, no one sees the value</strong> — neither your boss, your client, nor you.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">📊</span> The gap that becomes an opportunity</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Almost every company uses AI, but only <strong>~6%</strong> are really good at it.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>About <strong>30%</strong> of AI projects are abandoned halfway through.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>The number one reason people give up: no one defined the number that would prove it was worth it.</span></li>
+</ul>
+<p class="text-neutral-400 text-sm mt-3">Translation: most people build without a target. Those who define the KPI at the start are already in the 6% — and that’s your advantage.</p>
+</div>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center"><span class="mr-2">🎯</span> What makes a good KPI</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Bad:</strong> "improve customer service" (can’t be measured).</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Good:</strong> "respond to a customer within 5 min instead of 2 hours."</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Good:</strong> "save 2 hours a day that I currently spend copying data."</span></li>
+</ul>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 KPI = target number, that’s all</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Choose <strong>before</strong> to build</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 No number, no visible value</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Time · sales · errors</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-1-5#topico-4" id="topico-4">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🔍 Check Whether It Worked (Close the Loop)</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t4-p1">You diagnosed the problem (topic 1), found the bottleneck (2), chose the number (3), and built it. One step remains, the one almost everyone skips: <strong class="text-emerald-400">check whether the number actually changed</strong>. This is called “closing the loop” — returning to the target you defined and measuring.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t4-p2"><strong>"It looks like it worked" isn’t proof.</strong> AI may have delivered something impressive that doesn't move the needle. You only know by measuring. And that's the step that separates someone who "built an AI project" from someone who <strong>solved a problem</strong> — because now you have the result in hand.</p>
+<!-- SVG do fluxo: restrição → KPI → construir → conferir -->
+<figure class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="The four-step cycle: first find the constraint (bottleneck), then define the KPI (target number), then build with AI, and finally check whether the number moved—a line loops back from the check to the constraint, closing the loop." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 520 170">
+<defs>
+<pattern height="20" id="m15fdots" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#38bdf8" opacity="0.10" r="1"></circle></pattern>
+<filter height="160%" id="m15fsoft" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+<marker id="m15fa" markerheight="9" markerwidth="9" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#34d399"></path></marker>
+<marker id="m15fb" markerheight="9" markerwidth="9" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m15fdots)" height="170" width="520"></rect>
+<!-- nós -->
+<g>
+<rect fill="#0b3b2e" height="46" rx="12" stroke="#34d399" stroke-width="2" width="100" x="20" y="40"></rect>
+<text font-size="18" text-anchor="middle" x="70" y="60">🚧</text>
+<text fill="#34d399" font-size="11" font-weight="600" text-anchor="middle" x="70" y="78">constraint</text>
+</g>
+<path d="M122 63 L150 63" marker-end="url(#m15fa)" stroke="#34d399" stroke-width="2"></path>
+<g>
+<rect fill="#1f2937" height="46" rx="12" stroke="#38bdf8" stroke-width="2" width="100" x="152" y="40"></rect>
+<text font-size="18" text-anchor="middle" x="202" y="60">📊</text>
+<text fill="#38bdf8" font-size="11" font-weight="600" text-anchor="middle" x="202" y="78">KPI</text>
+</g>
+<path d="M254 63 L282 63" marker-end="url(#m15fa)" stroke="#34d399" stroke-width="2"></path>
+<g>
+<rect fill="#1f2937" height="46" rx="12" stroke="#34d399" stroke-width="2" width="100" x="284" y="40"></rect>
+<text font-size="18" text-anchor="middle" x="334" y="60">🛠️</text>
+<text fill="#34d399" font-size="11" font-weight="600" text-anchor="middle" x="334" y="78">build</text>
+</g>
+<path d="M386 63 L414 63" marker-end="url(#m15fa)" stroke="#34d399" stroke-width="2"></path>
+<g filter="url(#m15fsoft)">
+<rect fill="#064e3b" height="46" rx="12" stroke="#38bdf8" stroke-width="2" width="100" x="416" y="40"></rect>
+</g>
+<text font-size="18" text-anchor="middle" x="466" y="60">🔍</text>
+<text fill="#38bdf8" font-size="11" font-weight="600" text-anchor="middle" x="466" y="78">check</text>
+<!-- loop de volta -->
+<path d="M466 88 L466 130 L70 130 L70 88" fill="none" marker-end="url(#m15fb)" stroke="#38bdf8" stroke-dasharray="4 4" stroke-width="2"></path>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="268" y="152">Did the number change? If not, go back and adjust — that’s closing the loop</text>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">The full cycle of the human advantage: <em>find the bottleneck → define the number → build → check</em>. The AI does the “building”; <strong>you</strong> does the other three.</figcaption>
+</figure>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Mark a date on the calendar to measure: "in 1 week, I’ll see whether those 2 hours/day were really saved." Without that date, the loop never closes and you never have proof—just an impression.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Real evidence</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>"It used to take 2h/day; now it takes 15 min" (measured figure)</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Before and after, side by side</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Tested with real cases</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ “It seems to have worked”</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"It got much faster" (no number)</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Thought it looked good and stopped there</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Never tested it outside the perfect example</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Close the loop = go back and measure</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 “Seems” ≠ proof</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Set a date to measure</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Solve &gt; deliver</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-1-5#topico-5" id="topico-5">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">🏅 Proof &gt; diploma: show what you did</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t5-p1">A diploma says that you <em>studied</em> one thing. Proof shows that you <strong class="text-emerald-400">did</strong> one thing. In a world where building has become easy, the question that decides everything is no longer “what course did you take?” but: <strong>"what have you already built?"</strong>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t5-p2">The good news: you don't need permission to have proof. Every little thing you solve with AI—a spreadsheet that saves time, an automation that sent something to the group—is proof. <strong>Build in public</strong> (post it, show the before and after) and <strong>save the evidence</strong>. They become your real résumé.</p>
+<!-- EXPERIMENTE AGORA (copy-run) -->
+<div class="bg-dark-800 border border-emerald-500/30 rounded-xl p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-2 flex items-center"><span class="mr-2">🧪</span> Try it now (5 minutes)</h3>
+<p class="text-neutral-300 text-sm mb-2"><strong>Goal:</strong> make AI act like <em>doctor</em> — diagnose before proposing, and suggest a KPI. Paste the text below into Claude or ChatGPT, replacing the parts between &lt; &gt;.</p>
+<pre class="bg-dark-900 border border-dark-600 rounded-lg p-4 overflow-x-auto text-sm font-mono text-neutral-200 whitespace-pre-wrap">Aja como um médico de problemas, não como farmacêutico.
+No meu trabalho de &lt;sua função, ex: gestor de loja&gt;,
+o resultado que eu mais quero melhorar é &lt;ex: vender mais&gt;.
+
+NÃO me dê solução ainda. Primeiro:
+1. Me faça 5 perguntas pra achar o GARGALO real.
+2. Depois aponte 1 gargalo provável.
+3. Proponha 1 KPI (número-alvo) pra eu acompanhar.
+4. Só então sugira o que a IA poderia construir.</pre>
+<p class="text-neutral-400 text-sm mt-3"><strong>How to know it worked:</strong> AI should <em>ask before proposing</em>, point out a bottleneck, and finish with a target number (KPI). If it has already started proposing a solution, it acted like a pharmacist—ask it to start over by diagnosing the problem.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Evidence (it counts)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>"I built this and it saved X hours"</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Before-and-after screenshot, link, demo</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>When you post publicly, people can see</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Just talking (doesn’t count)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"I know how to use AI" (without showing anything)</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>List of courses with nothing built yet</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Promises, but no real examples</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Open a folder called “my proof.” Every time you solve something with AI, save a screenshot of the result and the sentence “this solved ___ and the number was ___.” In 3 months, you’ll have a portfolio no diploma can buy.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 "What did you build?" decides</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Proof &gt; diploma</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Build in public</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Save the evidence</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-1-5#topico-6" id="topico-6">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">⏳ How long the advantage lasts</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t6-p1">Let’s be honest: the advantage of “knowing AI” has <strong class="text-emerald-400">expiration date</strong>. In a few years, directing AI will be basic for everyone — the way every accountant uses Excel today, and no one puts “I know Excel” on their résumé anymore as if it were magic.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t6-p2">This <strong>no</strong> means the opportunity is fake—means the opposite: it’s real <em>now</em>, precisely because most people haven't made it there yet. The window is open, but it won't stay open forever. Whoever diagnoses, measures, and has proof <strong>before</strong> becomes a commodity moves ahead — and when everyone else catches up, you'll already be a step ahead.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">📊</span> The Excel parallel</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>The 90s: “Know Excel?” opened doors and paid well.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Today: it’s an invisible prerequisite; the differentiator is what you <em>does</em> with it.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>AI will follow the same path — those who got in early and gathered proof reaped the golden age.</span></li>
+</ul>
+<p class="text-neutral-400 text-sm mt-3">The advantage isn’t “knowing the tool” (that becomes basic). It’s the habit of diagnosing, measuring, and proving—that won’t become a commodity.</p>
+</div>
+<div class="space-y-3 mb-6">
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-emerald-400 text-xl">🩺</span><div><strong class="text-emerald-400">What lasts:</strong> <span class="text-neutral-300 text-sm">diagnose the right problem and prove the result.</span></div></div>
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-blue-400 text-xl">⏳</span><div><strong class="text-blue-400">What has an expiration date:</strong> <span class="text-neutral-300 text-sm">"know how to operate the tool" — soon everyone will know.</span></div></div>
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-purple-400 text-xl">🚀</span><div><strong class="text-purple-400">The move:</strong> <span class="text-neutral-300 text-sm">take advantage of the window now — build proof while most people still haven't arrived.</span></div></div>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-1-5#q1">
+<p class="font-medium mb-4">✋ Before you continue — what's the real human differentiator in this module?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A) Know how to use the AI tool better than everyone else.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">B) Diagnose the right problem, set a target number, and prove that it made a difference.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">C) Automate as many things as possible, as quickly as possible.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="flex justify-start mt-8">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎓</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Be the doctor, not the pharmacist</strong><span class="text-neutral-400"> — diagnosis is more valuable than execution.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Find the bottleneck first</strong><span class="text-neutral-400"> — solve what unblocks you, not what’s easy.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Define the KPI and close the loop</strong><span class="text-neutral-400"> — target number first, measured proof afterward.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Proof &gt; diploma, and the window has a deadline</strong><span class="text-neutral-400"> — build in public while it’s still early.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-emerald-400 mb-2">Next track:</h3>
+<p class="text-neutral-300">🛠️ Track 2 — Practice: enough theory. Now you direct AI and build real things, from diagnosis to proof.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the Track</a>
+<a class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors" href="../trilha2/index.html">Next: Track 2 · Practice →</a>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>🎼 The World After Claude · Module 1.5 — <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<script>
+    function toggleTopic(button){
+      var topicItem=button.closest('.topic-item');
+      var explanation=topicItem.querySelector('.topic-explanation');
+      var moduleCard=button.closest('.bg-dark-800')||document;
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(function(exp){ if(exp!==explanation) exp.classList.remove('active'); });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active')?'true':'false');
+    }
+    (function(){
+      var themeToggle=document.getElementById('theme-toggle');
+      var d=document.getElementById('theme-toggle-dark-icon');
+      var l=document.getElementById('theme-toggle-light-icon');
+      var html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ l.classList.remove('hidden'); d.classList.add('hidden'); } else { d.classList.remove('hidden'); l.classList.add('hidden'); } }
+      sync();
+      themeToggle.addEventListener('click',function(){
+        html.classList.toggle('dark');
+        var isDark=html.classList.contains('dark');
+        localStorage.setItem('theme', isDark?'dark':'light');
+        try{ var p=JSON.parse(localStorage.getItem('inema.prefs')||'{}'); p.theme=isDark?'inema-dark':'claro'; localStorage.setItem('inema.prefs',JSON.stringify(p)); }catch(e){}
+        html.style.colorScheme=isDark?'dark':'light';
+        if(isDark) html.removeAttribute('data-theme');
+        sync();
+      });
+    })();
+    function openModal(id){ var m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(function(m){ m.classList.add('hidden'); }); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+  </script>
+<script src="../../../assets/learn.js"></script>
+<script>
+    if(window.INEMA&&typeof window.INEMA.init==='function'){ window.INEMA.init(); }
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-1-5#q1', {
+          answer: 1,
+          explain: {
+            0: 'Não — operar a ferramenta vira o básico de todo mundo (como o Excel). Isso tem prazo de validade.',
+            1: 'Isso! O diferencial que dura é diagnosticar o problema certo, definir um número-alvo e provar que ele mexeu.',
+            2: 'Não — automatizar muito sem achar o gargalo certo é movimento, não progresso. Diagnosticar vem antes.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

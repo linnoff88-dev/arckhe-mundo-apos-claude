@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="mundo-apos-claude" name="inema-course"/>
+<title>3.5 Automatización y disparadores | El Mundo Después de Claude</title>
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'purple' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark')?'dark':'light'));
+      html.setAttribute('data-font', p.font||'inter'); html.setAttribute('data-accent', p.accent||'purple');
+      var s=html.style, scale=(+p.fontScale||100);
+      s.setProperty('--inema-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
+      s.setProperty('--measure',(+p.lineWidth||68)+'ch'); s.setProperty('--lh-body',(+p.leading||1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC={emerald:[152,76,45],blue:[217,91,60],purple:[258,90,66],amber:[38,92,50],teal:[174,72,41],rose:[350,89,60]};
+      var a=ACC[p.accent]||ACC.purple; s.setProperty('--accent-h',a[0]+''); s.setProperty('--accent-s',a[1]+'%'); s.setProperty('--accent-l',a[2]+'%'); s.setProperty('--accent','hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode:'class', theme:{ extend:{ colors:{ primary:'#FACC15', dark:{900:'#111827',800:'#1f2937',700:'#374151',600:'#4b5563'} } } } }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 5rem; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* acento purple (T3) */
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+    /* nav: emerald/blue */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "mundo-apos-claude",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "A virada: de usuario a maestro", "topics": 6, "href": "curso/trilha1/modulo-1-1.html" },
+        { "id": "1-2", "title": "Anatomia de um agente", "topics": 6, "href": "curso/trilha1/modulo-1-2.html" },
+        { "id": "1-3", "title": "Skills, MCP e o ecossistema", "topics": 6, "href": "curso/trilha1/modulo-1-3.html" },
+        { "id": "1-4", "title": "Contexto, memoria e o harness", "topics": 6, "href": "curso/trilha1/modulo-1-4.html" },
+        { "id": "1-5", "title": "O diferencial humano", "topics": 6, "href": "curso/trilha1/modulo-1-5.html" }
+      ]},
+      { "n": "2", "title": "Pratica", "modules": [
+        { "id": "2-1", "title": "Seu primeiro build dirigido", "topics": 6, "href": "curso/trilha2/modulo-2-1.html" },
+        { "id": "2-2", "title": "Construindo com skills", "topics": 6, "href": "curso/trilha2/modulo-2-2.html" },
+        { "id": "2-3", "title": "Conectando o mundo (MCP)", "topics": 6, "href": "curso/trilha2/modulo-2-3.html" },
+        { "id": "2-4", "title": "Agentes que fazem o trabalho", "topics": 6, "href": "curso/trilha2/modulo-2-4.html" },
+        { "id": "2-5", "title": "Verificar e provar", "topics": 6, "href": "curso/trilha2/modulo-2-5.html" }
+      ]},
+      { "n": "3", "title": "Jarvis & Arsenal", "modules": [
+        { "id": "3-1", "title": "Arquitetura de um Jarvis", "topics": 6, "href": "curso/trilha3/modulo-3-1.html" },
+        { "id": "3-2", "title": "OpenClaw, Hermes e sistemas agenticos", "topics": 6, "href": "curso/trilha3/modulo-3-2.html" },
+        { "id": "3-3", "title": "Skills prontas", "topics": 6, "href": "curso/trilha3/modulo-3-3.html" },
+        { "id": "3-4", "title": "Agentes e workflows prontos", "topics": 6, "href": "curso/trilha3/modulo-3-4.html" },
+        { "id": "3-5", "title": "Automacao e gatilhos", "topics": 6, "href": "curso/trilha3/modulo-3-5.html" },
+        { "id": "3-6", "title": "Seu Jarvis ao vivo", "topics": 6, "href": "curso/trilha3/modulo-3-6.html" }
+      ]}
+    ]
+  }
+  </script>
+<link href="https://inematds.github.io/mundo-apos-claude/curso/trilha3/modulo-3-5.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/en/curso/trilha3/modulo-3-5.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/es/curso/trilha3/modulo-3-5.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/modulo-3-5.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha3/modulo-3-5.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-3-5.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<a class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-lg" href="#conteudo">Saltar al contenido</a>
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🎼</span><span class="font-bold text-lg hidden sm:inline">El mundo después de Claude</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Práctica</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="index.html"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Jarvis</span></a>
+<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-inema-journey-open="" type="button"><span aria-hidden="true">◷</span><span>Mi recorrido</span><span class="hidden" data-inema-journey-badge=""></span></button>
+<button aria-label="Alternar tema claro/oscuro" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav aria-label="Ruta de navegación" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-purple-400" href="../../index.html">Inicio</a><span>/</span>
+<a class="hover:text-purple-400" href="index.html">Ruta 3</a><span>/</span>
+<span class="text-purple-400">Módulo 3.5</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">MÓDULO 3.5</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">⚡ Automatización y activadores</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">Hasta aquí, tú hablabas con Jarvis y él respondía. Ahora se convierte en <strong class="text-purple-400">proactivo</strong>: rutinas que se activan solas — por horario, por un evento o por un comando tuyo — y dejan el trabajo listo sin que tengas que pulsar nada.</p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">6</div><div class="text-xs text-neutral-400">Temas</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">~50</div><div class="text-xs text-neutral-400">Minutos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Avanzado</div><div class="text-xs text-neutral-400">Nivel</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Práctica</div><div class="text-xs text-neutral-400">Tipo</div></div>
+</div>
+<div class="mt-6 max-w-md">
+<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progreso de este módulo</span><span class="text-sm font-bold text-purple-400"><span class="inema-meter-pct">0%</span></span></div>
+<div aria-label="Progreso del módulo 3.5" aria-valuemax="100" aria-valuemin="0" class="inema-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-inema-meter="modulo:3-5" role="progressbar"><div class="h-full bg-purple-500 rounded-full transition-all" data-inema-meter-fill="" style="width:0%"></div></div>
+<p class="text-xs text-neutral-500 mt-1.5"><span class="inema-meter-count">0 de 6</span> secciones leídas</p>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid lg:grid-cols-[220px_1fr] gap-10">
+<!-- TOC -->
+<nav aria-label="Índice del módulo" class="hidden lg:block sticky top-24 self-start" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-3">Sección <span class="inema-toc-pos">1</span> de <span class="inema-toc-total">6</span></p>
+<ul class="space-y-1.5 text-sm">
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-1">1. Disparadores</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-2">2. Programar tareas</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-3">3. Conectar a mensajes</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-4">4. Rutinas sin ti</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-5">5. Supervisar</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-6">6. Automatizaciones que valen la pena</a></li>
+</ul>
+</nav>
+<main class="min-w-0 inema-prose" id="conteudo">
+<!-- "Novo aqui?" -->
+<div class="bg-primary/10 border border-primary/30 rounded-2xl p-6 mb-12">
+<h2 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> ¿Eres nuevo aquí? Tres palabras antes de empezar</h2>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-primary">Disparador</strong> — lo que hace que Jarvis empiece a actuar por sí solo: una hora, un evento o un comando tuyo.</li>
+<li><strong class="text-primary">Programar</strong> — programar una tarea para que se ejecute a una hora fija (como un despertador, pero que hace el trabajo).</li>
+<li><strong class="text-primary">Proactivo</strong> — cuando el asistente actúa sin que se lo pidas, porque lo acordaste antes.</li>
+</ul>
+</div>
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-3-5#topico-1" id="topico-1">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">⚡ Activadores: tiempo, evento, comando</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar una duda en este tema" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tengo una duda</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-5-t1-p1">Hasta ahora, tu Jarvis solo se movía cuando <strong>tú</strong> hablaba con él. Uno <strong class="text-purple-400">disparador</strong> cambia esto: es la «señal» que hace que el asistente empiece a trabajar por su cuenta. Hay tres tipos y, básicamente, todas las automatizaciones nacen de uno de ellos.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-5-t1-p2">Piensa en un portero. Abre el portón cuando <strong>llega el momento</strong> para soltar la basura (tiempo), cuando <strong>alguien toca el timbre</strong> (evento) o cuando <strong>tú lo activas y lo pides</strong> (comando). La misma idea.</p>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-4 flex items-center"><span class="mr-2">🔑</span> Los tres desencadenantes</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">⏰</span><span><strong>Tiempo:</strong> "todas las mañanas a las 7h", "todos los viernes", "cada hora". El reloj es el disparador.</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">📩</span><span><strong>Evento:</strong> "cuando llegue un correo de mi jefe", "cuando baje el precio". Algo sucede y se activa.</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">💬</span><span><strong>Comando:</strong> "cuando escriba /resumo en Telegram". Tú activas el disparador cuando quieras.</span></li>
+</ul>
+</div>
+<!-- SVG 1: gatilho -> acao ao longo do tempo / relogio (obrigatorio) -->
+<figure class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Cronología de un día: un reloj a las 7h activa el disparador de tiempo, que se convierte en una acción; a lo largo del día, un evento y un comando también activan acciones." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 210">
+<defs>
+<pattern height="20" id="m35dots" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#c084fc" opacity="0.10" r="1"></circle></pattern>
+<radialgradient cx="50%" cy="50%" id="m35glow" r="50%"><stop offset="0%" stop-color="#c084fc" stop-opacity="0.5"></stop><stop offset="100%" stop-color="#c084fc" stop-opacity="0"></stop></radialgradient>
+<filter height="160%" id="m35soft" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.6"></fegaussianblur></filter>
+</defs>
+<rect fill="url(#m35dots)" height="210" width="480"></rect>
+<!-- relogio -->
+<g filter="url(#m35soft)"><circle cx="62" cy="62" fill="url(#m35glow)" r="34"></circle></g>
+<circle cx="62" cy="62" fill="#2e1065" r="26" stroke="#c084fc" stroke-width="2"></circle>
+<line stroke="#c084fc" stroke-width="2.5" x1="62" x2="62" y1="62" y2="44"></line>
+<line stroke="#c084fc" stroke-width="2.5" x1="62" x2="76" y1="62" y2="62"></line>
+<text fill="#c084fc" font-size="12" font-weight="600" text-anchor="middle" x="62" y="112">7 h · activador por tiempo</text>
+<!-- linha do tempo -->
+<line stroke="#1f1240" stroke-width="6" x1="30" x2="450" y1="160" y2="160"></line>
+<line opacity="0.5" stroke="#c084fc" stroke-width="2" x1="30" x2="450" y1="160" y2="160"></line>
+<!-- pontos de disparo -->
+<circle cx="110" cy="160" fill="#2e1065" r="7" stroke="#c084fc" stroke-width="2"></circle>
+<path d="M110 153 L110 132" marker-end="url(#m35a)" stroke="#c084fc" stroke-width="2"></path>
+<rect fill="#1f1240" height="22" rx="6" stroke="#c084fc" stroke-width="1.5" width="64" x="78" y="108"></rect><text fill="#e9d5ff" font-size="10" text-anchor="middle" x="110" y="123">▶ acción</text>
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="110" y="184">⏰ tiempo</text>
+<circle cx="260" cy="160" fill="#2e1065" r="7" stroke="#c084fc" stroke-width="2"></circle>
+<path d="M260 153 L260 132" marker-end="url(#m35a)" stroke="#c084fc" stroke-width="2"></path>
+<rect fill="#1f1240" height="22" rx="6" stroke="#c084fc" stroke-width="1.5" width="64" x="228" y="108"></rect><text fill="#e9d5ff" font-size="10" text-anchor="middle" x="260" y="123">▶ acción</text>
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="260" y="184">📩 evento</text>
+<circle cx="410" cy="160" fill="#064e3b00" r="7" stroke="#38bdf8" stroke-width="2"></circle>
+<path d="M410 153 L410 132" marker-end="url(#m35b)" stroke="#38bdf8" stroke-width="2"></path>
+<rect fill="#1f1240" height="22" rx="6" stroke="#38bdf8" stroke-width="1.5" width="64" x="378" y="108"></rect><text fill="#38bdf8" font-size="10" text-anchor="middle" x="410" y="123">▶ acción</text>
+<text fill="#38bdf8" font-size="10" text-anchor="middle" x="410" y="184">💬 comando</text>
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="240" y="202">todo el día →</text>
+<defs>
+<marker id="m35a" markerheight="8" markerwidth="8" orient="auto" refx="4" refy="6"><path d="M0,6 L4,0 L8,6 Z" fill="#c084fc"></path></marker>
+<marker id="m35b" markerheight="8" markerwidth="8" orient="auto" refx="4" refy="6"><path d="M0,6 L4,0 L8,6 Z" fill="#38bdf8"></path></marker>
+</defs>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">Cada punto en la línea de tiempo es un disparador que se activa; la flecha hacia arriba es la <em>acción</em> que activa. El Jarvis proactivo es esto: disparadores que se convierten en acciones sin que estés presente.</figcaption>
+</figure>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Conceptos clave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Disparador = la «señal» que activa</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 <strong>Tiempo</strong> · <strong>evento</strong> · <strong>comando</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Toda automatización nace de un disparador</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Activa el «modo proactivo»</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como leído</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-3-5#topico-2" id="topico-2">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">⏰ Programar tareas: el Jarvis proactivo</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar una duda en este tema" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tengo una duda</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-5-t2-p1">El disparador de tiempo es el más fácil para empezar y el que más transforma la rutina. <strong>Programar</strong> es decirle a Jarvis "haz esto a esta hora, todos los días". A partir de ahí, se activa solo, hace la tarea y te entrega el resultado, aunque estés durmiendo o en el tráfico.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-5-t2-p2">El ejemplo clásico es el <strong class="text-purple-400">resumen de la mañana</strong>: a las 7h, Jarvis lee tus fuentes (noticias, calendario, correos) y te envía un breve informe. Te despiertas con el día ya masticado.</p>
+<!-- CODE BOX copy-run: rotina agendada pronta (obrigatorio) -->
+<div class="bg-dark-800 border border-purple-500/30 rounded-xl p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-2 flex items-center"><span class="mr-2">🧪</span> Copia y usa: tu primera rutina programada</h3>
+<p class="text-neutral-300 text-sm mb-2"><strong>Objetivo:</strong> programar un resumen automático que llegue todas las mañanas. Pega el texto de abajo en la herramienta de programación de tu Jarvis (o pídele a Claude que configure la rutina), reemplazando los fragmentos entre &lt; &gt;.</p>
+<pre class="bg-dark-900 border border-dark-600 rounded-lg p-4 overflow-x-auto text-sm font-mono text-neutral-200 whitespace-pre-wrap">AGENDAR: todo dia às &lt;7h&gt;, no fuso &lt;America/Sao_Paulo&gt;.
+
+TAREFA: resuma estas fontes pra mim em até 10 linhas:
+  - &lt;link do jornal ou newsletter que eu sigo&gt;
+  - minha agenda de &lt;hoje&gt;
+  - e-mails marcados como importantes desde ontem
+
+REGRAS:
+  - Comece pelo mais urgente.
+  - Se nada importante, escreva "dia tranquilo, nada urgente".
+  - Me mande por &lt;Telegram&gt;.</pre>
+<p class="text-neutral-400 text-sm mt-3"><strong>Cómo verificar:</strong> espera la hora programada (o pide "ejecútalo ahora para probar"). Sabes que funcionó si recibes un mensaje breve, por el canal correcto, sin haber hecho nada. Si es demasiado largo, ajusta "hasta 10 líneas".</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Consejo práctico</h3>
+<p class="text-neutral-300">Empieza con <strong>una</strong> solo una rutina, en un solo horario. Es tentador programar diez cosas de entrada, pero necesitas confiar en que la primera funciona antes de acumular más. Una buena rutina vale más que diez desordenadas.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Conceptos clave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Programar = "hazlo a esta hora"</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Jarvis llama <strong>solo</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 El resumen de la mañana = el clásico</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Empieza con <strong>una</strong> rutina</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como leído</span></button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-3-5#topico-3" id="topico-3">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">💬 Conectar con mensajes: Telegram y correo electrónico</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar una duda en este tema" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tengo una duda</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-5-t3-p1">¿De qué sirve que Jarvis trabaje de madrugada si el resultado queda atrapado en la computadora? Conectarlo a un <strong>app de mensajería</strong> resuelve eso: te avisa donde ya miras todo el día. El <strong class="text-purple-400">Telegram</strong> es el favorito: es gratis, fácil de conectar y funciona como un chat normal.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-5-t3-p2">Y no es un canal de una sola vía: por el mismo canal <strong>tú</strong> envía comandos. Escribe "/resumo" y responde; envía "aplaza mi reunión" y se encarga. El celular se convierte en el control remoto de tu asistente.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-4">✓ Buenos canales para empezar</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Telegram: rápido, gratis, fácil de conectar</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Correo electrónico: bueno para resúmenes largos y archivo</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Un canal que ya abres todos los días</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Qué evitar al principio</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Difundir avisos en 5 apps diferentes</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Canal que rara vez abres</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Enviar todo por todos los canales (se vuelve spam)</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Consejo práctico</h3>
+<p class="text-neutral-300">Elige <strong>un</strong> canal principal y quédate en él. Tener todo en un solo lugar es fácil de seguir; si está disperso, te pierdes los avisos. Telegram para el día a día, correo electrónico solo para lo que necesitas guardar: es una división que funciona bien.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Conceptos clave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Te avisa donde ya miras</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Telegram = canal fácil</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Doble vía: avisa <strong>e</strong> obedece</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Un solo canal principal</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como leído</span></button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-3-5#topico-4" id="topico-4">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🌙 Rutinas que se ejecutan sin ti</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar una duda en este tema" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tengo una duda</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-5-t4-p1">La magia aparece cuando el trabajo se lleva a cabo <strong class="text-purple-400">mientras duermes</strong>. Las tareas aburridas y largas —revisar noticias, organizar archivos, preparar un borrador— se ejecutan de madrugada, a la hora en que nadie quiere trabajar. Te despiertas y ya está todo listo.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-5-t4-p2">Es el cambio radical del módulo 1.1 llevado al extremo: dejaste de ser quien <em>hace</em> y se convirtió en quien <em>lo recibe listo</em>. Tu tiempo rinde incluso cuando no estás frente a la computadora.</p>
+<figure class="rounded-2xl overflow-hidden border border-purple-500/30 mb-6">
+<img alt="Un panel de automatización por la noche: engranajes y flujos de luz morada funcionando solos mientras la casa duerme, con un resumen listo para la mañana siguiente." class="w-full h-auto" loading="lazy" src="../../../curso/trilha3/assets/img/automation.png"/>
+<figcaption class="text-xs text-neutral-500 px-4 py-3 bg-dark-800">Mientras duermes, las rutinas de Jarvis trabajan y dejan el resultado listo para la mañana.</figcaption>
+</figure>
+<!-- caixa de dados -->
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">📊</span> Para dimensionarlo</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Una tarea que lleva <strong>~30 min</strong> por día se convierte en <strong>~10 horas</strong> ahorradas por mes.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Al ejecutarse de madrugada, ocupa <strong>0 minuto</strong> de tu día hábil.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Con tres rutinas como estas, ganas prácticamente <strong>una semana de trabajo</strong> por mes.</span></li>
+</ul>
+<p class="text-neutral-400 text-sm mt-3">Traducción: automatizar lo repetitivo no es un lujo para gente técnica; es lo que te libera para hacer lo que solo tú puedes hacer.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Conceptos clave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 El trabajo se ejecuta de madrugada</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Te despiertas con todo listo</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 El tiempo rinde sin ti</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Recibirlo listo &gt; hacerlo a mano</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como leído</span></button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-3-5#topico-5" id="topico-5">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">👀 Supervisar y mantener el control</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar una duda en este tema" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tengo una duda</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-5-t5-p1">La autonomía sin visibilidad se convierte en ansiedad. Si Jarvis actúa por su cuenta, necesitas una forma de <strong class="text-purple-400">mirar por encima del hombro</strong> suyo: un registro de lo que hizo y un aviso cuando algo se sale de lo esperado. Autonomía con los ojos abiertos, no a ciegas.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-5-t5-p2">La regla de oro: empieza pidiéndole que <strong>pide permiso</strong> en las acciones que afectan al mundo (enviar un e-mail, gastar dinero, borrar algo). Cuando ganes confianza, suelta las riendas poco a poco.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-4">✓ Mantener el control</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Pedir un registro: "dime qué hiciste"</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Avisar cuando algo sale mal</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Pedir permiso para acciones riesgosas</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Soltar las riendas poco a poco</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Perder el control</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Dar autonomía total desde el día 1</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Nunca revisar lo que hizo</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Dejar que envíe correos o pague sin avisar</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Descubrir el error solo cuando ya es demasiado tarde</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Consejo práctico</h3>
+<p class="text-neutral-300">Pídele a Jarvis un <strong>resumen de lo que hizo</strong> una vez al día. Es tu «estado de cuenta»: una mirada de 30 segundos que te mantiene al mando sin tener que vigilar nada todo el tiempo.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Conceptos clave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Autonomía <strong>con</strong> visibilidad</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Registro: lo que hizo</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Permiso para las acciones de riesgo</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Soltar las riendas poco a poco</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como leído</span></button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-3-5#topico-6" id="topico-6">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">💡 Automatizaciones que valen la pena</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar una duda en este tema" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tengo una duda</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-5-t6-p1">Para que no te quedes atascado pensando «¿qué automatizo?», aquí tienes una lista para empezar. La regla es sencilla: automatiza lo que es <strong class="text-purple-400">repetitivo, aburrido y predecible</strong>. Deja para ti lo que exige criterio.</p>
+<!-- SVG 2: catalogo de automacoes em roxo -->
+<figure class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Cuatro tarjetas de automatización conectadas a un núcleo central: resumen de noticias, recordatorio inteligente, clasificación de correos electrónicos y copia de seguridad automática." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 180">
+<defs>
+<pattern height="20" id="m35dots2" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#c084fc" opacity="0.10" r="1"></circle></pattern>
+<radialgradient cx="50%" cy="50%" id="m35glow2" r="50%"><stop offset="0%" stop-color="#c084fc" stop-opacity="0.5"></stop><stop offset="100%" stop-color="#c084fc" stop-opacity="0"></stop></radialgradient>
+<filter height="160%" id="m35soft2" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.6"></fegaussianblur></filter>
+</defs>
+<rect fill="url(#m35dots2)" height="180" width="480"></rect>
+<line opacity="0.5" stroke="#38bdf8" stroke-width="2" x1="240" x2="90" y1="90" y2="45"></line>
+<line opacity="0.5" stroke="#38bdf8" stroke-width="2" x1="240" x2="390" y1="90" y2="45"></line>
+<line opacity="0.5" stroke="#38bdf8" stroke-width="2" x1="240" x2="90" y1="90" y2="138"></line>
+<line opacity="0.5" stroke="#38bdf8" stroke-width="2" x1="240" x2="390" y1="90" y2="138"></line>
+<g filter="url(#m35soft2)"><circle cx="240" cy="90" fill="url(#m35glow2)" r="32"></circle></g>
+<circle cx="240" cy="90" fill="#2e1065" r="22" stroke="#c084fc" stroke-width="2"></circle><text font-size="16" text-anchor="middle" x="240" y="96">⚡</text>
+<rect fill="#1f1240" height="34" rx="8" stroke="#c084fc" stroke-width="1.5" width="100" x="40" y="28"></rect><text fill="#e9d5ff" font-size="10" text-anchor="middle" x="90" y="49">📰 resumen de noticias</text>
+<rect fill="#1f1240" height="34" rx="8" stroke="#c084fc" stroke-width="1.5" width="100" x="340" y="28"></rect><text fill="#e9d5ff" font-size="10" text-anchor="middle" x="390" y="49">🔔 recordatorio inteligente</text>
+<rect fill="#1f1240" height="34" rx="8" stroke="#c084fc" stroke-width="1.5" width="100" x="40" y="120"></rect><text fill="#e9d5ff" font-size="10" text-anchor="middle" x="90" y="141">📥 clasificación de correo electrónico</text>
+<rect fill="#1f1240" height="34" rx="8" stroke="#c084fc" stroke-width="1.5" width="100" x="340" y="120"></rect><text fill="#e9d5ff" font-size="10" text-anchor="middle" x="390" y="141">💾 copia de seguridad automática</text>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">Cuatro automatizaciones clásicas alrededor del núcleo de Jarvis: todas son repetitivas, tediosas y predecibles; el terreno ideal.</figcaption>
+</figure>
+<div class="space-y-3 mb-6">
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-purple-400 text-xl">📰</span><div><strong class="text-purple-400">Resumen de noticias:</strong> <span class="text-neutral-300 text-sm">cada mañana, un breve resumen de las fuentes que sigues.</span></div></div>
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-purple-400 text-xl">🔔</span><div><strong class="text-purple-400">Recordatorio inteligente:</strong> <span class="text-neutral-300 text-sm">avisos de compromisos, plazos y cumpleaños, con contexto.</span></div></div>
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-purple-400 text-xl">📥</span><div><strong class="text-purple-400">Clasificación de correos electrónicos:</strong> <span class="text-neutral-300 text-sm">separa lo urgente del ruido y te entrega solo lo que importa.</span></div></div>
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-purple-400 text-xl">💾</span><div><strong class="text-purple-400">Copias de seguridad y organización:</strong> <span class="text-neutral-300 text-sm">archivos en el lugar correcto, copias de seguridad automáticas.</span></div></div>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-3-5#q1">
+<p class="font-medium mb-4">✋ Antes de seguir — ¿cuál de estas tareas es la mejor candidata para automatizar?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A) Decidir si despido a un empleado.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">B) Preparar todos los días a las 7h un resumen de las mismas fuentes de noticias.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">C) Elegir el nombre de tu empresa.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="flex justify-start mt-8">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como leído</span></button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎓</span> Resumen del módulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Los disparadores activan Jarvis</strong><span class="text-neutral-400"> — por tiempo, evento o comando.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Programar te vuelve proactivo</strong><span class="text-neutral-400"> — se activa por sí solo y te entrega todo listo.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Conéctate a un canal</strong><span class="text-neutral-400"> — Telegram/correo electrónico te llevan el resultado.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Monitorea y mantén el control</strong><span class="text-neutral-400"> — autonomía con los ojos abiertos.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-purple-400 mb-2">Siguiente módulo:</h3>
+<p class="text-neutral-300">3.6 — 🎬 Tu Jarvis en vivo: unir todo — armarlo, darle memoria, conectar skills y poner al asistente a trabajar de verdad.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Volver a la Ruta</a>
+<a class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors" href="modulo-3-6.html">Siguiente: 3.6 Tu Jarvis en vivo →</a>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>🎼 El mundo después de Claude · Módulo 3.5 — <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<script>
+    function toggleTopic(button){
+      var topicItem=button.closest('.topic-item');
+      var explanation=topicItem.querySelector('.topic-explanation');
+      var moduleCard=button.closest('.bg-dark-800')||document;
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(function(exp){ if(exp!==explanation) exp.classList.remove('active'); });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active')?'true':'false');
+    }
+    (function(){
+      var themeToggle=document.getElementById('theme-toggle');
+      var d=document.getElementById('theme-toggle-dark-icon');
+      var l=document.getElementById('theme-toggle-light-icon');
+      var html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ l.classList.remove('hidden'); d.classList.add('hidden'); } else { d.classList.remove('hidden'); l.classList.add('hidden'); } }
+      sync();
+      themeToggle.addEventListener('click',function(){
+        html.classList.toggle('dark');
+        var isDark=html.classList.contains('dark');
+        localStorage.setItem('theme', isDark?'dark':'light');
+        try{ var p=JSON.parse(localStorage.getItem('inema.prefs')||'{}'); p.theme=isDark?'inema-dark':'claro'; localStorage.setItem('inema.prefs',JSON.stringify(p)); }catch(e){}
+        html.style.colorScheme=isDark?'dark':'light';
+        if(isDark) html.removeAttribute('data-theme');
+        sync();
+      });
+    })();
+    function openModal(id){ var m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(function(m){ m.classList.add('hidden'); }); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+  </script>
+<script src="../../../assets/learn.js"></script>
+<script>
+    if(window.INEMA&&typeof window.INEMA.init==='function'){ window.INEMA.init(); }
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-3-5#q1', {
+          answer: 1,
+          explain: {
+            0: 'Não — demitir alguém exige julgamento humano e empatia; é exatamente o tipo de decisão que você NÃO delega a uma automação.',
+            1: 'Isso! Mesmas fontes, mesmo horário, todo dia: repetitivo, chato e previsível — o terreno perfeito pra agendar.',
+            2: 'Não — nomear a empresa é criativo e único, feito uma vez. Automação brilha no repetitivo, não no que se faz uma vez só.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="mundo-apos-claude" name="inema-course"/>
+<title>1.3 Skills, MCP, and the ecosystem | The World After Claude</title>
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark')?'dark':'light'));
+      html.setAttribute('data-font', p.font||'inter'); html.setAttribute('data-accent', p.accent||'emerald');
+      var s=html.style, scale=(+p.fontScale||100);
+      s.setProperty('--inema-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
+      s.setProperty('--measure',(+p.lineWidth||68)+'ch'); s.setProperty('--lh-body',(+p.leading||1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC={emerald:[152,76,45],blue:[217,91,60],purple:[258,90,66],amber:[38,92,50],teal:[174,72,41],rose:[350,89,60]};
+      var a=ACC[p.accent]||ACC.emerald; s.setProperty('--accent-h',a[0]+''); s.setProperty('--accent-s',a[1]+'%'); s.setProperty('--accent-l',a[2]+'%'); s.setProperty('--accent','hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode:'class', theme:{ extend:{ colors:{ primary:'#FACC15', dark:{900:'#111827',800:'#1f2937',700:'#374151',600:'#4b5563'} } } } }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 5rem; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "mundo-apos-claude",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "A virada: de usuario a maestro", "topics": 6, "href": "curso/trilha1/modulo-1-1.html" },
+        { "id": "1-2", "title": "Anatomia de um agente", "topics": 6, "href": "curso/trilha1/modulo-1-2.html" },
+        { "id": "1-3", "title": "Skills, MCP e o ecossistema", "topics": 6, "href": "curso/trilha1/modulo-1-3.html" },
+        { "id": "1-4", "title": "Contexto, memoria e o harness", "topics": 6, "href": "curso/trilha1/modulo-1-4.html" },
+        { "id": "1-5", "title": "O diferencial humano", "topics": 6, "href": "curso/trilha1/modulo-1-5.html" }
+      ]},
+      { "n": "2", "title": "Pratica", "modules": [
+        { "id": "2-1", "title": "Seu primeiro build dirigido", "topics": 6, "href": "curso/trilha2/modulo-2-1.html" },
+        { "id": "2-2", "title": "Construindo com skills", "topics": 6, "href": "curso/trilha2/modulo-2-2.html" },
+        { "id": "2-3", "title": "Conectando o mundo (MCP)", "topics": 6, "href": "curso/trilha2/modulo-2-3.html" },
+        { "id": "2-4", "title": "Agentes que fazem o trabalho", "topics": 6, "href": "curso/trilha2/modulo-2-4.html" },
+        { "id": "2-5", "title": "Verificar e provar", "topics": 6, "href": "curso/trilha2/modulo-2-5.html" }
+      ]},
+      { "n": "3", "title": "Jarvis & Arsenal", "modules": [
+        { "id": "3-1", "title": "Arquitetura de um Jarvis", "topics": 6, "href": "curso/trilha3/modulo-3-1.html" },
+        { "id": "3-2", "title": "OpenClaw, Hermes e sistemas agenticos", "topics": 6, "href": "curso/trilha3/modulo-3-2.html" },
+        { "id": "3-3", "title": "Skills prontas", "topics": 6, "href": "curso/trilha3/modulo-3-3.html" },
+        { "id": "3-4", "title": "Agentes e workflows prontos", "topics": 6, "href": "curso/trilha3/modulo-3-4.html" },
+        { "id": "3-5", "title": "Automacao e gatilhos", "topics": 6, "href": "curso/trilha3/modulo-3-5.html" },
+        { "id": "3-6", "title": "Seu Jarvis ao vivo", "topics": 6, "href": "curso/trilha3/modulo-3-6.html" }
+      ]}
+    ]
+  }
+  </script>
+<link href="https://inematds.github.io/mundo-apos-claude/curso/trilha1/modulo-1-3.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/en/curso/trilha1/modulo-1-3.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/es/curso/trilha1/modulo-1-3.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha1/modulo-1-3.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-1-3.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha1/modulo-1-3.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-emerald-600 focus:text-white focus:rounded-lg" href="#conteudo">Skip to content</a>
+<!-- NAV -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🎼</span><span class="font-bold text-lg hidden sm:inline">The World After Claude</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10" href="index.html"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Practice</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Jarvis</span></a>
+<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-inema-journey-open="" type="button"><span aria-hidden="true">◷</span><span>My journey</span><span class="hidden" data-inema-journey-badge=""></span></button>
+<button aria-label="Toggle light/dark theme" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav aria-label="Navigation trail" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-emerald-400" href="../../index.html">Start</a><span>/</span>
+<a class="hover:text-emerald-400" href="index.html">Track 1</a><span>/</span>
+<span class="text-emerald-400">Module 1.3</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">MODULE 1.3</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🔌 Skills, MCP, and the Ecosystem</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">An AI on its own is like a brilliant brain locked in a room with no door. This module shows the <strong class="text-emerald-400">pieces that give it arms and legs</strong> to it: the <strong class="text-primary">skills</strong> (recipes that teach the AI to work your way) and the <strong class="text-emerald-400">MCP</strong> (the connector that plugs the AI into your email, calendar, and spreadsheets). It's what turns a standalone AI into a system that does things in the real world.</p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">6</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">~45</div><div class="text-xs text-neutral-400">Minutes</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Basic</div><div class="text-xs text-neutral-400">Level</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Theory</div><div class="text-xs text-neutral-400">Type</div></div>
+</div>
+<div class="mt-6 max-w-md">
+<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progress in this module</span><span class="text-sm font-bold text-emerald-400"><span class="inema-meter-pct">0%</span></span></div>
+<div aria-label="Module 1.3 progress" aria-valuemax="100" aria-valuemin="0" class="inema-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-inema-meter="modulo:1-3" role="progressbar"><div class="h-full bg-emerald-500 rounded-full transition-all" data-inema-meter-fill="" style="width:0%"></div></div>
+<p class="text-xs text-neutral-500 mt-1.5"><span class="inema-meter-count">0 of 6</span> sections read</p>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid lg:grid-cols-[220px_1fr] gap-10">
+<!-- TOC -->
+<nav aria-label="Module index" class="hidden lg:block sticky top-24 self-start" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-3">Section <span class="inema-toc-pos">1</span> of <span class="inema-toc-total">6</span></p>
+<ul class="space-y-1.5 text-sm">
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-1">1. What is a skill</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-2">2. What is MCP</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-3">3. Tools and connectors</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-4">4. The ecosystem</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-5">5. Why it becomes an "OS"</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-6">6. Putting together your kit</a></li>
+</ul>
+</nav>
+<main class="min-w-0 inema-prose" id="conteudo">
+<!-- "Novo aqui?" -->
+<div class="bg-primary/10 border border-primary/30 rounded-2xl p-6 mb-12">
+<h2 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> New here? Three words before you start</h2>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-primary">Skill</strong> — a ready-made “recipe” you give the AI so it always does a task your way, exactly the same every time. It’s your knowledge packaged up.</li>
+<li><strong class="text-primary">MCP</strong> — a “universal plug” (the English acronym for Model Context Protocol) that connects AI to services like email, spreadsheets, and calendars without a workaround.</li>
+<li><strong class="text-primary">Connector</strong> — each “cable” that connects the AI to a specific service. The more connectors, the more things the AI can do.</li>
+</ul>
+</div>
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-1-3#topico-1" id="topico-1">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">📜 What Is a Skill</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-3-t1-p1">A <strong class="text-emerald-400">skill</strong> (the English word for "skill") is a <strong>ready-made recipe</strong> that teaches AI to do a specific task — always from the <strong>your</strong> the way you do it, every time. It's like writing "how I put together my business proposal" on a piece of paper and giving that paper to the AI to follow every time.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-3-t1-p2">Without a skill, you have to explain everything again in every conversation. With a skill, you <strong>packages your knowledge once</strong> and the AI repeats it faithfully — without forgetting a step, inventing a different format, or making you keep reminding it.</p>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center"><span class="mr-2">🔑</span> The central idea</h3>
+<p class="text-neutral-300 mb-3">Think about the difference between <strong>hire someone new every day</strong> e <strong>train a loyal employee</strong>:</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Without a skill:</strong> with every conversation, you explain everything again, and the result varies.</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>With a skill:</strong> the AI already knows the steps, tone, and format—every time, the same way.</span></li>
+</ul>
+</div>
+<!-- CODE BOX (copy-run leigo) -->
+<div class="bg-dark-800 border border-emerald-500/30 rounded-xl p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-2 flex items-center"><span class="mr-2">🧪</span> What a skill looks like on the inside (in simple terms)</h3>
+<p class="text-neutral-300 text-sm mb-2"><strong>Goal:</strong> see that a skill is just a little set of instructions you'd give the AI to follow. There's no code or anything technical—it's in Portuguese. Replace the parts between &lt; &gt;.</p>
+<pre class="bg-dark-900 border border-dark-600 rounded-lg p-4 overflow-x-auto text-sm font-mono text-neutral-200 whitespace-pre-wrap">SKILL: Responder cliente no WhatsApp
+
+QUANDO USAR: sempre que eu colar uma mensagem de cliente.
+
+COMO FAZER (siga nesta ordem):
+1. Cumprimente pelo nome usando &lt;meu jeito, ex: "Oi, tudo bem?"&gt;.
+2. Responda a dúvida em até &lt;3 frases&gt;, sem termos técnicos.
+3. Termine com uma pergunta que ajude a fechar a venda.
+4. Use o tom &lt;ex: educado e próximo, sem ser formal demais&gt;.
+
+NÃO FAÇA: prometer prazo que eu não confirmei; usar emoji em excesso.</pre>
+<p class="text-neutral-400 text-sm mt-3"><strong>How to know it worked:</strong> when you paste a customer's message, the AI already replies in the <em>your</em> tone, the right length, and ending with a question—without you having to repeat the rules. That’s the skill in action.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Good candidate for a skill</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>A task you repeat the same way</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>There's a format or tone that matters</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>You can describe the step-by-step process</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ No skill needed</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>One question you'll never ask again</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>A task that changes completely every time</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Something you don’t even know how you want yet</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Skill = <strong>ready-made recipe</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Your knowledge <strong>packaged</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Always the same, without re-explaining</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 It’s just text, not programming</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-1-3#topico-2" id="topico-2">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🔌 What Is MCP</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-3-t2-p1">The skill teaches AI to <em>think</em> your way. But thinking isn’t enough — it needs to <strong>act in the world</strong>: read your email, create a calendar event, update a spreadsheet. That’s what the <strong class="text-emerald-400">MCP</strong> (Model Context Protocol), a <strong>“universal outlet” standard</strong>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-3-t2-p2">Before, connecting AI to each service was a <strong>a different workaround</strong> for each one. MCP solves this: it’s like the wall outlet standard — any device with the right plug simply plugs in. With MCP, AI plugs into email, spreadsheets, calendars <strong>the same way</strong>, without manual adaptation.</p>
+<!-- SVG principal: fan-out (IA central -> conectores) -->
+<figure class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="A central AI connects, like a universal MCP socket, to several services around it: email, calendar, spreadsheet, files, and database, all plugged in through the same standard." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 520 300">
+<defs>
+<pattern height="22" id="m13dots" patternunits="userSpaceOnUse" width="22"><circle cx="2" cy="2" fill="#34d399" opacity="0.10" r="1"></circle></pattern>
+<filter height="180%" id="m13soft" width="180%" x="-40%" y="-40%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+<marker id="m13arrow" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#34d399"></path></marker>
+</defs>
+<rect fill="url(#m13dots)" height="300" width="520"></rect>
+<!-- cabos / conectores (fan-out a partir do centro) -->
+<path d="M260 150 C 180 90, 150 80, 110 70" fill="none" marker-end="url(#m13arrow)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M260 150 C 180 130, 150 120, 110 150" fill="none" marker-end="url(#m13arrow)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M260 150 C 180 210, 150 220, 110 230" fill="none" marker-end="url(#m13arrow)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M260 150 C 340 90, 370 80, 410 70" fill="none" marker-end="url(#m13arrow)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M260 150 C 340 130, 370 120, 410 150" fill="none" marker-end="url(#m13arrow)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M260 150 C 340 210, 370 220, 410 230" fill="none" marker-end="url(#m13arrow)" stroke="#38bdf8" stroke-width="2"></path>
+<!-- nucleo IA central com glow -->
+<g filter="url(#m13soft)"><circle cx="260" cy="150" fill="#064e3b" r="40" stroke="#34d399" stroke-width="3"></circle></g>
+<text font-size="22" text-anchor="middle" x="260" y="146">🤖</text>
+<text fill="#34d399" font-size="11" font-weight="700" text-anchor="middle" x="260" y="172">AI + MCP</text>
+<!-- conectores esquerda -->
+<g><rect fill="#1f2937" height="36" rx="9" stroke="#38bdf8" stroke-width="1.5" width="68" x="40" y="52"></rect><text fill="#e5e7eb" font-size="11" text-anchor="middle" x="74" y="75">📧 Email</text></g>
+<g><rect fill="#1f2937" height="36" rx="9" stroke="#38bdf8" stroke-width="1.5" width="68" x="40" y="132"></rect><text fill="#e5e7eb" font-size="11" text-anchor="middle" x="74" y="155">📅 Calendar</text></g>
+<g><rect fill="#1f2937" height="36" rx="9" stroke="#38bdf8" stroke-width="1.5" width="68" x="40" y="212"></rect><text fill="#e5e7eb" font-size="11" text-anchor="middle" x="74" y="235">📊 Spreadsheet</text></g>
+<!-- conectores direita -->
+<g><rect fill="#1f2937" height="36" rx="9" stroke="#38bdf8" stroke-width="1.5" width="72" x="412" y="52"></rect><text fill="#e5e7eb" font-size="11" text-anchor="middle" x="448" y="75">📁 Files</text></g>
+<g><rect fill="#1f2937" height="36" rx="9" stroke="#38bdf8" stroke-width="1.5" width="72" x="412" y="132"></rect><text fill="#e5e7eb" font-size="11" text-anchor="middle" x="448" y="155">🗄️ Database</text></g>
+<g><rect fill="#1f2937" height="36" rx="9" stroke="#38bdf8" stroke-width="1.5" width="72" x="412" y="212"></rect><text fill="#e5e7eb" font-size="11" text-anchor="middle" x="448" y="235">🌐 Web</text></g>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="260" y="288">one standard · everything plugs in the same way</text>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">The MCP is the <em>universal outlet</em>: the AI in the center extends a standard cable (blue) to each service. Notice that all the cables are the same—that's what puts an end to makeshift workarounds.</figcaption>
+</figure>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">You’re not going to “build” the outlet. In most cases, the MCP connector for the service you use <strong>already exists</strong> — you just turn it on. Remember the word <strong>MCP</strong>: when you hear “there’s an MCP for Gmail,” understand it as “you can connect AI to Gmail without a hacky workaround.”</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 MCP = <strong>universal outlet</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Connects AI to real services</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 One standard, no hacks</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Skill = think · MCP = act</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-1-3#topico-3" id="topico-3">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🧰 Tools and connectors</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-3-t3-p1">Each <strong class="text-emerald-400">connector</strong> it’s a cable that gives a <strong>new power</strong> for AI. A web connector lets it research. A file connector lets it read and write documents. An email connector lets it send messages. A database connector lets it query your records. The more connectors you have, the more things AI can actually <em>do</em>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-3-t3-p2">The fun part is that you <strong>put the kit together as needed</strong>, like a toolbox. Need to work with spreadsheets? Get the spreadsheet connector. Need to respond to customers? Get the WhatsApp or email one. You don't need to connect everything—just what solves your problem.</p>
+<!-- imagem PNG gerada -->
+<figure class="rounded-2xl overflow-hidden border border-emerald-500/30 mb-6">
+<img alt="A central AI radiates luminous connections to several service icons around it — email, spreadsheet, calendar, files, web — each connection representing a connector that gives the AI a new capability." class="w-full h-auto" loading="lazy" src="../../../curso/trilha1/assets/img/connectors.png"/>
+<figcaption class="text-xs text-neutral-500 px-4 py-3 bg-dark-800">Each beam of light is a connector. You choose which ones to turn on—and each one adds a new capability to your AI.</figcaption>
+</figure>
+<div class="space-y-3 mb-6">
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-emerald-400 text-xl">🌐</span><div><strong class="text-emerald-400">Web:</strong> <span class="text-neutral-300 text-sm">the AI researches, reads pages, and brings back up-to-date information.</span></div></div>
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-emerald-400 text-xl">📁</span><div><strong class="text-emerald-400">Files:</strong> <span class="text-neutral-300 text-sm">it opens, edits, and creates documents on your computer.</span></div></div>
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-emerald-400 text-xl">📲</span><div><strong class="text-emerald-400">Apps:</strong> <span class="text-neutral-300 text-sm">email, calendar, WhatsApp—it works within your apps.</span></div></div>
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-emerald-400 text-xl">🗄️</span><div><strong class="text-emerald-400">Databases:</strong> <span class="text-neutral-300 text-sm">it checks and updates your records and contact lists.</span></div></div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Before plugging anything in, ask: <strong>"what capability is the AI missing to solve my pain point?"</strong>. If your pain point is answering email, the email connector is worth more than ten others. A lean kit beats a full one.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Connector = <strong>new power</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Web, files, apps, databases</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 You put together the <strong>kit</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Only what solves your pain point</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-1-3#topico-4" id="topico-4">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🌐 The ecosystem</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-3-t4-p1">Here’s the best news: you <strong>aren’t alone in putting everything together from scratch</strong>. There is a <strong class="text-emerald-400">ecosystem</strong> — a growing world of skills and connectors <strong>ready-made</strong>, made and shared by the community. Someone has already made a lot of what you need.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-3-t4-p2">"Ecosystem" here just means this: <strong>a bunch of ready-made pieces that work together</strong>. You don’t create—you <strong>plugs in</strong>. It’s the difference between making your own charger and grabbing one that’s already in the drawer.</p>
+<!-- SVG secundario: pegar pronto vs criar do zero -->
+<figure class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Comparison: creating from scratch takes a lot of time and effort; picking a ready-made piece from the ecosystem and plugging it in is quick and straightforward." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 200">
+<defs>
+<pattern height="20" id="m13dots2" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#34d399" opacity="0.10" r="1"></circle></pattern>
+<filter height="180%" id="m13soft2" width="180%" x="-40%" y="-40%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+<marker id="m13a3" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#6b7280"></path></marker>
+<marker id="m13a4" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#34d399"></path></marker>
+</defs>
+<rect fill="url(#m13dots2)" height="200" width="480"></rect>
+<!-- DO ZERO -->
+<text fill="#9ca3af" font-size="13" font-weight="600" text-anchor="middle" x="120" y="28">CREATE FROM SCRATCH</text>
+<circle cx="50" cy="100" fill="#1f2937" r="16" stroke="#6b7280" stroke-width="2"></circle><text font-size="14" text-anchor="middle" x="50" y="105">🧑</text>
+<path d="M68 100 L96 100" marker-end="url(#m13a3)" stroke="#6b7280" stroke-width="2"></path>
+<rect fill="#1f2937" height="28" rx="6" stroke="#6b7280" stroke-width="2" width="28" x="100" y="86"></rect><text font-size="12" text-anchor="middle" x="114" y="105">🔧</text>
+<path d="M130 100 L150 100" marker-end="url(#m13a3)" stroke="#6b7280" stroke-width="2"></path>
+<rect fill="#1f2937" height="28" rx="6" stroke="#6b7280" stroke-width="2" width="28" x="154" y="86"></rect><text font-size="12" text-anchor="middle" x="168" y="105">🔧</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="120" y="160">a lot of time and effort ⏳</text>
+<!-- divisor -->
+<line stroke="#374151" stroke-dasharray="3 4" stroke-width="1.5" x1="240" x2="240" y1="40" y2="170"></line>
+<!-- PEGAR PRONTO -->
+<text fill="#34d399" font-size="13" font-weight="600" text-anchor="middle" x="370" y="28">GET IT READY-MADE</text>
+<g filter="url(#m13soft2)"><rect fill="#064e3b" height="40" rx="9" stroke="#34d399" stroke-width="2" width="46" x="300" y="80"></rect></g>
+<text font-size="16" text-anchor="middle" x="323" y="105">📦</text>
+<path d="M350 100 L392 100" marker-end="url(#m13a4)" stroke="#34d399" stroke-width="2"></path>
+<circle cx="416" cy="100" fill="#0b3b2e" r="16" stroke="#34d399" stroke-width="2"></circle><text font-size="14" text-anchor="middle" x="416" y="105">✅</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="370" y="160">just plug it in ⚡</text>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">The left side builds everything by hand; the right side grabs a ready-made piece (📦) and plugs it in. In the ecosystem, most of your needs are already packaged.</figcaption>
+</figure>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ What the ecosystem gives you</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Ready-made skills that you just adapt</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Ready-made connectors for popular apps</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Community testing and improving</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ What you do NOT need to do</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Reinventing what already exists</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Program each connector from scratch</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Start everything on your own</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 World of components <strong>ready</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Made by the community</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 You <strong>plugs in</strong>, don't create</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Grow every day</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-1-3#topico-5" id="topico-5">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">💻 Why it becomes an "OS" (operating system)</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-3-t5-p1">Separately, these pieces are useful. Together, they become something else. When you combine <strong class="text-emerald-400">memory</strong> (the AI remembers your context) + <strong class="text-emerald-400">skills</strong> (knows how to do it your way) + <strong class="text-emerald-400">connectors</strong> (acts on your services), the AI stops being a chat and becomes a <strong>central hub that controls everything</strong>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-3-t5-p2">That’s exactly the role of the <strong>operating system</strong> (the "OS," like Windows or Android): the base program that coordinates all the others and organizes the computer. With this complete kit, the AI becomes <strong>this command center</strong>. And this is the foundation of <strong class="text-emerald-400">Jarvis</strong> that you’ll build in Track 3.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">📊</span> The account that becomes an "Operating System"</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Memory</strong> — the AI remembers who you are and what you’ve already agreed on.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>+ Skills</strong> — it knows how to carry out tasks your way.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>+ Connectors</strong> — it acts in your apps and services.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>= Command center</strong> — an AI that coordinates everything, like an OS.</span></li>
+</ul>
+<p class="text-neutral-400 text-sm mt-3">Memory is the topic of the next module (1.4). For now, it’s enough to understand that the combination of these pieces creates the leap.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Don’t try to sense the “SO” on day one. It <strong>emerges</strong> as you build up the pieces. Start with one skill and one connector; the “command center” feeling comes naturally as your toolkit grows.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Memory + skills + connectors</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 AI becomes <strong>command center</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 OS = coordinates everything</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Foundation of the <strong>Jarvis</strong> (Track 3)</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-1-3#topico-6" id="topico-6">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🧱 Building your toolkit</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-3-t6-p1">The trap for beginners is wanting to <strong>put everything together at once</strong> — ten skills, twenty connectors — and getting stuck before using any of them. The approach that works is the opposite: <strong class="text-emerald-400">start small</strong>. ONE skill + ONE connector that solve <strong>one specific pain point of yours</strong>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-3-t6-p2">When this first pair works, you gain the confidence and clarity to add the next one. The kit grows <strong>out of real necessity</strong>, not out of anxiety. That's how you avoid getting stuck.</p>
+<div class="space-y-5 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">🎯 Choose ONE pain point</h4><p class="text-neutral-300 text-sm">The tedious task that takes up most of your time today.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">📜 Write ONE Skill</h4><p class="text-neutral-300 text-sm">The recipe for how you solve that pain point, in Portuguese.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">🔌 Grab ONE Connector</h4><p class="text-neutral-300 text-sm">The only service the AI needs to access to get the job done.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">4</span></div>
+<div class="flex-1 bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl p-5 border border-emerald-500/30"><h4 class="font-semibold mb-1 text-emerald-400">✅ Use it, then scale up</h4><p class="text-neutral-300 text-sm">Did it work? Now you can add the next piece.</p></div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">🎯</span> The pattern to watch for</h3>
+<p class="text-neutral-300">A kit that grows out of necessity is a kit you'll use. A kit assembled out of anxiety is a kit you'll abandon. <strong>One useful asset today is worth more than ten unused ones.</strong></p>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-1-3#q1">
+<p class="font-medium mb-4">✋ Before you continue — what's the best way to start putting your kit together?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A) Set up ten skills and twenty connectors right away to be prepared.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">B) Start with ONE skill + ONE connector that solve a problem for you, use them, and only then expand.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">C) Wait until you know how to code before touching any part.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6 mt-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Start <strong>small</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 1 skill + 1 connector</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Solve one <strong>real pain point</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Grow as needed</div>
+</div>
+</div>
+<div class="flex justify-start mt-8">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎓</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">A skill is a ready-made recipe</strong><span class="text-neutral-400"> — your knowledge packaged for the AI to repeat consistently.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">MCP is the universal plug</strong><span class="text-neutral-400"> — connects AI to real services without duct tape.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Connectors add capabilities</strong><span class="text-neutral-400"> — and the ecosystem already has plenty of things ready to plug in.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Together, they become an OS</strong><span class="text-neutral-400"> — the foundation of your Jarvis. Start small: 1 skill + 1 connector.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-emerald-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">1.4 — 🧠 Context, memory, and the harness: how AI remembers your context and organizes the work.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the Track</a>
+<a class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors" href="modulo-1-4.html">Next: 1.4 Context, memory, and the harness →</a>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>🎼 The World After Claude · Module 1.3 — <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<script>
+    function toggleTopic(button){
+      var topicItem=button.closest('.topic-item');
+      var explanation=topicItem.querySelector('.topic-explanation');
+      var moduleCard=button.closest('.bg-dark-800')||document;
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(function(exp){ if(exp!==explanation) exp.classList.remove('active'); });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active')?'true':'false');
+    }
+    (function(){
+      var themeToggle=document.getElementById('theme-toggle');
+      var d=document.getElementById('theme-toggle-dark-icon');
+      var l=document.getElementById('theme-toggle-light-icon');
+      var html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ l.classList.remove('hidden'); d.classList.add('hidden'); } else { d.classList.remove('hidden'); l.classList.add('hidden'); } }
+      sync();
+      themeToggle.addEventListener('click',function(){
+        html.classList.toggle('dark');
+        var isDark=html.classList.contains('dark');
+        localStorage.setItem('theme', isDark?'dark':'light');
+        try{ var p=JSON.parse(localStorage.getItem('inema.prefs')||'{}'); p.theme=isDark?'inema-dark':'claro'; localStorage.setItem('inema.prefs',JSON.stringify(p)); }catch(e){}
+        html.style.colorScheme=isDark?'dark':'light';
+        if(isDark) html.removeAttribute('data-theme');
+        sync();
+      });
+    })();
+    function openModal(id){ var m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(function(m){ m.classList.add('hidden'); }); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+  </script>
+<script src="../../../assets/learn.js"></script>
+<script>
+    if(window.INEMA&&typeof window.INEMA.init==='function'){ window.INEMA.init(); }
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-1-3#q1', {
+          answer: 1,
+          explain: {
+            0: 'Não — montar tudo de uma vez é o jeito mais rápido de travar antes de usar qualquer coisa.',
+            1: 'Isso! Uma skill + um conector que resolvem uma dor sua, usar de verdade, e só então crescer por necessidade.',
+            2: 'Não — você não precisa programar. Skill é só texto e a maioria dos conectores já vem pronta pra plugar.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

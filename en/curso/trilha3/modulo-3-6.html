@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="mundo-apos-claude" name="inema-course"/>
+<title>3.6 Your Jarvis in action | The World After Claude</title>
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'purple' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark')?'dark':'light'));
+      html.setAttribute('data-font', p.font||'inter'); html.setAttribute('data-accent', p.accent||'purple');
+      var s=html.style, scale=(+p.fontScale||100);
+      s.setProperty('--inema-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
+      s.setProperty('--measure',(+p.lineWidth||68)+'ch'); s.setProperty('--lh-body',(+p.leading||1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC={emerald:[152,76,45],blue:[217,91,60],purple:[258,90,66],amber:[38,92,50],teal:[174,72,41],rose:[350,89,60]};
+      var a=ACC[p.accent]||ACC.purple; s.setProperty('--accent-h',a[0]+''); s.setProperty('--accent-s',a[1]+'%'); s.setProperty('--accent-l',a[2]+'%'); s.setProperty('--accent','hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode:'class', theme:{ extend:{ colors:{ primary:'#FACC15', dark:{900:'#111827',800:'#1f2937',700:'#374151',600:'#4b5563'} } } } }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 5rem; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "mundo-apos-claude",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "A virada: de usuario a maestro", "topics": 6, "href": "curso/trilha1/modulo-1-1.html" },
+        { "id": "1-2", "title": "Anatomia de um agente", "topics": 6, "href": "curso/trilha1/modulo-1-2.html" },
+        { "id": "1-3", "title": "Skills, MCP e o ecossistema", "topics": 6, "href": "curso/trilha1/modulo-1-3.html" },
+        { "id": "1-4", "title": "Contexto, memoria e o harness", "topics": 6, "href": "curso/trilha1/modulo-1-4.html" },
+        { "id": "1-5", "title": "O diferencial humano", "topics": 6, "href": "curso/trilha1/modulo-1-5.html" }
+      ]},
+      { "n": "2", "title": "Pratica", "modules": [
+        { "id": "2-1", "title": "Seu primeiro build dirigido", "topics": 6, "href": "curso/trilha2/modulo-2-1.html" },
+        { "id": "2-2", "title": "Construindo com skills", "topics": 6, "href": "curso/trilha2/modulo-2-2.html" },
+        { "id": "2-3", "title": "Conectando o mundo (MCP)", "topics": 6, "href": "curso/trilha2/modulo-2-3.html" },
+        { "id": "2-4", "title": "Agentes que fazem o trabalho", "topics": 6, "href": "curso/trilha2/modulo-2-4.html" },
+        { "id": "2-5", "title": "Verificar e provar", "topics": 6, "href": "curso/trilha2/modulo-2-5.html" }
+      ]},
+      { "n": "3", "title": "Jarvis & Arsenal", "modules": [
+        { "id": "3-1", "title": "Arquitetura de um Jarvis", "topics": 6, "href": "curso/trilha3/modulo-3-1.html" },
+        { "id": "3-2", "title": "OpenClaw, Hermes e sistemas agenticos", "topics": 6, "href": "curso/trilha3/modulo-3-2.html" },
+        { "id": "3-3", "title": "Skills prontas", "topics": 6, "href": "curso/trilha3/modulo-3-3.html" },
+        { "id": "3-4", "title": "Agentes e workflows prontos", "topics": 6, "href": "curso/trilha3/modulo-3-4.html" },
+        { "id": "3-5", "title": "Automacao e gatilhos", "topics": 6, "href": "curso/trilha3/modulo-3-5.html" },
+        { "id": "3-6", "title": "Seu Jarvis ao vivo", "topics": 6, "href": "curso/trilha3/modulo-3-6.html" }
+      ]}
+    ]
+  }
+  </script>
+<link href="https://inematds.github.io/mundo-apos-claude/curso/trilha3/modulo-3-6.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/en/curso/trilha3/modulo-3-6.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/es/curso/trilha3/modulo-3-6.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/modulo-3-6.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-3-6.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha3/modulo-3-6.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-lg" href="#conteudo">Skip to content</a>
+<!-- NAV -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🎼</span><span class="font-bold text-lg hidden sm:inline">The World After Claude</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Practice</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="index.html"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Jarvis</span></a>
+<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-inema-journey-open="" type="button"><span aria-hidden="true">◷</span><span>My journey</span><span class="hidden" data-inema-journey-badge=""></span></button>
+<button aria-label="Toggle light/dark theme" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav aria-label="Navigation trail" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-purple-400" href="../../index.html">Start</a><span>/</span>
+<a class="hover:text-purple-400" href="index.html">Track 3</a><span>/</span>
+<span class="text-purple-400">Module 3.6</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">MODULE 3.6</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🎬 Your Jarvis in action</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">Time to bring it all together. Brain, memory, skills, and triggers become a single <strong class="text-purple-400">assistant that works for you</strong>. This is the final module: you’ll leave here with your Jarvis up and running — and a plan to keep it evolving.</p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">6</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">~60</div><div class="text-xs text-neutral-400">Minutes</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Advanced</div><div class="text-xs text-neutral-400">Level</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Practice</div><div class="text-xs text-neutral-400">Type</div></div>
+</div>
+<div class="mt-6 max-w-md">
+<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progress in this module</span><span class="text-sm font-bold text-purple-400"><span class="inema-meter-pct">0%</span></span></div>
+<div aria-label="Module 3.6 progress" aria-valuemax="100" aria-valuemin="0" class="inema-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-inema-meter="modulo:3-6" role="progressbar"><div class="h-full bg-purple-500 rounded-full transition-all" data-inema-meter-fill="" style="width:0%"></div></div>
+<p class="text-xs text-neutral-500 mt-1.5"><span class="inema-meter-count">0 of 6</span> sections read</p>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid lg:grid-cols-[220px_1fr] gap-10">
+<!-- TOC -->
+<nav aria-label="Module index" class="hidden lg:block sticky top-24 self-start" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-3">Section <span class="inema-toc-pos">1</span> of <span class="inema-toc-total">6</span></p>
+<ul class="space-y-1.5 text-sm">
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-1">1. Setting up the assistant</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-2">2. Memory and preferences</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-3">3. Plug in skills and workflows</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-4">4. First day at work</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-5">5. Improve over time</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-6">6. Next steps</a></li>
+</ul>
+</nav>
+<main class="min-w-0 inema-prose" id="conteudo">
+<!-- "Novo aqui?" -->
+<div class="bg-primary/10 border border-primary/30 rounded-2xl p-6 mb-12">
+<h2 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> New here? Three words before you start</h2>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-primary">Jarvis</strong> — a personal AI assistant that knows you, remembers things, and handles tasks for you.</li>
+<li><strong class="text-primary">Skill</strong> — a ready-made “recipe” that teaches the assistant to do something the way you like.</li>
+<li><strong class="text-primary">System prompt</strong> — the master instruction: the text that tells Jarvis who it is, what it remembers, and how to act.</li>
+</ul>
+</div>
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-3-6#topico-1" id="topico-1">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🧰 Building the complete assistant</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-6-t1-p1">You’ve already seen the four separate pieces throughout the track. Putting Jarvis together is just <strong class="text-purple-400">fit them all in one place</strong>: the brain (the AI), the memory (what it remembers), the skills (what it knows how to do), and the triggers (what sets it off). When all four come together, you stop having a tool and start having an assistant.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-6-t1-p2">The good news: you don't have to build anything by hand. You <strong>describes</strong> each piece in text, and the agentic system (the "body" we chose in module 3.2) does the rest. Think less about "installing" and more about <strong>hire and train</strong> an employee.</p>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-4 flex items-center"><span class="mr-2">🔑</span> The central idea</h3>
+<p class="text-neutral-300 mb-3">Building Jarvis = filling in four boxes, in order:</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Brain:</strong> which AI is doing the thinking behind it (Claude, for example).</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Memory:</strong> who you are and what it should remember (next topic).</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Skills + workflows:</strong> what it can do (topic 3).</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Triggers:</strong> what triggers it — you or a schedule (review of 3.5).</span></li>
+</ul>
+</div>
+<!-- SVG ilustrativo: Jarvis completo no centro com tudo plugado (obrigatorio) -->
+<figure class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="The complete Jarvis: a central core connected by lines of light to four plug-in components around it—brain, memory, skills, and triggers—all working together." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 300">
+<defs>
+<radialgradient cx="50%" cy="50%" id="m36glow" r="50%"><stop offset="0%" stop-color="#c084fc" stop-opacity="0.55"></stop><stop offset="100%" stop-color="#c084fc" stop-opacity="0"></stop></radialgradient>
+<filter height="160%" id="m36soft" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+<pattern height="20" id="m36dots" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#c084fc" opacity="0.12" r="1"></circle></pattern>
+</defs>
+<rect fill="url(#m36dots)" height="300" width="480"></rect>
+<line opacity="0.55" stroke="#38bdf8" stroke-width="2" x1="240" x2="110" y1="150" y2="70"></line>
+<line opacity="0.55" stroke="#38bdf8" stroke-width="2" x1="240" x2="370" y1="150" y2="70"></line>
+<line opacity="0.55" stroke="#38bdf8" stroke-width="2" x1="240" x2="110" y1="150" y2="230"></line>
+<line opacity="0.55" stroke="#38bdf8" stroke-width="2" x1="240" x2="370" y1="150" y2="230"></line>
+<g filter="url(#m36soft)"><circle cx="240" cy="150" fill="url(#m36glow)" r="50"></circle></g>
+<circle cx="240" cy="150" fill="#2e1065" r="32" stroke="#c084fc" stroke-width="2"></circle><text font-size="24" text-anchor="middle" x="240" y="157">🤖</text>
+<text fill="#c084fc" font-size="12" font-weight="600" text-anchor="middle" x="240" y="200">your Jarvis</text>
+<rect fill="#1f1240" height="40" rx="9" stroke="#c084fc" stroke-width="2" width="72" x="74" y="48"></rect><text fill="#e9d5ff" font-size="11" text-anchor="middle" x="110" y="73">🧠 brain</text>
+<rect fill="#1f1240" height="40" rx="9" stroke="#c084fc" stroke-width="2" width="72" x="334" y="48"></rect><text fill="#e9d5ff" font-size="11" text-anchor="middle" x="370" y="73">💾 memory</text>
+<rect fill="#1f1240" height="40" rx="9" stroke="#c084fc" stroke-width="2" width="72" x="74" y="212"></rect><text fill="#e9d5ff" font-size="11" text-anchor="middle" x="110" y="237">🧰 skills</text>
+<g filter="url(#m36soft)"><rect fill="#1f1240" height="40" rx="9" stroke="#38bdf8" stroke-width="2" width="72" x="334" y="212"></rect></g><text fill="#e9d5ff" font-size="11" text-anchor="middle" x="370" y="237">⚡ triggers</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="240" y="285">4 pieces plugged in = 1 assistant ✅</text>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">At the center, your Jarvis; around it, the four plugged-in pieces. Each line of light is a piece "connected" to the core—when all four are connected, it works.</figcaption>
+</figure>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Fit the <strong>4 pieces</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Describe, don’t <strong>install</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Hire &amp; <strong>train</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Tool → <strong>assistant</strong></div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-3-6#topico-2" id="topico-2">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">💾 Add memory and preferences</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-6-t2-p1">A generic assistant answers the same way for everyone. The <strong>your</strong> Jarvis responds from <strong class="text-purple-400">your way</strong> because you told it who you are. That’s memory: the piece of text it reads <em>before</em> for each task, with its name, your work, your quirks, and what it should always remember.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-6-t2-p2">It doesn’t need to be long or perfect on the first try. Start with the essentials and add more as it makes mistakes. Every time you think, “it <em>should</em> know that,” write it down—it becomes a new line in its memory.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">📋</span> What’s worth keeping in memory</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Who you are:</strong> name, role, the kind of work it does.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>What it likes:</strong> tone (formal/direct), response length, language.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Fixed facts:</strong> tools it uses, typical deadlines, recurring names.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Nonnegotiable rules:</strong> "never do X without asking me."</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Don’t try to guess everything at once. Whenever Jarvis makes a mistake because <em>not knowing</em> something of your own, turn the correction into a short sentence and paste it into its memory. In two weeks, its memory becomes an accurate picture of you—built through use, not guesswork.</p>
+</div>
+<!-- CODE BOX copy-run: o system prompt / instrucao-mestra -->
+<div class="bg-dark-800 border border-purple-500/30 rounded-xl p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-2 flex items-center"><span class="mr-2">🧪</span> Your Jarvis's master instruction (copy and paste)</h3>
+<p class="text-neutral-300 text-sm mb-2"><strong>Goal:</strong> give your Jarvis a ready-made identity — who it is, what it remembers about you, and how it acts. Paste it into the "instructions" / "system prompt" field of your assistant (or at the top of the conversation), replacing the parts between &lt; &gt;.</p>
+<pre class="bg-dark-900 border border-dark-600 rounded-lg p-4 overflow-x-auto text-sm font-mono text-neutral-200 whitespace-pre-wrap">Você é o JARVIS, meu assistente pessoal. Aja sempre assim:
+
+QUEM EU SOU
+- Meu nome é &lt;seu nome&gt; e eu trabalho com &lt;sua função/área&gt;.
+- O que mais me consome tempo é &lt;tarefa que mais cansa&gt;.
+
+O QUE VOCÊ SEMPRE LEMBRA
+- Minhas ferramentas: &lt;ex: WhatsApp, planilha de gastos, e-mail&gt;.
+- Prefiro respostas &lt;curtas e diretas / detalhadas&gt;, em português.
+- Fato fixo que não muda: &lt;ex: meu cliente principal é a loja X&gt;.
+
+COMO VOCÊ AGE
+1. Antes de fazer algo demorado, confirme em 1 frase o que entendeu.
+2. Entregue o resultado pronto + diga COMO eu verifico se ficou bom.
+3. NUNCA &lt;sua regra inegociável, ex: envie nada sem eu aprovar&gt;.
+
+Comece se apresentando em 2 linhas e me perguntando
+qual é a primeira tarefa de hoje.</pre>
+<p class="text-neutral-400 text-sm mt-3"><strong>How to know it worked:</strong> when you paste it, Jarvis should introduce itself using the <em>your</em> name, follow the tone you asked for, and finish by asking what the first task is—instead of dumping a generic response. If it ignores your name or the “NEVER” rule, reinforce that line and paste it again.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Memory = it reads <strong>before</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Generic → <strong>your</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Start <strong>small</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Error becomes <strong>new line</strong></div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-3-6#topico-3" id="topico-3">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🔌 Plug In Your Skills and Workflows</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-6-t3-p1">Memory says <em>who it is</em>; skills tell you <em>what it can do</em>. Each skill is a ready-made recipe — like the ones you saw in module 3.3 — that teaches Jarvis to perform a task your way, consistently. Plugging in a skill simply means <strong class="text-purple-400">make it available</strong> for it to use when the task calls for it.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-6-t3-p2">Resist the temptation to plug everything in at once. Start with <strong>two or three skills</strong> that solve your most frequent pain points. A Jarvis with 3 skills that work is worth more than one with 30 you’ve never tested.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-4">✓ How to plug it in well</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Start with 2-3 skills for real pain points</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Test each one on its own before combining them</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Give each skill a clear name (“close out the day’s cash”)</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Only add the next one after the previous one works</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ How it goes wrong</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Plug in 20 skills at once "just to be safe"</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Never tests it, just trusts that it will work</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Skills with vague names that it confuses</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>You don’t know which skill broke when an error occurs</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Think of skills as apps on a newly hired friend's phone: you don't install 80 apps on the first day. Install the 3 they'll actually use, show them how, and add more only after they've mastered those. <strong>Less, but tested, always wins.</strong></p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Skill = what it <strong>does</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Plug in = let <strong>available</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Start with <strong>2-3</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Tested &gt; many</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-3-6#topico-4" id="topico-4">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🌅 Jarvis’s first day at work</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-6-t4-p1">You built it, gave it memory, plugged in skills. Now comes the real test: <strong class="text-purple-400">let Jarvis work on an ordinary day</strong>. Don’t expect perfection — expect to learn. The first day is for seeing where it gets things right on its own and where it still needs your help.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-6-t4-p2">Treat it like the first day for a new employee: stay close, check what they deliver, correct things right away, and note the stumbles. Don’t disappear — <strong>observes</strong>.</p>
+<figure class="rounded-2xl overflow-hidden border border-purple-500/30 mb-6">
+<img alt="A fully functioning AI assistant on a desk: the glowing core is connected by threads of light to an email, a calendar, and a spreadsheet, carrying out tasks while the person watches." class="w-full h-auto" loading="lazy" src="../../../curso/trilha3/assets/img/jarvis-live.png"/>
+<figcaption class="text-xs text-neutral-500 px-4 py-3 bg-dark-800">Your Jarvis on day one: connected to your tools, working while you keep a close eye on it.</figcaption>
+</figure>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-4 flex items-center"><span class="mr-2">📅</span> A plan for the first day</h3>
+<div class="space-y-4">
+<div class="flex items-start space-x-3"><span class="flex-shrink-0 w-7 h-7 rounded-full bg-purple-500/20 text-purple-400 font-bold text-sm flex items-center justify-center">1</span><p class="text-neutral-300 text-sm">Morning: give <strong>one</strong> simple task and see if it uses the right skill.</p></div>
+<div class="flex items-start space-x-3"><span class="flex-shrink-0 w-7 h-7 rounded-full bg-purple-500/20 text-purple-400 font-bold text-sm flex items-center justify-center">2</span><p class="text-neutral-300 text-sm">Check the result with a critical eye—as you would with an intern.</p></div>
+<div class="flex items-start space-x-3"><span class="flex-shrink-0 w-7 h-7 rounded-full bg-purple-500/20 text-purple-400 font-bold text-sm flex items-center justify-center">3</span><p class="text-neutral-300 text-sm">Noted an error? It becomes a line in memory or an adjustment to the skill (topic 5).</p></div>
+<div class="flex items-start space-x-3"><span class="flex-shrink-0 w-7 h-7 rounded-full bg-purple-500/20 text-purple-400 font-bold text-sm flex items-center justify-center">4</span><p class="text-neutral-300 text-sm">Only then move on to task no. 2. One win at a time.</p></div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">⚠️</span> Attention</h3>
+<p class="text-neutral-300">On the first day, keep the "NEVER without approval" rule firmly in place. It's easy to let Jarvis <em>propose</em> and you <em>approve</em>; it’s expensive to discover an error after it’s already sent. Autonomy is earned through trust—and trust comes from day 2 onward.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Stress test = <strong>real day</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Observe, don't <strong>disappear</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 One task <strong>at a time</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Approve before <strong>trust</strong></div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-3-6#topico-5" id="topico-5">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">📈 Improve over time</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-6-t5-p1">A Jarvis isn’t ready-made — it <strong class="text-purple-400">grows with you</strong>. Every corrected error becomes a new rule; every task you repeat too often becomes a new skill; everything you’re tired of explaining becomes a line in its memory. The secret isn’t building the perfect assistant, but building one that <strong>gets a little better every week</strong>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-6-t5-p2">The best part: you already have the raw material. Remember the human advantage from Track 1? That's exactly what you'll use here—knowing what's good and what needs adjustment. AI executes; <strong>you refine</strong>.</p>
+<div class="bg-dark-800 border border-dark-600 rounded-xl p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-4 flex items-center"><span class="mr-2">🔁</span> The continuous improvement cycle</h3>
+<div class="space-y-5">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-700/50 rounded-xl p-4 border border-dark-600"><h4 class="font-semibold mb-1">👀 Observe</h4><p class="text-neutral-300 text-sm">Where did it get things right on its own? Where did you have to correct it?</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-700/50 rounded-xl p-4 border border-dark-600"><h4 class="font-semibold mb-1">✏️ Adjust</h4><p class="text-neutral-300 text-sm">It becomes a rule in memory, an adjustment to the skill, or a new skill.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">3</span></div>
+<div class="flex-1 bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl p-4 border border-purple-500/30"><h4 class="font-semibold mb-1 text-purple-400">🚀 Trust more</h4><p class="text-neutral-300 text-sm">Whatever it already gets right every time, you let it do on its own.</p></div>
+</div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Reserve <strong>10 minutes per week</strong> just to refine Jarvis: review where it went wrong and fix one thing. Ten minutes x 52 weeks = an assistant that knows you better than any off-the-shelf tool ever could.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Grow <strong>with you</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Observe → adjust → <strong>trust</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Error = <strong>new rule</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 10 min/week <strong>of refinement</strong></div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-3-6#topico-6" id="topico-6">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🚀 Next steps and the expiration date</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-6-t6-p1">You’ve reached the end of the course with something rare: you didn’t just understand the shift, you also <strong class="text-purple-400">built your own Jarvis</strong>. What comes next is simple to say and powerful to do: <strong>use</strong>. An assistant that sits idle doesn’t improve; one you use every day becomes indispensable.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-6-t6-p2">And here’s the honest truth about <em>expiration date</em>: the advantage of arriving early in the agentic phase is significant, but it won't last forever. The more people join, the more common this becomes. <strong>The window is open now</strong> — and you’re already in it. The difference will be between those who started today and those who are still thinking about it.</p>
+<!-- CAIXA DE DADOS -->
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">📊</span> Why start now</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>~88%</strong> of companies already work with AI — but only <strong>~6%</strong> actually use.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>AI changes phases every <strong>~1 year</strong>: those who get in early catch the wave.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>You just built a Jarvis — it’s in the <strong>a few percent</strong> that move beyond theory.</span></li>
+</ul>
+<p class="text-neutral-400 text-sm mt-3">Translation: most people have the tool; very few have their own assistant running. You’ve just joined that minority.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-4">✓ Clear next steps</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Use Jarvis on a real task today</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Set aside 10 min/week to refine</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Return to the modules when you get stuck</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Share what worked on INEMA.CLUB</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Pitfalls to avoid</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Build Jarvis and never use it</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Wait for the "perfect" tool to arrive</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Wanting 30 skills before testing the first one</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Put it off “until you have time”</span></li>
+</ul>
+</div>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-3-6#q1">
+<p class="font-medium mb-4">✋ Final question of the course — what's the best way to make your Jarvis good?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A) Plug in as many skills as possible on day one.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">B) Start simple, put it to real use, and refine it a little every week.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">C) Wait for a perfect tool to appear before using one.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="flex justify-start mt-8">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- RESUMO / FECHO DO CURSO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+<h2 class="text-2xl font-bold mb-2 flex items-center"><span class="mr-3">🎉</span> You completed the course!</h2>
+<p class="text-neutral-300 mb-6">From the user’s shift to conductor, through hands-on practice, to building your own Jarvis live: you’ve completed all three tracks. That’s much more than most people ever do. Truly, congratulations.</p>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">You put the 4 pieces together</strong><span class="text-neutral-400"> — brain, memory, skills, and triggers in a single assistant.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Gave it an identity</strong><span class="text-neutral-400"> — a master instruction that says who it is and how it acts.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Put it to work</strong><span class="text-neutral-400"> — and learned to refine it a little each week.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Got in early during the agentic phase</strong><span class="text-neutral-400"> — the window is open, and you’re already inside.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-purple-400 mb-2">What’s next?</h3>
+<p class="text-neutral-300">The course ends here, but the journey begins when you put it to use. Keep learning, share experiences, and take your Jarvis further in the INEMA community.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the Track</a>
+<a class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors" href="https://inema.club" target="_blank">Explore more on INEMA.CLUB →</a>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>🎼 The World After Claude · Module 3.6 — <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<script>
+    function toggleTopic(button){
+      var topicItem=button.closest('.topic-item');
+      var explanation=topicItem.querySelector('.topic-explanation');
+      var moduleCard=button.closest('.bg-dark-800')||document;
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(function(exp){ if(exp!==explanation) exp.classList.remove('active'); });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active')?'true':'false');
+    }
+    (function(){
+      var themeToggle=document.getElementById('theme-toggle');
+      var d=document.getElementById('theme-toggle-dark-icon');
+      var l=document.getElementById('theme-toggle-light-icon');
+      var html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ l.classList.remove('hidden'); d.classList.add('hidden'); } else { d.classList.remove('hidden'); l.classList.add('hidden'); } }
+      sync();
+      themeToggle.addEventListener('click',function(){
+        html.classList.toggle('dark');
+        var isDark=html.classList.contains('dark');
+        localStorage.setItem('theme', isDark?'dark':'light');
+        try{ var p=JSON.parse(localStorage.getItem('inema.prefs')||'{}'); p.theme=isDark?'inema-dark':'claro'; localStorage.setItem('inema.prefs',JSON.stringify(p)); }catch(e){}
+        html.style.colorScheme=isDark?'dark':'light';
+        if(isDark) html.removeAttribute('data-theme');
+        sync();
+      });
+    })();
+    function openModal(id){ var m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(function(m){ m.classList.add('hidden'); }); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+  </script>
+<script src="../../../assets/learn.js"></script>
+<script>
+    if(window.INEMA&&typeof window.INEMA.init==='function'){ window.INEMA.init(); }
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-3-6#q1', {
+          answer: 1,
+          explain: {
+            0: 'Não — plugar tudo de uma vez vira um Jarvis que você não testou e não confia. Comece com 2-3 skills.',
+            1: 'Isso! Simples no começo, uso de verdade e lapidação semanal: é assim que o assistente fica seu e fica bom.',
+            2: 'Não — esperar a ferramenta perfeita é a armadilha clássica. A janela está aberta agora; o melhor jeito de melhorar é usando.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

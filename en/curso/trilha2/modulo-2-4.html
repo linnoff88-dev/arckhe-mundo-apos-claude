@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="mundo-apos-claude" name="inema-course"/>
+<title>2.4 Agents that do the work | The World After Claude</title>
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'blue' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark')?'dark':'light'));
+      html.setAttribute('data-font', p.font||'inter'); html.setAttribute('data-accent', p.accent||'blue');
+      var s=html.style, scale=(+p.fontScale||100);
+      s.setProperty('--inema-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
+      s.setProperty('--measure',(+p.lineWidth||68)+'ch'); s.setProperty('--lh-body',(+p.leading||1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC={emerald:[152,76,45],blue:[217,91,60],purple:[258,90,66],amber:[38,92,50],teal:[174,72,41],rose:[350,89,60]};
+      var a=ACC[p.accent]||ACC.blue; s.setProperty('--accent-h',a[0]+''); s.setProperty('--accent-s',a[1]+'%'); s.setProperty('--accent-l',a[2]+'%'); s.setProperty('--accent','hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode:'class', theme:{ extend:{ colors:{ primary:'#FACC15', dark:{900:'#111827',800:'#1f2937',700:'#374151',600:'#4b5563'} } } } }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 5rem; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* acento blue (T2) */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+    /* nav: emerald/purple */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "mundo-apos-claude",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "A virada: de usuario a maestro", "topics": 6, "href": "curso/trilha1/modulo-1-1.html" },
+        { "id": "1-2", "title": "Anatomia de um agente", "topics": 6, "href": "curso/trilha1/modulo-1-2.html" },
+        { "id": "1-3", "title": "Skills, MCP e o ecossistema", "topics": 6, "href": "curso/trilha1/modulo-1-3.html" },
+        { "id": "1-4", "title": "Contexto, memoria e o harness", "topics": 6, "href": "curso/trilha1/modulo-1-4.html" },
+        { "id": "1-5", "title": "O diferencial humano", "topics": 6, "href": "curso/trilha1/modulo-1-5.html" }
+      ]},
+      { "n": "2", "title": "Pratica", "modules": [
+        { "id": "2-1", "title": "Seu primeiro build dirigido", "topics": 6, "href": "curso/trilha2/modulo-2-1.html" },
+        { "id": "2-2", "title": "Construindo com skills", "topics": 6, "href": "curso/trilha2/modulo-2-2.html" },
+        { "id": "2-3", "title": "Conectando o mundo (MCP)", "topics": 6, "href": "curso/trilha2/modulo-2-3.html" },
+        { "id": "2-4", "title": "Agentes que fazem o trabalho", "topics": 6, "href": "curso/trilha2/modulo-2-4.html" },
+        { "id": "2-5", "title": "Verificar e provar", "topics": 6, "href": "curso/trilha2/modulo-2-5.html" }
+      ]},
+      { "n": "3", "title": "Jarvis & Arsenal", "modules": [
+        { "id": "3-1", "title": "Arquitetura de um Jarvis", "topics": 6, "href": "curso/trilha3/modulo-3-1.html" },
+        { "id": "3-2", "title": "OpenClaw, Hermes e sistemas agenticos", "topics": 6, "href": "curso/trilha3/modulo-3-2.html" },
+        { "id": "3-3", "title": "Skills prontas", "topics": 6, "href": "curso/trilha3/modulo-3-3.html" },
+        { "id": "3-4", "title": "Agentes e workflows prontos", "topics": 6, "href": "curso/trilha3/modulo-3-4.html" },
+        { "id": "3-5", "title": "Automacao e gatilhos", "topics": 6, "href": "curso/trilha3/modulo-3-5.html" },
+        { "id": "3-6", "title": "Seu Jarvis ao vivo", "topics": 6, "href": "curso/trilha3/modulo-3-6.html" }
+      ]}
+    ]
+  }
+  </script>
+<link href="https://inematds.github.io/mundo-apos-claude/curso/trilha2/modulo-2-4.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/en/curso/trilha2/modulo-2-4.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/es/curso/trilha2/modulo-2-4.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha2/modulo-2-4.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-2-4.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha2/modulo-2-4.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg" href="#conteudo">Skip to content</a>
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🎼</span><span class="font-bold text-lg hidden sm:inline">The World After Claude</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10" href="index.html"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Practice</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Jarvis</span></a>
+<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-inema-journey-open="" type="button"><span aria-hidden="true">◷</span><span>My journey</span><span class="hidden" data-inema-journey-badge=""></span></button>
+<button aria-label="Toggle light/dark theme" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav aria-label="Navigation trail" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-blue-400" href="../../index.html">Start</a><span>/</span>
+<a class="hover:text-blue-400" href="index.html">Track 2</a><span>/</span>
+<span class="text-blue-400">Module 2.4</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">MODULE 2.4</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🤖 Agents that do the work</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">Up to this point, you’ve directed <strong class="text-blue-400">one</strong> helper at a time. Now you become the boss of a <strong class="text-blue-400">team</strong>: handles entire tasks, puts several agents to work at the same time, and brings everything together at the end—like a <strong class="text-primary">conductor</strong> conducting the orchestra.</p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">6</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">~55</div><div class="text-xs text-neutral-400">Minutes</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">Practical</div><div class="text-xs text-neutral-400">Level</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">Practice</div><div class="text-xs text-neutral-400">Type</div></div>
+</div>
+<div class="mt-6 max-w-md">
+<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progress in this module</span><span class="text-sm font-bold text-blue-400"><span class="inema-meter-pct">0%</span></span></div>
+<div aria-label="Module 2.4 progress" aria-valuemax="100" aria-valuemin="0" class="inema-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-inema-meter="modulo:2-4" role="progressbar"><div class="h-full bg-blue-500 rounded-full transition-all" data-inema-meter-fill="" style="width:0%"></div></div>
+<p class="text-xs text-neutral-500 mt-1.5"><span class="inema-meter-count">0 of 6</span> sections read</p>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid lg:grid-cols-[220px_1fr] gap-10">
+<!-- TOC -->
+<nav aria-label="Module index" class="hidden lg:block sticky top-24 self-start" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-3">Section <span class="inema-toc-pos">1</span> of <span class="inema-toc-total">6</span></p>
+<ul class="space-y-1.5 text-sm">
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-1">1. Delegate the entire task</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-2">2. Several at the same time</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-3">3. Break down big tasks</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-4">4. Review what it delivered</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-5">5. When to use one or several</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-blue-400" href="#topico-6">6. Orchestrate like a maestro</a></li>
+</ul>
+</nav>
+<main class="min-w-0 inema-prose" id="conteudo">
+<!-- "Novo aqui?" -->
+<div class="bg-primary/10 border border-primary/30 rounded-2xl p-6 mb-12">
+<h2 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> New here? Three words before you start</h2>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-primary">Agent</strong> — an AI that, instead of just answering, <em>goes and does it</em> the task from start to finish, on its own.</li>
+<li><strong class="text-primary">Delegate</strong> — handing an entire objective to someone (or an agent) to take care of, instead of doing it by hand.</li>
+<li><strong class="text-primary">In parallel</strong> — several tasks happening at the same time, side by side, without waiting for one to finish before starting another.</li>
+</ul>
+</div>
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-2-4#topico-1" id="topico-1">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">📨 Delegate an Entire Task to an Agent</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-4-t1-p1">Until now, you’ve talked with AI step by step: you ask for something, it responds, then you ask for the next thing. <strong class="text-blue-400">Delegate</strong> it’s different — you give it the goal <em>whole</em> at once and let the agent handle everything on its own: it reads, decides, does the work, checks it, and comes back with the finished work.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-4-t1-p2">It’s like asking a human assistant: you don’t dictate every click. You say <strong>"organize the invoices folder by month and let me know if anything is missing"</strong> and trust that it’ll handle it. Your job becomes <strong>describe the goal well</strong> e <strong>check the result</strong> — not monitoring every move.</p>
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">🔑</span> The central idea</h3>
+<p class="text-neutral-300 mb-3">Think about the difference between <strong>give instructions every minute</strong> e <strong>hand off the mission</strong>:</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span><strong>Micromanage:</strong> "open the file... now copy line 3... now paste it here..." — you do almost everything.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span><strong>Delegate:</strong> "combine these 5 spreadsheets into one, removing duplicates" — the agent handles the steps in between.</span></li>
+</ul>
+</div>
+<!-- SVG ilustrativo 1 (obrigatorio) -->
+<figure class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Comparison: on the left, you dictate every step to the AI and get stuck halfway; on the right, you give it the whole mission and the agent returns the finished result." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 200">
+<defs>
+<pattern height="20" id="m24dots" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#60a5fa" opacity="0.10" r="1"></circle></pattern>
+<filter height="160%" id="m24soft" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+<radialgradient cx="50%" cy="50%" id="m24glow" r="50%"><stop offset="0%" stop-color="#60a5fa" stop-opacity="0.5"></stop><stop offset="100%" stop-color="#60a5fa" stop-opacity="0"></stop></radialgradient>
+</defs>
+<rect fill="url(#m24dots)" height="200" width="480"></rect>
+<!-- MICROGERENCIAR -->
+<text fill="#9ca3af" font-size="13" font-weight="600" text-anchor="middle" x="120" y="28">MICROMANAGE</text>
+<circle cx="60" cy="100" fill="#1f2937" r="18" stroke="#6b7280" stroke-width="2"></circle><text font-size="16" text-anchor="middle" x="60" y="105">🙂</text>
+<path d="M82 92 L150 92" marker-end="url(#m24a1)" stroke="#6b7280" stroke-width="2"></path>
+<path d="M150 108 L82 108" marker-end="url(#m24a1b)" stroke="#6b7280" stroke-width="2"></path>
+<rect fill="#1f2937" height="40" rx="8" stroke="#6b7280" stroke-width="2" width="60" x="155" y="80"></rect><text fill="#9ca3af" font-size="11" text-anchor="middle" x="185" y="104">step</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="120" y="160">keeps going back and forth 🔁</text>
+<!-- divisor -->
+<line stroke="#374151" stroke-dasharray="3 4" stroke-width="1.5" x1="240" x2="240" y1="40" y2="170"></line>
+<!-- DELEGAR -->
+<text fill="#60a5fa" font-size="13" font-weight="600" text-anchor="middle" x="370" y="28">DELEGATE</text>
+<circle cx="300" cy="100" fill="#102a4c" r="18" stroke="#60a5fa" stroke-width="2"></circle><text font-size="16" text-anchor="middle" x="300" y="105">🧑‍🎤</text>
+<path d="M322 100 L388 100" marker-end="url(#m24a2)" stroke="#60a5fa" stroke-width="2"></path>
+<g filter="url(#m24soft)"><circle cx="426" cy="100" fill="url(#m24glow)" r="26"></circle></g>
+<rect fill="#0b3550" height="44" rx="10" stroke="#38bdf8" stroke-width="2" width="64" x="394" y="78"></rect><text fill="#38bdf8" font-size="11" text-anchor="middle" x="426" y="104">✅ ready</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="370" y="160">the agent handles the middle 🤖</text>
+<defs>
+<marker id="m24a1" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#6b7280"></path></marker>
+<marker id="m24a1b" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#6b7280"></path></marker>
+<marker id="m24a2" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#60a5fa"></path></marker>
+</defs>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">On the left, you're stuck going back and forth; on the right, you hand off the mission and get the result. Delegating gives you back <em>time</em>.</figcaption>
+</figure>
+<!-- CODE BOX copy-run -->
+<div class="bg-dark-800 border border-blue-500/30 rounded-xl p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-2 flex items-center"><span class="mr-2">🧪</span> Copy and run: delegate an entire task</h3>
+<p class="text-neutral-300 text-sm mb-2"><strong>Goal:</strong> feel what it’s like to hand over the whole mission instead of asking for step-by-step instructions. Paste it into Claude or ChatGPT, replacing what’s between &lt; &gt;.</p>
+<pre class="bg-dark-900 border border-dark-600 rounded-lg p-4 overflow-x-auto text-sm font-mono text-neutral-200 whitespace-pre-wrap">Aja como um agente que executa a tarefa DO COMEÇO AO FIM.
+
+TAREFA: &lt;ex: organizar estas anotações soltas num resumo
+de reunião com decisões e próximos passos&gt;.
+
+MATERIAL: &lt;cole aqui suas anotações / dados&gt;
+
+Como quero o resultado: &lt;ex: um resumo em tópicos, com uma
+lista de tarefas no final, cada uma com responsável&gt;.
+
+Trabalhe sozinho até terminar. No fim, me entregue:
+1) o resultado pronto,
+2) uma linha dizendo como EU posso conferir se ficou certo.</pre>
+<p class="text-neutral-400 text-sm mt-3"><strong>How to know it worked:</strong> AI should come back with the work <em>ready-made</em> (not just a plan) and finish by telling you how to check it. That's delegation — you only review it at the end.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Deliver the <strong>goal</strong>, not the steps</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Let the agent <strong>autonomy</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Your role: <strong>describe + check</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Stop micromanaging</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-2-4#topico-2" id="topico-2">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">👥 Several at once (fan-out)</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-4-t2-p1">If an agent can already do the whole task on its own, why not have <strong class="text-blue-400">several working at the same time</strong>? That’s the <strong>fan-out</strong> — a fancy word for “spreading out the work.” You split the mission into parts and send one agent to each part, all working in parallel.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-4-t2-p2">Imagine you need to research 5 competitors. Instead of having one agent analyze them one by one (slowly), you send <strong>5 agents</strong>, each handling a competitor. They work together, and you get all 5 reports in almost the same time it would take to get one. That's where the speed takes off.</p>
+<!-- SVG ilustrativo 2 (obrigatorio) — FAN-OUT: 1 maestro -> varios agentes em paralelo -->
+<figure class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Fan-out: one orchestrator at the center launches four agents that work at the same time, each on a part of the task." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 260">
+<defs>
+<pattern height="20" id="m24fdots" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#60a5fa" opacity="0.10" r="1"></circle></pattern>
+<filter height="180%" id="m24fsoft" width="180%" x="-40%" y="-40%"><fegaussianblur stddeviation="2"></fegaussianblur></filter>
+<radialgradient cx="50%" cy="50%" id="m24fglow" r="50%"><stop offset="0%" stop-color="#60a5fa" stop-opacity="0.55"></stop><stop offset="100%" stop-color="#60a5fa" stop-opacity="0"></stop></radialgradient>
+</defs>
+<rect fill="url(#m24fdots)" height="260" width="480"></rect>
+<text fill="#60a5fa" font-size="13" font-weight="600" text-anchor="middle" x="240" y="26">FAN-OUT · 1 orchestrator → multiple agents</text>
+<!-- linhas saindo do maestro para os 4 agentes -->
+<path d="M240 78 L96 168" opacity="0.7" stroke="#38bdf8" stroke-dasharray="4 4" stroke-width="2"></path>
+<path d="M240 78 L192 168" opacity="0.7" stroke="#38bdf8" stroke-dasharray="4 4" stroke-width="2"></path>
+<path d="M240 78 L288 168" opacity="0.7" stroke="#38bdf8" stroke-dasharray="4 4" stroke-width="2"></path>
+<path d="M240 78 L384 168" opacity="0.7" stroke="#38bdf8" stroke-dasharray="4 4" stroke-width="2"></path>
+<!-- maestro -->
+<g filter="url(#m24fsoft)"><circle cx="240" cy="60" fill="url(#m24fglow)" r="30"></circle></g>
+<circle cx="240" cy="60" fill="#102a4c" r="22" stroke="#60a5fa" stroke-width="2"></circle><text font-size="20" text-anchor="middle" x="240" y="67">🎼</text>
+<text fill="#e5e7eb" font-size="11" font-weight="600" text-anchor="middle" x="240" y="108">you (the conductor)</text>
+<!-- 4 agentes em paralelo -->
+<g>
+<rect fill="#102a4c" height="44" rx="10" stroke="#60a5fa" stroke-width="2" width="52" x="70" y="168"></rect><text font-size="20" text-anchor="middle" x="96" y="196">🤖</text>
+<rect fill="#102a4c" height="44" rx="10" stroke="#60a5fa" stroke-width="2" width="52" x="166" y="168"></rect><text font-size="20" text-anchor="middle" x="192" y="196">🤖</text>
+<rect fill="#102a4c" height="44" rx="10" stroke="#60a5fa" stroke-width="2" width="52" x="262" y="168"></rect><text font-size="20" text-anchor="middle" x="288" y="196">🤖</text>
+<rect fill="#102a4c" height="44" rx="10" stroke="#60a5fa" stroke-width="2" width="52" x="358" y="168"></rect><text font-size="20" text-anchor="middle" x="384" y="196">🤖</text>
+</g>
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="96" y="232">part A</text>
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="192" y="232">part B</text>
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="288" y="232">part C</text>
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="384" y="232">part D</text>
+<text fill="#38bdf8" font-size="11" font-weight="600" text-anchor="middle" x="240" y="252">all at the same time ⚡</text>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">The conductor launches one agent per part and <strong>all run together</strong>. Four tasks in the time of one—that’s fan-out.</figcaption>
+</figure>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Fan-out is only worthwhile when the parts are <strong>independent</strong> — one doesn’t need to wait for the other. Researching 5 competitors is perfect. But “write chapter 2, which depends on chapter 1” won’t work: that’s better handled by a single agent, step by step.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 <strong>Fan-out</strong> = spread the work</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Multiple agents <strong>in parallel</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Works in parts <strong>independent</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Multiplies the <strong>speed</strong></div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-2-4#topico-3" id="topico-3">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🪓 Break a large task into pieces</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-4-t3-p1">To distribute work among several agents (or just get more out of one agent), first you need to <strong class="text-blue-400">break the task into pieces</strong>. A task that’s too big confuses even AI: focus gets lost, details slip through. Smaller pieces are easier to do well—and easier to check.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-4-t3-p2">The image below summarizes the module: you're the conductor coordinating agents that do the heavy lifting, each in their own area.</p>
+<figure class="rounded-2xl overflow-hidden border border-blue-500/30 mb-6">
+<img alt="A conductor in the center, surrounded by several glowing AI agents carrying out tasks in parallel, connected by blue threads of light — an image of delegating and orchestrating work." class="w-full h-auto" loading="lazy" src="../../../curso/trilha2/assets/img/agents-work.png"/>
+<figcaption class="text-xs text-neutral-500 px-4 py-3 bg-dark-800">The heart of module 2.4: you conduct; the agents execute, each handling its own part.</figcaption>
+</figure>
+<!-- TIMELINE: como cortar -->
+<div class="space-y-5 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">🎯 Look at the end goal</h4><p class="text-neutral-300 text-sm">Before cutting, make it clear what “done” means. Example: “a report on 5 competitors.”</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">✂️ Split into natural sections</h4><p class="text-neutral-300 text-sm">Look for the obvious “seams”: one competitor per section, one chapter per section, one month per section.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">📋 Give each piece the same template</h4><p class="text-neutral-300 text-sm">Each agent gets the same response format. That makes it easy to put everything together at the end.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">4</span></div>
+<div class="flex-1 bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl p-5 border border-blue-500/30"><h4 class="font-semibold mb-1 text-blue-400">🧩 Put the pieces together</h4><p class="text-neutral-300 text-sm">When the parts follow the same pattern, putting together the final result is like fitting pieces together.</p></div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Rule of thumb: if you can’t describe a part in <strong>one clear sentence</strong>, it's still too big. Cut it down again until each part fits in one sentence.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Smaller piece = better result</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Cut by <strong>natural connections</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Same <strong>template</strong> in each part</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 One sentence per piece</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-2-4#topico-4" id="topico-4">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🔍 Review What the Agent Delivered</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-4-t4-p1">Delegate <strong class="text-blue-400">no</strong> it’s giving up control. The agent does the heavy lifting, but the result has your name on it — so the review is still yours. The good news: reviewing is much faster than doing the work, and with practice you develop an eye for where mistakes tend to show up.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-4-t4-p2">The right review isn’t rereading everything line by line. It’s <strong>check the points that matter</strong>: was the goal met? Do the numbers add up? Is anything made up? Is anything missing? When you clearly defined “what good looks like” at the top, review is easy—you just compare.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">✓ Conductor’s review</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Check whether the goal was achieved</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Confirm important facts and numbers</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Look for missing or made-up parts</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Asks for adjustments and runs it again if needed</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Blind trust</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Accepts everything without reading</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Assumes that “looks right” = is right</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Doesn't check any numbers</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Uses the result and discovers the error afterward</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Ask the agent itself for a <strong>"checklist"</strong> along with the result: "tell me 3 things I should check before trusting this". It points out the weak spots—and focuses your review.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Delegate ≠ abdicate</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Reviewing is faster than doing</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Check <strong>what matters</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 The result is yours</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-2-4#topico-5" id="topico-5">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">⚖️ When to use one agent or several</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-4-t5-p1">More agents aren’t always better. Launching five when one would do only creates confusion and unnecessary expense. The choice is simple when you look at the task: does it <strong class="text-blue-400">breaks it into independent parts</strong> or is <strong class="text-blue-400">one thing, in sequence</strong>?</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-4-t5-p2">Use the two charts below as your compass. When in doubt, start with <strong>one</strong> agent—it's easier to keep track of—and only move on to several when you feel you can split them up without the parts depending on one another.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">✓ One agent is enough when…</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>The task is small or quick</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>One step depends on the previous one (sequence)</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>You want to keep a close eye on it</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Everything is about the same topic</span></li>
+</ul>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">✓ Multiple agents are worth it when…</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>The work is large and separable</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>The parts don’t depend on one another</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Speed matters a lot</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Every part is similar (same template)</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Do the <strong>the stitching test</strong>: try describing the task as “do X for each ___.” If the phrase sounds natural (“for each competitor,” “for each month”), it’s fan-out. If you need “first... then... after that...,” it’s an agent working in sequence.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 More agents ≠ always better</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Sequence → <strong>one</strong> agent</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Separable → <strong>several</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 When in doubt, start with one</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-2-4#topico-6" id="topico-6">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🎼 Orchestrate like a conductor (put it all together)</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-4-t6-p1">Here, the module’s five ideas become one dance. <strong class="text-blue-400">Orchestrate</strong> it’s your job as the conductor: you define the goal, break it into pieces, launch the agents (one or several), review what each one brings back, and <strong>combines everything into one result</strong> that feels like you.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m2-4-t6-p2">Notice: you didn’t touch an instrument. You didn’t program or do the heavy lifting. But you conducted it—and the result bears your name. That’s the heart of this entire course, now put into practice with a team of agents.</p>
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">🎯</span> The maestro’s cycle</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400">1.</span><span><strong>Define</strong> the goal and “what good looks like.”</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">2.</span><span><strong>Cut</strong> in pieces that fit an agent.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">3.</span><span><strong>Launch</strong> — one agent, or several in parallel.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">4.</span><span><strong>Review</strong> what each one delivered.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">5.</span><span><strong>Gather</strong> all in one result.</span></li>
+</ul>
+</div>
+<div class="space-y-3 mb-6">
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-blue-400 text-xl">📨</span><div><strong class="text-blue-400">Delegate:</strong> <span class="text-neutral-300 text-sm">deliver the entire mission, not the steps.</span></div></div>
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-blue-400 text-xl">👥</span><div><strong class="text-blue-400">Fan-out:</strong> <span class="text-neutral-300 text-sm">several agents at the same time, on independent parts.</span></div></div>
+<div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-blue-400 text-xl">🔍</span><div><strong class="text-blue-400">Review and combine:</strong> <span class="text-neutral-300 text-sm">you review and assemble the final result.</span></div></div>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-2-4#q1">
+<p class="font-medium mb-4">✋ Before you continue — you need to research 5 competitors, and each search is independent of the others. What's the best move?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A) One agent does all 5, one at a time, in sequence.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">B) Fan-out: one agent per competitor, all working in parallel, and you combine the 5 reports at the end.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">C) You do the research yourself, without using any agent.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="flex justify-start mt-8">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎓</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Delegate the entire task</strong><span class="text-neutral-400"> — give it the objective, not the steps.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Fan-out</strong><span class="text-neutral-400"> — several agents working in parallel on independent parts.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Cut and review</strong><span class="text-neutral-400"> — small pieces, with you still doing the review.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Orchestrate</strong><span class="text-neutral-400"> — you lead the team and bring everything together into one result.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-blue-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">2.5 — ✅ Verify and prove: how to measure, test for real, and turn what you did into proof.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the Track</a>
+<a class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors" href="modulo-2-5.html">Next: 2.5 Verify and prove →</a>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>🎼 The World After Claude · Module 2.4 — <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<script>
+    function toggleTopic(button){
+      var topicItem=button.closest('.topic-item');
+      var explanation=topicItem.querySelector('.topic-explanation');
+      var moduleCard=button.closest('.bg-dark-800')||document;
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(function(exp){ if(exp!==explanation) exp.classList.remove('active'); });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active')?'true':'false');
+    }
+    (function(){
+      var themeToggle=document.getElementById('theme-toggle');
+      var d=document.getElementById('theme-toggle-dark-icon');
+      var l=document.getElementById('theme-toggle-light-icon');
+      var html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ l.classList.remove('hidden'); d.classList.add('hidden'); } else { d.classList.remove('hidden'); l.classList.add('hidden'); } }
+      sync();
+      themeToggle.addEventListener('click',function(){
+        html.classList.toggle('dark');
+        var isDark=html.classList.contains('dark');
+        localStorage.setItem('theme', isDark?'dark':'light');
+        try{ var p=JSON.parse(localStorage.getItem('inema.prefs')||'{}'); p.theme=isDark?'inema-dark':'claro'; localStorage.setItem('inema.prefs',JSON.stringify(p)); }catch(e){}
+        html.style.colorScheme=isDark?'dark':'light';
+        if(isDark) html.removeAttribute('data-theme');
+        sync();
+      });
+    })();
+    function openModal(id){ var m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(function(m){ m.classList.add('hidden'); }); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+  </script>
+<script src="../../../assets/learn.js"></script>
+<script>
+    if(window.INEMA&&typeof window.INEMA.init==='function'){ window.INEMA.init(); }
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-2-4#q1', {
+          answer: 1,
+          explain: {
+            0: 'Funciona, mas é lento — as 5 pesquisas são independentes, então não há motivo pra esperar uma terminar pra começar a outra.',
+            1: 'Isso! Partes independentes pedem fan-out: um agente por concorrente, todos em paralelo, e você junta os relatórios no fim.',
+            2: 'Não — você não precisa fazer o trabalho pesado. O seu papel é dirigir os agentes e revisar o que voltou.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

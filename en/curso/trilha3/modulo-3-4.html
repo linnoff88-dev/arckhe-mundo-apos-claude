@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="mundo-apos-claude" name="inema-course"/>
+<title>3.4 Ready-made agents and workflows | The World After Claude</title>
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'purple' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark')?'dark':'light'));
+      html.setAttribute('data-font', p.font||'inter'); html.setAttribute('data-accent', p.accent||'purple');
+      var s=html.style, scale=(+p.fontScale||100);
+      s.setProperty('--inema-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
+      s.setProperty('--measure',(+p.lineWidth||68)+'ch'); s.setProperty('--lh-body',(+p.leading||1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC={emerald:[152,76,45],blue:[217,91,60],purple:[258,90,66],amber:[38,92,50],teal:[174,72,41],rose:[350,89,60]};
+      var a=ACC[p.accent]||ACC.purple; s.setProperty('--accent-h',a[0]+''); s.setProperty('--accent-s',a[1]+'%'); s.setProperty('--accent-l',a[2]+'%'); s.setProperty('--accent','hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode:'class', theme:{ extend:{ colors:{ primary:'#FACC15', dark:{900:'#111827',800:'#1f2937',700:'#374151',600:'#4b5563'} } } } }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 5rem; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "mundo-apos-claude",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "A virada: de usuario a maestro", "topics": 6, "href": "curso/trilha1/modulo-1-1.html" },
+        { "id": "1-2", "title": "Anatomia de um agente", "topics": 6, "href": "curso/trilha1/modulo-1-2.html" },
+        { "id": "1-3", "title": "Skills, MCP e o ecossistema", "topics": 6, "href": "curso/trilha1/modulo-1-3.html" },
+        { "id": "1-4", "title": "Contexto, memoria e o harness", "topics": 6, "href": "curso/trilha1/modulo-1-4.html" },
+        { "id": "1-5", "title": "O diferencial humano", "topics": 6, "href": "curso/trilha1/modulo-1-5.html" }
+      ]},
+      { "n": "2", "title": "Pratica", "modules": [
+        { "id": "2-1", "title": "Seu primeiro build dirigido", "topics": 6, "href": "curso/trilha2/modulo-2-1.html" },
+        { "id": "2-2", "title": "Construindo com skills", "topics": 6, "href": "curso/trilha2/modulo-2-2.html" },
+        { "id": "2-3", "title": "Conectando o mundo (MCP)", "topics": 6, "href": "curso/trilha2/modulo-2-3.html" },
+        { "id": "2-4", "title": "Agentes que fazem o trabalho", "topics": 6, "href": "curso/trilha2/modulo-2-4.html" },
+        { "id": "2-5", "title": "Verificar e provar", "topics": 6, "href": "curso/trilha2/modulo-2-5.html" }
+      ]},
+      { "n": "3", "title": "Jarvis & Arsenal", "modules": [
+        { "id": "3-1", "title": "Arquitetura de um Jarvis", "topics": 6, "href": "curso/trilha3/modulo-3-1.html" },
+        { "id": "3-2", "title": "OpenClaw, Hermes e sistemas agenticos", "topics": 6, "href": "curso/trilha3/modulo-3-2.html" },
+        { "id": "3-3", "title": "Skills prontas", "topics": 6, "href": "curso/trilha3/modulo-3-3.html" },
+        { "id": "3-4", "title": "Agentes e workflows prontos", "topics": 6, "href": "curso/trilha3/modulo-3-4.html" },
+        { "id": "3-5", "title": "Automacao e gatilhos", "topics": 6, "href": "curso/trilha3/modulo-3-5.html" },
+        { "id": "3-6", "title": "Seu Jarvis ao vivo", "topics": 6, "href": "curso/trilha3/modulo-3-6.html" }
+      ]}
+    ]
+  }
+  </script>
+<link href="https://inematds.github.io/mundo-apos-claude/curso/trilha3/modulo-3-4.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/en/curso/trilha3/modulo-3-4.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/es/curso/trilha3/modulo-3-4.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/modulo-3-4.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-3-4.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha3/modulo-3-4.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-lg" href="#conteudo">Skip to content</a>
+<!-- NAV -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🎼</span><span class="font-bold text-lg hidden sm:inline">The World After Claude</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Practice</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="index.html"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Jarvis</span></a>
+<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-inema-journey-open="" type="button"><span aria-hidden="true">◷</span><span>My journey</span><span class="hidden" data-inema-journey-badge=""></span></button>
+<button aria-label="Toggle light/dark theme" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav aria-label="Navigation trail" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-purple-400" href="../../index.html">Start</a><span>/</span>
+<a class="hover:text-purple-400" href="index.html">Track 3</a><span>/</span>
+<span class="text-purple-400">Module 3.4</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">MODULE 3.4</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🧱 Ready-made agents and workflows</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">A skill does <em>one</em> task. A <strong class="text-purple-400">workflow</strong> does one <strong class="text-purple-400">entire job</strong> — several steps linked together, from start to finish. Here you get ready-made templates to copy, adapt, and plug into your Jarvis.</p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">6</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">~55</div><div class="text-xs text-neutral-400">Minutes</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Advanced</div><div class="text-xs text-neutral-400">Level</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Practice</div><div class="text-xs text-neutral-400">Type</div></div>
+</div>
+<div class="mt-6 max-w-md">
+<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progress in this module</span><span class="text-sm font-bold text-purple-400"><span class="inema-meter-pct">0%</span></span></div>
+<div aria-label="Module 3.4 progress" aria-valuemax="100" aria-valuemin="0" class="inema-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-inema-meter="modulo:3-4" role="progressbar"><div class="h-full bg-purple-500 rounded-full transition-all" data-inema-meter-fill="" style="width:0%"></div></div>
+<p class="text-xs text-neutral-500 mt-1.5"><span class="inema-meter-count">0 of 6</span> sections read</p>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid lg:grid-cols-[220px_1fr] gap-10">
+<!-- TOC -->
+<nav aria-label="Module index" class="hidden lg:block sticky top-24 self-start" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-3">Section <span class="inema-toc-pos">1</span> of <span class="inema-toc-total">6</span></p>
+<ul class="space-y-1.5 text-sm">
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-1">1. What is a workflow</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-2">2. Subagent templates</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-3">3. Research workflow</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-4">4. Content workflow</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-5">5. Adapt a template</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-6">6. Chain safely</a></li>
+</ul>
+</nav>
+<main class="min-w-0 inema-prose" id="conteudo">
+<!-- "Novo aqui?" -->
+<div class="bg-primary/10 border border-primary/30 rounded-2xl p-6 mb-12">
+<h2 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> New here? Three words before you start</h2>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-primary">Workflow</strong> — a sequence of automatic steps: it does A, then B, then C, without you having to move it from one to the next.</li>
+<li><strong class="text-primary">Subagent</strong> — an AI specialized in just one thing (researching, reviewing, writing) that your main agent calls when needed.</li>
+<li><strong class="text-primary">Template</strong> — a ready-made template. You copy it, replace what’s yours, and use it. You don’t build from scratch.</li>
+</ul>
+</div>
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-3-4#topico-1" id="topico-1">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🔄 What Is a Workflow: Linked Steps</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t1-p1">A skill is a <strong class="text-purple-400">ask</strong>: it does one thing well. A workflow is the <strong class="text-purple-400">recipe</strong>: it links several pieces in order, and the result of one step becomes the input for the next. Instead of copying the result from one place to another, the workflow does it automatically.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t1-p2">Think of ordering food through an app: you tap once, and a series of steps happens behind the scenes — confirms the payment, alerts the kitchen, calls the delivery driver, and sends you the status. You don't handle each step yourself. An AI workflow is the same idea, but for work: <strong>search → check → summarize</strong>, or <strong>idea → text → image</strong>, chained together.</p>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-4 flex items-center"><span class="mr-2">🔑</span> The central idea</h3>
+<p class="text-neutral-300 mb-3">The difference between <strong>a task</strong> e <strong>a job</strong>:</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Skill (one task):</strong> "summarize this text" → the summary comes back. Done.</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Workflow (a task):</strong> "research the topic, check the sources, and give me a report" → multiple steps, one final result.</span></li>
+</ul>
+</div>
+<!-- SVG fluxograma de nos encadeados (obrigatorio) -->
+<figure class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Workflow diagram: four nodes linked from left to right—input, step 1, step 2, and final result—connected by arrows, showing that one step’s output becomes the next step’s input." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 200">
+<defs>
+<radialgradient cx="50%" cy="50%" id="m34glow" r="50%"><stop offset="0%" stop-color="#c084fc" stop-opacity="0.5"></stop><stop offset="100%" stop-color="#c084fc" stop-opacity="0"></stop></radialgradient>
+<pattern height="20" id="m34dots" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#c084fc" opacity="0.10" r="1"></circle></pattern>
+<filter height="160%" id="m34soft" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+<marker id="m34arrow" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#c084fc"></path></marker>
+</defs>
+<rect fill="url(#m34dots)" height="200" width="480"></rect>
+<text fill="#c084fc" font-size="13" font-weight="600" text-anchor="middle" x="240" y="26">ONE WORKFLOW · one’s output becomes the next one’s input</text>
+<!-- no 1: entrada -->
+<rect fill="#1f1240" height="44" rx="10" stroke="#c084fc" stroke-width="2" width="86" x="20" y="80"></rect><text fill="#e9d5ff" font-size="11" text-anchor="middle" x="63" y="100">📥 input</text><text fill="#9ca3af" font-size="9" text-anchor="middle" x="63" y="115">your request</text>
+<path d="M108 102 L132 102" marker-end="url(#m34arrow)" stroke="#c084fc" stroke-width="2"></path>
+<!-- no 2: passo 1 -->
+<rect fill="#2e1065" height="44" rx="10" stroke="#c084fc" stroke-width="2" width="86" x="134" y="80"></rect><text fill="#e9d5ff" font-size="11" text-anchor="middle" x="177" y="100">🔎 step 1</text><text fill="#9ca3af" font-size="9" text-anchor="middle" x="177" y="115">search</text>
+<path d="M222 102 L246 102" marker-end="url(#m34arrow)" stroke="#c084fc" stroke-width="2"></path>
+<!-- no 3: passo 2 -->
+<rect fill="#2e1065" height="44" rx="10" stroke="#c084fc" stroke-width="2" width="86" x="248" y="80"></rect><text fill="#e9d5ff" font-size="11" text-anchor="middle" x="291" y="100">✅ step 2</text><text fill="#9ca3af" font-size="9" text-anchor="middle" x="291" y="115">check</text>
+<path d="M336 102 L360 102" marker-end="url(#m34arrow)" stroke="#c084fc" stroke-width="2"></path>
+<!-- no 4: resultado -->
+<g filter="url(#m34soft)"><rect fill="url(#m34glow)" height="56" rx="12" width="96" x="362" y="74"></rect></g>
+<rect fill="#1f1240" height="44" rx="10" stroke="#38bdf8" stroke-width="2" width="88" x="366" y="80"></rect><text fill="#38bdf8" font-size="11" text-anchor="middle" x="410" y="100">📄 result</text><text fill="#9ca3af" font-size="9" text-anchor="middle" x="410" y="115">summary ready</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="240" y="170">You trigger it once at the start; the steps run in sequence until the result is ready.</text>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">Each box is a step. The arrows show the sequence: nothing is copied by hand between them—the flow carries the result forward.</figcaption>
+</figure>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Skill = building block · workflow = recipe</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 One's output = the next one's input</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 You handle <strong>one</strong> time</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Make a <strong>work</strong>, not a tiny task</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-3-4#topico-2" id="topico-2">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🧩 Ready-made subagent templates</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t2-p1">A subagent is an AI <strong class="text-purple-400">with just one role</strong>. Instead of asking one generic AI to do everything, you build a small team: one that <em>just</em> research, one that <em>just</em> reviews, one that <em>just</em> writes. Each one does their part better because they have a narrow, clear instruction.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t2-p2">The good news: you don't have to invent these roles. There are <strong>ready-made templates</strong> — standard descriptions of “what this agent is, what it does, and what it doesn’t do.” You copy the template, tweak a detail or two, and you’ve got your team member.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-4">✓ A good subagent template</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Has <strong>one role</strong> (researcher, reviewer...)</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Says what to do <strong>and what not to do</strong></span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Defines how to deliver the result</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>It’s short — it fits in one paragraph</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ A bad template</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"Do everything" — an unfocused role</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Without limits: it doesn’t know what to avoid</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Doesn’t say what the expected deliverable is</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Huge and confusing</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Start with <strong>two or three subagents</strong>, not ten. A researcher, a writer, and a reviewer already cover most jobs. More agents mean more things can go wrong. Grow the team only when you feel the need.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Subagent = single role</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Template ready to copy</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Say what to do <strong>e</strong> what to avoid</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Start with 2–3, not 10</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-3-4#topico-3" id="topico-3">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🔬 A Ready-to-Use Research Workflow</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t3-p1">The research workflow is the “Columbus’s egg” of workflows: three simple steps that, together, save you hours. <strong class="text-purple-400">Search</strong> the sources, <strong class="text-purple-400">check</strong> whether they’re reliable and agree with each other, and <strong class="text-purple-400">summarize</strong> in a report with the sources noted. Each step has a clear purpose.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t3-p2">The middle step — checking — is what separates research from rumor. That’s where the workflow discards anything without a source and flags anything uncertain. Without it, all you have is a polished summary of something that may be wrong.</p>
+<!-- CODE BOX copy-run (obrigatorio) -->
+<div class="bg-dark-800 border border-purple-500/30 rounded-xl p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-2 flex items-center"><span class="mr-2">🧪</span> Workflow ready to copy (research in 3 steps)</h3>
+<p class="text-neutral-300 text-sm mb-2"><strong>Goal:</strong> go from a vague topic to a short report with sources—without manually reading ten tabs. Paste it into Claude or ChatGPT, replacing what’s between &lt; &gt;.</p>
+<pre class="bg-dark-900 border border-dark-600 rounded-lg p-4 overflow-x-auto text-sm font-mono text-neutral-200 whitespace-pre-wrap">Você é meu agente de pesquisa. Faça este workflow em 3 passos,
+me mostrando o resultado de cada passo antes de seguir:
+
+TEMA: &lt;o que você quer pesquisar, ex: melhores planos de celular pré-pago&gt;
+
+PASSO 1 — BUSCAR: liste de 4 a 6 fontes recentes sobre o tema,
+com o título e o link de cada uma.
+
+PASSO 2 — CONFERIR: para cada fonte, diga se é confiável e se
+concorda com as outras. Descarte as duvidosas e me avise quais.
+
+PASSO 3 — RESUMIR: escreva um relatório de 1 página com:
+  - 3 a 5 conclusões principais (cada uma com a fonte ao lado),
+  - 1 ponto em que as fontes discordam,
+  - o que ainda ficou em aberto.</pre>
+<p class="text-neutral-400 text-sm mt-3"><strong>How to verify it worked:</strong> the final report should have <em>sources next to each conclusion</em> and cite at least one disagreement. If you get a smooth text with no sources, step 2 was skipped — ask it to redo the check.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-neutral-300">Ask to see the result of <strong>each step</strong> before the next one. That way, you catch problems early: if the sources in step 1 are already bad, there's no point in summarizing. Checking along the way is cheaper than finding the error at the end.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Search → check → summarize</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Checking is the step that matters</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Source next to each conclusion</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Review each step before the next</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-3-4#topico-4" id="topico-4">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🎨 A ready-to-use content workflow</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t4-p1">Creating content from scratch is tiring. A workflow turns it into a <strong class="text-purple-400">production line</strong>: <strong>idea → script → text → image</strong>. Each stage delivers something concrete that the next one uses — the outline guides the text, the text suggests the image. You provide the idea and review things at the handoff points.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t4-p2">The image below is the blueprint for this pipeline. Notice that it's not magic: it's the same chaining logic from topic 1, applied to creative work. The value is in not starting from scratch with every post.</p>
+<!-- IMG obrigatoria em figure -->
+<figure class="rounded-2xl overflow-hidden border border-purple-500/30 mb-6">
+<img alt="Illustration of a content production line: an idea goes in one end and comes out as a linked sequence of script, text, and image, representing a ready-to-use workflow." class="w-full h-auto" loading="lazy" src="../../../curso/trilha3/assets/img/workflows.png"/>
+<figcaption class="text-xs text-neutral-500 px-4 py-3 bg-dark-800">A content production line: the idea goes in, and the workflow carries it through to the finished post, step by step.</figcaption>
+</figure>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-4 flex items-center"><span class="mr-2">🏭</span> The 4 stages of the line</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-purple-400">1.</span><span><strong>Idea:</strong> you (or an agent) define the topic and audience.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">2.</span><span><strong>Script:</strong> the AI builds the structure—title, topics, call to action.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">3.</span><span><strong>Text:</strong> writes the content following the outline.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">4.</span><span><strong>Image:</strong> suggests/generates artwork that fits the text.</span></li>
+</ul>
+<p class="text-neutral-400 text-sm mt-3">You review between stages. Did you approve the outline? Move on to the text. Don’t like it? Make adjustments before spending the rest.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Idea → script → text → image</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Production line, not improvisation</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Review at handoffs</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 It doesn't start from scratch with every post</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-3-4#topico-5" id="topico-5">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">🪡 Adapt a template to your workflow</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t5-p1">The template is the <strong class="text-purple-400">skeleton</strong>; you add the substance. Adapting means changing three things: the <strong>tools</strong> (where it searches, where it saves), the <strong>steps</strong> (remove what you don't need, add what's missing) and the <strong>delivers</strong> (the format you want at the end). There's no need to rewrite the workflow — just adjust these pieces.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t5-p2">Golden rule: <strong>change one thing at a time and test</strong>. If you change everything at once and it breaks, you won’t know which change caused it. Small adjustments, one at a time, keep control in your hands.</p>
+<div class="space-y-5 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">🔧 Swap the Tools</h4><p class="text-neutral-300 text-sm">Where the template says “search the web,” point it to your drive, your spreadsheet, your email.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">➕ Adjust the steps</h4><p class="text-neutral-300 text-sm">Remove a step that doesn’t work for you, add one that’s missing (e.g., “translate into Portuguese”).</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">📦 Define the Deliverable</h4><p class="text-neutral-300 text-sm">Specify the final format: email, post, spreadsheet, audio. Same workflow, different output.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">4</span></div>
+<div class="flex-1 bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl p-5 border border-purple-500/30"><h4 class="font-semibold mb-1 text-purple-400">🧪 Test one change at a time</h4><p class="text-neutral-300 text-sm">Did it change? Run it. Did it work? Next one. Did it break? You know exactly what happened.</p></div>
+</div>
+</div>
+<!-- SVG 2: ROXO, antes/depois da adaptacao -->
+<figure class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Comparison: a generic template becomes your workflow—the generic toolboxes are replaced with your tools while keeping the same sequence of steps." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 200">
+<defs>
+<pattern height="20" id="m34dots2" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#c084fc" opacity="0.10" r="1"></circle></pattern>
+<filter height="160%" id="m34soft2" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.6"></fegaussianblur></filter>
+<radialgradient cx="50%" cy="50%" id="m34glow2" r="50%"><stop offset="0%" stop-color="#c084fc" stop-opacity="0.45"></stop><stop offset="100%" stop-color="#c084fc" stop-opacity="0"></stop></radialgradient>
+</defs>
+<rect fill="url(#m34dots2)" height="200" width="480"></rect>
+<text fill="#9ca3af" font-size="13" font-weight="600" text-anchor="middle" x="120" y="26">TEMPLATE · skeleton</text>
+<rect fill="#1f2937" height="34" rx="8" stroke="#6b7280" stroke-width="2" width="120" x="60" y="55"></rect><text fill="#9ca3af" font-size="11" text-anchor="middle" x="120" y="76">🔎 search (web)</text>
+<rect fill="#1f2937" height="34" rx="8" stroke="#6b7280" stroke-width="2" width="120" x="60" y="100"></rect><text fill="#9ca3af" font-size="11" text-anchor="middle" x="120" y="121">📄 save (generic)</text>
+<rect fill="#1f2937" height="34" rx="8" stroke="#6b7280" stroke-width="2" width="120" x="60" y="145"></rect><text fill="#9ca3af" font-size="11" text-anchor="middle" x="120" y="166">📤 deliver (text)</text>
+<path d="M188 96 L292 96" marker-end="url(#m34arrow)" stroke="#c084fc" stroke-width="2.5"></path>
+<text fill="#c084fc" font-size="11" text-anchor="middle" x="240" y="88">adapt</text>
+<line stroke="#374151" stroke-dasharray="3 4" stroke-width="1.5" x1="240" x2="240" y1="40" y2="185"></line>
+<text fill="#c084fc" font-size="13" font-weight="600" text-anchor="middle" x="370" y="26">YOUR WORKFLOW · with substance</text>
+<g filter="url(#m34soft2)"><rect fill="url(#m34glow2)" height="138" rx="12" width="132" x="304" y="50"></rect></g>
+<rect fill="#2e1065" height="34" rx="8" stroke="#c084fc" stroke-width="2" width="120" x="310" y="55"></rect><text fill="#e9d5ff" font-size="11" text-anchor="middle" x="370" y="76">🔎 your spreadsheet</text>
+<rect fill="#2e1065" height="34" rx="8" stroke="#c084fc" stroke-width="2" width="120" x="310" y="100"></rect><text fill="#e9d5ff" font-size="11" text-anchor="middle" x="370" y="121">📄 your drive</text>
+<rect fill="#1f1240" height="34" rx="8" stroke="#38bdf8" stroke-width="2" width="120" x="310" y="145"></rect><text fill="#38bdf8" font-size="11" text-anchor="middle" x="370" y="166">📤 your email</text>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">The skeleton (on the left) stays the same; you just replace each box with the <em>your</em> tools (on the right). That's how you adapt a template.</figcaption>
+</figure>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Template = skeleton; you add the flesh</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Change the tools, steps, deliverable</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 One change at a time</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Test after every adjustment</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-3-4#topico-6" id="topico-6">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🔒 Chain Safely</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Flag a question on this topic" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">I have a question</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t6-p1">The longer the workflow, the more chances a small mistake can snowball. The fix is simple: <strong class="text-purple-400">checkpoints</strong> between steps. Before an action that affects the real world—sending an email, deleting a file, spending money—the workflow pauses and asks for your OK.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t6-p2">The practical rule: steps that <strong>only read or draft</strong> can run on their own; steps that <strong>make a real difference</strong> require confirmation. This keeps the workflow fast, but nothing irreversible happens without you seeing it.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-4">✓ It can run on its own</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Search for and read information</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Draft a text (without sending it)</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Summarize, organize, compare</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Generate a suggestion for you to review</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ It asks for your confirmation</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Send an email or message</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Delete or overwrite files</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Spending money / shopping</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Publish something for the public</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">🎯</span> The habit that saves you</h3>
+<p class="text-neutral-300">Whenever you build a new workflow, ask: <strong>"which step here is irreversible?"</strong>. This is the step that adds a checkpoint. Everything else can run on its own.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3 text-sm">Key concepts</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Checkpoints between steps</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Read/draft = on your own</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Real change = requires OK</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Mark the irreversible step</div>
+</div>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-3-4#q1">
+<p class="font-medium mb-4">✋ Before you continue — what sets a workflow apart from a standalone skill?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A) A workflow is just a skill with a fancier name.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">B) The workflow chains several steps together—the output of one becomes the input of the next—to complete an entire task.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">C) The workflow must run without any review from you.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="flex justify-start mt-8">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Mark as read</span></button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎓</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Workflow = linked steps</strong><span class="text-neutral-400"> — one becomes the next one’s input, and gets a whole job done.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Has ready-made templates</strong><span class="text-neutral-400"> — subagents with a single role and research and content workflows to copy.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Adapting means replacing parts</strong><span class="text-neutral-400"> — tools, steps, and delivery; one change at a time.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Chain things together safely</strong><span class="text-neutral-400"> — checkpoints before any irreversible step.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-purple-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">3.5 — ⚡ Automation and triggers: how to get your Jarvis to act on its own, at the right time, without you asking.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the Track</a>
+<a class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors" href="modulo-3-5.html">Next: 3.5 Automation and triggers →</a>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>🎼 The World After Claude · Module 3.4 — <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<script>
+    function toggleTopic(button){
+      var topicItem=button.closest('.topic-item');
+      var explanation=topicItem.querySelector('.topic-explanation');
+      var moduleCard=button.closest('.bg-dark-800')||document;
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(function(exp){ if(exp!==explanation) exp.classList.remove('active'); });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active')?'true':'false');
+    }
+    (function(){
+      var themeToggle=document.getElementById('theme-toggle');
+      var d=document.getElementById('theme-toggle-dark-icon');
+      var l=document.getElementById('theme-toggle-light-icon');
+      var html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ l.classList.remove('hidden'); d.classList.add('hidden'); } else { d.classList.remove('hidden'); l.classList.add('hidden'); } }
+      sync();
+      themeToggle.addEventListener('click',function(){
+        html.classList.toggle('dark');
+        var isDark=html.classList.contains('dark');
+        localStorage.setItem('theme', isDark?'dark':'light');
+        try{ var p=JSON.parse(localStorage.getItem('inema.prefs')||'{}'); p.theme=isDark?'inema-dark':'claro'; localStorage.setItem('inema.prefs',JSON.stringify(p)); }catch(e){}
+        html.style.colorScheme=isDark?'dark':'light';
+        if(isDark) html.removeAttribute('data-theme');
+        sync();
+      });
+    })();
+    function openModal(id){ var m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(function(m){ m.classList.add('hidden'); }); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+  </script>
+<script src="../../../assets/learn.js"></script>
+<script>
+    if(window.INEMA&&typeof window.INEMA.init==='function'){ window.INEMA.init(); }
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-3-4#q1', {
+          answer: 1,
+          explain: {
+            0: 'Não — não é só nome. O workflow encadeia vários passos numa ordem; a skill faz uma tarefa só.',
+            1: 'Isso! O workflow encadeia passos (a saída de um vira a entrada do próximo) pra fazer um trabalho inteiro.',
+            2: 'Não — pelo contrário: workflow bom tem pontos de conferência antes de passos irreversíveis.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

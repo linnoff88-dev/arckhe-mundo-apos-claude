@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="mundo-apos-claude" name="inema-course"/>
+<title>1.4 Contexto, memória e o harness | O Mundo Após o Claude</title>
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark')?'dark':'light'));
+      html.setAttribute('data-font', p.font||'inter'); html.setAttribute('data-accent', p.accent||'emerald');
+      var s=html.style, scale=(+p.fontScale||100);
+      s.setProperty('--inema-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
+      s.setProperty('--measure',(+p.lineWidth||68)+'ch'); s.setProperty('--lh-body',(+p.leading||1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC={emerald:[152,76,45],blue:[217,91,60],purple:[258,90,66],amber:[38,92,50],teal:[174,72,41],rose:[350,89,60]};
+      var a=ACC[p.accent]||ACC.emerald; s.setProperty('--accent-h',a[0]+''); s.setProperty('--accent-s',a[1]+'%'); s.setProperty('--accent-l',a[2]+'%'); s.setProperty('--accent','hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode:'class', theme:{ extend:{ colors:{ primary:'#FACC15', dark:{900:'#111827',800:'#1f2937',700:'#374151',600:'#4b5563'} } } } }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 5rem; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="../../assets/learn.css" rel="stylesheet"/>
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "mundo-apos-claude",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "A virada: de usuario a maestro", "topics": 6, "href": "curso/trilha1/modulo-1-1.html" },
+        { "id": "1-2", "title": "Anatomia de um agente", "topics": 6, "href": "curso/trilha1/modulo-1-2.html" },
+        { "id": "1-3", "title": "Skills, MCP e o ecossistema", "topics": 6, "href": "curso/trilha1/modulo-1-3.html" },
+        { "id": "1-4", "title": "Contexto, memoria e o harness", "topics": 6, "href": "curso/trilha1/modulo-1-4.html" },
+        { "id": "1-5", "title": "O diferencial humano", "topics": 6, "href": "curso/trilha1/modulo-1-5.html" }
+      ]},
+      { "n": "2", "title": "Pratica", "modules": [
+        { "id": "2-1", "title": "Seu primeiro build dirigido", "topics": 6, "href": "curso/trilha2/modulo-2-1.html" },
+        { "id": "2-2", "title": "Construindo com skills", "topics": 6, "href": "curso/trilha2/modulo-2-2.html" },
+        { "id": "2-3", "title": "Conectando o mundo (MCP)", "topics": 6, "href": "curso/trilha2/modulo-2-3.html" },
+        { "id": "2-4", "title": "Agentes que fazem o trabalho", "topics": 6, "href": "curso/trilha2/modulo-2-4.html" },
+        { "id": "2-5", "title": "Verificar e provar", "topics": 6, "href": "curso/trilha2/modulo-2-5.html" }
+      ]},
+      { "n": "3", "title": "Jarvis & Arsenal", "modules": [
+        { "id": "3-1", "title": "Arquitetura de um Jarvis", "topics": 6, "href": "curso/trilha3/modulo-3-1.html" },
+        { "id": "3-2", "title": "OpenClaw, Hermes e sistemas agenticos", "topics": 6, "href": "curso/trilha3/modulo-3-2.html" },
+        { "id": "3-3", "title": "Skills prontas", "topics": 6, "href": "curso/trilha3/modulo-3-3.html" },
+        { "id": "3-4", "title": "Agentes e workflows prontos", "topics": 6, "href": "curso/trilha3/modulo-3-4.html" },
+        { "id": "3-5", "title": "Automacao e gatilhos", "topics": 6, "href": "curso/trilha3/modulo-3-5.html" },
+        { "id": "3-6", "title": "Seu Jarvis ao vivo", "topics": 6, "href": "curso/trilha3/modulo-3-6.html" }
+      ]}
+    ]
+  }
+  </script>
+<link href="https://inematds.github.io/mundo-apos-claude/curso/trilha1/modulo-1-4.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/en/curso/trilha1/modulo-1-4.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/es/curso/trilha1/modulo-1-4.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="modulo-1-4.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">PT</a><a href="../../en/curso/trilha1/modulo-1-4.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="../../es/curso/trilha1/modulo-1-4.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-emerald-600 focus:text-white focus:rounded-lg" href="#conteudo">Pular para o conteudo</a>
+<!-- NAV -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🎼</span><span class="font-bold text-lg hidden sm:inline">O Mundo Após o Claude</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10" href="index.html"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Prática</span></a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Jarvis</span></a>
+<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-inema-journey-open="" type="button"><span aria-hidden="true">◷</span><span>Minha jornada</span><span class="hidden" data-inema-journey-badge=""></span></button>
+<button aria-label="Alternar tema claro/escuro" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav aria-label="Trilha de navegacao" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-emerald-400" href="../../index.html">Início</a><span>/</span>
+<a class="hover:text-emerald-400" href="index.html">Trilha 1</a><span>/</span>
+<span class="text-emerald-400">Módulo 1.4</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">MÓDULO 1.4</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🧠 Contexto, memória e o harness</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">Já reparou que a IA às vezes parece <strong class="text-emerald-400">esquecer</strong> o que você disse no começo da conversa? Aqui você entende por que isso acontece — e aprende a manter o agente <strong class="text-primary">focado e no rumo</strong>, sem mágica nem termos técnicos.</p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">6</div><div class="text-xs text-neutral-400">Tópicos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">~40</div><div class="text-xs text-neutral-400">Minutos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Básico</div><div class="text-xs text-neutral-400">Nível</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Teoria</div><div class="text-xs text-neutral-400">Tipo</div></div>
+</div>
+<div class="mt-6 max-w-md">
+<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progresso deste módulo</span><span class="text-sm font-bold text-emerald-400"><span class="inema-meter-pct">0%</span></span></div>
+<div aria-label="Progresso do modulo 1.4" aria-valuemax="100" aria-valuemin="0" class="inema-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-inema-meter="modulo:1-4" role="progressbar"><div class="h-full bg-emerald-500 rounded-full transition-all" data-inema-meter-fill="" style="width:0%"></div></div>
+<p class="text-xs text-neutral-500 mt-1.5"><span class="inema-meter-count">0 de 6</span> seções lidas</p>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid lg:grid-cols-[220px_1fr] gap-10">
+<!-- TOC -->
+<nav aria-label="Índice do módulo" class="hidden lg:block sticky top-24 self-start" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-3">Seção <span class="inema-toc-pos">1</span> de <span class="inema-toc-total">6</span></p>
+<ul class="space-y-1.5 text-sm">
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-1">1. O que é "contexto"</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-2">2. Por que a IA esquece</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-3">3. Memória de longo prazo</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-4">4. O que é o harness</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-5">5. Não deixar se perder</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-6">6. Boas práticas pra leigos</a></li>
+</ul>
+</nav>
+<main class="min-w-0 inema-prose" id="conteudo">
+<!-- "Novo aqui?" -->
+<div class="bg-primary/10 border border-primary/30 rounded-2xl p-6 mb-12">
+<h2 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Novo aqui? Quatro palavras antes de começar</h2>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-primary">Contexto</strong> — tudo que a IA tem "na cabeça" naquela conversa: o que você falou e o que ela já fez.</li>
+<li><strong class="text-primary">Janela de contexto</strong> — o tamanho dessa "cabeça". Cabe muita coisa, mas não infinita.</li>
+<li><strong class="text-primary">Memória</strong> — anotações que ficam guardadas <em>entre</em> conversas (diferente do contexto).</li>
+<li><strong class="text-primary">Harness</strong> — a estrutura em volta da IA: ferramentas, memória e regras. O "carro" onde o motor é montado.</li>
+</ul>
+</div>
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-1-4#topico-1" id="topico-1">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🗒️ O que é "contexto"</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-4-t1-p1"><strong class="text-emerald-400">Contexto</strong> é tudo que a IA tem "na cabeça" naquele momento da conversa: o que você escreveu, o que ela já respondeu, os arquivos que você mostrou e os passos que ela já deu. É a memória de curto prazo daquele papo — como o que você lembra de uma conversa que ainda está acontecendo.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-4-t1-p2">Vale uma regra simples e poderosa: <strong>bom contexto = boas respostas</strong>. Se você dá objetivo claro, exemplos e o que importa, a IA acerta o alvo. Se joga tudo bagunçado e pela metade, ela chuta — e a culpa não é dela, é do contexto fraco.</p>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center"><span class="mr-2">🔑</span> A ideia central</h3>
+<p class="text-neutral-300 mb-3">Pense numa pessoa nova que chegou pra te ajudar hoje:</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Sem contexto:</strong> "faça um relatório" → ela não sabe sobre o quê, pra quem, nem em que formato.</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Com contexto:</strong> "faça o relatório de vendas do mês, pra reunião de amanhã, em 1 página" → agora ela acerta de primeira.</span></li>
+</ul>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Bom contexto</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Objetivo claro e quem vai usar</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Um exemplo do que você quer</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>O que importa e o que ignorar</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Formato e tamanho da resposta</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Contexto bagunçado</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Pedido vago: "me ajuda com isso"</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Misturar 5 assuntos no mesmo papo</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Esquecer de dizer o objetivo final</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Não dar nenhum exemplo</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Conceitos-chave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Contexto = memória <strong>da conversa</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Bom contexto = boas respostas</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Objetivo + exemplo + formato</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Vago entra, vago sai</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-1-4#topico-2" id="topico-2">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🪟 Por que a IA esquece</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-4-t2-p1">A "cabeça" da IA tem tamanho limitado. Esse limite tem nome: <strong class="text-emerald-400">janela de contexto</strong>. Imagine uma janela por onde o texto da conversa entra. Cabe bastante coisa — mas não infinita.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-4-t2-p2">Quando a conversa fica muito longa, o que está mais antigo começa a ser <strong>empurrado pra fora</strong> pela borda da janela. Por isso a IA "esquece" o que você disse lá no começo: não é desatenção — simplesmente não cabe mais tudo ao mesmo tempo.</p>
+<!-- SVG principal: a janela de contexto -->
+<figure class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Uma janela de contexto: linhas de texto novas entram pela direita e empurram as linhas mais antigas pra fora pela borda esquerda. O que sai da janela e esquecido pela IA." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 220">
+<defs>
+<pattern height="20" id="m14dots" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#34d399" opacity="0.10" r="1"></circle></pattern>
+<filter height="160%" id="m14soft" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+<marker id="m14arr" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m14dots)" height="220" width="480"></rect>
+<text fill="#34d399" font-size="14" font-weight="700" text-anchor="middle" x="240" y="26">A janela de contexto</text>
+<!-- moldura da janela -->
+<g filter="url(#m14soft)"><rect fill="#0b3b2e" height="120" rx="12" stroke="#34d399" stroke-width="2.5" width="240" x="120" y="50"></rect></g>
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="240" y="68">o que a IA tem "na cabeça" agora</text>
+<!-- linhas dentro da janela (lembrado) -->
+<rect fill="#064e3b" height="12" rx="6" stroke="#34d399" stroke-width="1" width="208" x="136" y="80"></rect>
+<rect fill="#064e3b" height="12" rx="6" stroke="#34d399" stroke-width="1" width="208" x="136" y="100"></rect>
+<rect fill="#38bdf8" height="12" opacity="0.85" rx="6" width="208" x="136" y="120"></rect>
+<rect fill="#38bdf8" height="12" opacity="0.85" rx="6" width="160" x="136" y="140"></rect>
+<text fill="#34d399" font-size="11" font-weight="600" text-anchor="middle" x="240" y="186">✓ lembrado</text>
+<!-- entra pela direita (texto novo) -->
+<text fill="#38bdf8" font-size="10" text-anchor="middle" x="430" y="100">texto</text>
+<text fill="#38bdf8" font-size="10" text-anchor="middle" x="430" y="113">novo</text>
+<path d="M408 130 L364 130" marker-end="url(#m14arr)" stroke="#38bdf8" stroke-width="2.5"></path>
+<!-- sai pela esquerda (esquecido) -->
+<path d="M116 110 L72 110" marker-end="url(#m14out)" stroke="#6b7280" stroke-dasharray="4 3" stroke-width="2"></path>
+<rect fill="#1f2937" height="12" opacity="0.6" rx="6" stroke="#6b7280" stroke-width="1" width="44" x="20" y="92"></rect>
+<rect fill="#1f2937" height="12" opacity="0.35" rx="6" stroke="#6b7280" stroke-width="1" width="44" x="20" y="112"></rect>
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="42" y="146">✗ esquecido</text>
+<text fill="#6b7280" font-size="9" text-anchor="middle" x="42" y="160">(saiu da janela)</text>
+<defs>
+<marker id="m14out" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#6b7280"></path></marker>
+</defs>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">Texto novo entra pela direita; o antigo é empurrado pela borda esquerda e "cai pra fora". O que saiu da janela, a IA não vê mais — por isso parece que esqueceu.</figcaption>
+</figure>
+<figure class="rounded-2xl overflow-hidden border border-emerald-500/30 mb-6">
+<img alt="Ilustração de uma janela luminosa onde fluxos de texto entram por um lado e os fragmentos mais antigos se dissolvem pela borda oposta — a metáfora da janela de contexto que tem tamanho limitado." class="w-full h-auto" loading="lazy" src="assets/img/memory-window.png"/>
+<figcaption class="text-xs text-neutral-500 px-4 py-3 bg-dark-800">A janela de contexto, vista como imagem: o que entra demais por um lado escorre pelo outro. Conversa longa demais perde o começo.</figcaption>
+</figure>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Dica prática</h3>
+<p class="text-neutral-300">Se a IA começar a se contradizer ou "perder o fio" numa conversa longa, não brigue com ela. <strong>Recomece numa conversa nova</strong> e cole de novo só o que importa. Janela limpa = atenção total no que interessa.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Conceitos-chave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 A "cabeça" tem <strong>tamanho limitado</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Isso se chama <strong>janela de contexto</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Conversa longa empurra o começo pra fora</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Esquecer ≠ desatenção</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-1-4#topico-3" id="topico-3">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">💾 Memória de longo prazo</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-4-t3-p1">O contexto some quando você fecha a conversa. Mas existe outra camada: a <strong class="text-emerald-400">memória de longo prazo</strong>. São anotações que a IA guarda <em>fora</em> da conversa pra lembrar suas preferências <strong>entre</strong> conversas diferentes — hoje, amanhã, semana que vem.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-4-t3-p2">É exatamente isso que faz um assistente parecer que te <strong>conhece</strong>. Ele anota "fala comigo em português", "prefere respostas curtas", "meu negócio é uma loja de roupa" — e não precisa que você repita tudo de novo. É o que faz o <strong class="text-emerald-400">Jarvis</strong> da Trilha 3 funcionar.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">📊</span> Contexto vs. memória — não confunda</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Contexto</strong> = o que a IA lembra <em>dentro</em> da conversa atual. Some quando você fecha.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Memória</strong> = anotações que ficam <em>entre</em> as conversas. Continua valendo amanhã.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Analogia: contexto é o que você tem na mesa agora; memória é o caderno na gaveta.</span></li>
+</ul>
+<p class="text-neutral-400 text-sm mt-3">Os dois trabalham juntos: a memória reabastece o contexto com o que importa toda vez que você volta a conversar.</p>
+</div>
+<!-- SVG: caderno de memoria abastecendo a conversa -->
+<figure class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="Diagrama: um caderno de memoria guarda preferencias do usuario e abastece cada nova conversa, fazendo a IA ja te conhecer desde o inicio." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 180">
+<defs>
+<pattern height="20" id="m14dots3" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#34d399" opacity="0.10" r="1"></circle></pattern>
+<filter height="160%" id="m14soft3" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+<marker id="m14arr3" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L6,3 L0,6 Z" fill="#34d399"></path></marker>
+</defs>
+<rect fill="url(#m14dots3)" height="180" width="480"></rect>
+<!-- caderno -->
+<g filter="url(#m14soft3)"><rect fill="#064e3b" height="90" rx="10" stroke="#34d399" stroke-width="2.5" width="120" x="40" y="50"></rect></g>
+<text fill="#34d399" font-size="12" font-weight="700" text-anchor="middle" x="100" y="42">💾 Memória</text>
+<rect fill="#0b3b2e" height="10" rx="5" stroke="#34d399" stroke-width="0.8" width="92" x="54" y="68"></rect>
+<rect fill="#0b3b2e" height="10" rx="5" stroke="#34d399" stroke-width="0.8" width="92" x="54" y="86"></rect>
+<rect fill="#0b3b2e" height="10" rx="5" stroke="#34d399" stroke-width="0.8" width="70" x="54" y="104"></rect>
+<text fill="#9ca3af" font-size="9" text-anchor="middle" x="100" y="156">"fala em PT", "respostas curtas"...</text>
+<!-- setas para conversas -->
+<path d="M168 95 L262 70" marker-end="url(#m14arr3)" stroke="#34d399" stroke-width="2"></path>
+<path d="M168 95 L262 120" marker-end="url(#m14arr3)" stroke="#34d399" stroke-width="2"></path>
+<!-- conversas -->
+<rect fill="#1f2937" height="42" rx="10" stroke="#38bdf8" stroke-width="2" width="180" x="268" y="48"></rect>
+<text fill="#38bdf8" font-size="11" font-weight="600" text-anchor="middle" x="358" y="66">Conversa de hoje</text>
+<text fill="#9ca3af" font-size="9" text-anchor="middle" x="358" y="82">já te conhece ✓</text>
+<rect fill="#1f2937" height="42" rx="10" stroke="#38bdf8" stroke-width="2" width="180" x="268" y="100"></rect>
+<text fill="#38bdf8" font-size="11" font-weight="600" text-anchor="middle" x="358" y="118">Conversa de amanhã</text>
+<text fill="#9ca3af" font-size="9" text-anchor="middle" x="358" y="134">não precisa repetir ✓</text>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">A memória é o caderno na gaveta: ela abastece cada conversa nova com o que você já contou antes. É isso que faz a IA "te conhecer".</figcaption>
+</figure>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Dica prática</h3>
+<p class="text-neutral-300">Quando perceber que está repetindo a mesma instrução toda conversa ("responda em português, seja direto"), peça à IA pra <strong>guardar isso na memória</strong>. Você instrui uma vez e ela passa a aplicar sempre.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Conceitos-chave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Memória = anotações <strong>entre conversas</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Guarda suas preferências</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 É o que faz o Jarvis te conhecer</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Instrua uma vez, vale sempre</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-1-4#topico-4" id="topico-4">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🏗️ O que é o harness</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-4-t4-p1">A IA sozinha é como um <strong class="text-emerald-400">motor</strong>: potente, mas solto não vai a lugar nenhum. O <strong class="text-emerald-400">harness</strong> (lê-se "rárnes") é o chassi — o carro inteiro montado em volta do motor: o lugar onde ficam as <strong>ferramentas</strong>, a <strong>memória</strong> e as <strong>regras</strong> que organizam o trabalho.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-4-t4-p2">Por isso a mesma IA pode render muito mais ou muito menos dependendo de onde está montada. Um <strong>bom harness</strong> dá à IA as ferramentas certas, lembra do que importa e a mantém nas regras — fazendo uma IA comum entregar como uma craque.</p>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center"><span class="mr-2">🔑</span> Motor vs. carro</h3>
+<p class="text-neutral-300 mb-3">Mesmo motor, resultados muito diferentes:</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Motor solto (IA pura):</strong> responde bem, mas não tem ferramentas nem lembra de nada entre tarefas.</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Motor no carro (IA no harness):</strong> tem volante, freio, GPS e porta-malas — vira um agente que faz o trajeto inteiro.</span></li>
+</ul>
+</div>
+<!-- SVG: motor dentro do carro/harness -->
+<figure class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-4 mb-6">
+<svg aria-label="O harness e o chassi em volta da IA: dentro do carro ficam o motor (a IA), as ferramentas, a memoria e as regras, que juntos fazem a IA render muito mais." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 200">
+<defs>
+<pattern height="20" id="m14dots4" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#34d399" opacity="0.10" r="1"></circle></pattern>
+<filter height="160%" id="m14soft4" width="160%" x="-30%" y="-30%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
+</defs>
+<rect fill="url(#m14dots4)" height="200" width="480"></rect>
+<text fill="#34d399" font-size="14" font-weight="700" text-anchor="middle" x="240" y="26">O harness: o carro em volta do motor</text>
+<!-- chassi (harness) -->
+<rect fill="none" height="120" rx="16" stroke="#38bdf8" stroke-dasharray="6 4" stroke-width="2.5" width="360" x="60" y="48"></rect>
+<text fill="#38bdf8" font-size="10" text-anchor="middle" x="240" y="64">HARNESS (o chassi / carro)</text>
+<!-- motor IA no centro com glow -->
+<g filter="url(#m14soft4)"><circle cx="240" cy="118" fill="#0b3b2e" r="30" stroke="#34d399" stroke-width="2.5"></circle></g>
+<text font-size="20" text-anchor="middle" x="240" y="114">⚙️</text>
+<text fill="#34d399" font-size="9" font-weight="600" text-anchor="middle" x="240" y="134">IA (motor)</text>
+<!-- pecas ao redor -->
+<rect fill="#1f2937" height="34" rx="8" stroke="#34d399" stroke-width="1.5" width="80" x="84" y="92"></rect><text fill="#9ca3af" font-size="10" text-anchor="middle" x="124" y="113">🔧 ferramentas</text>
+<rect fill="#1f2937" height="34" rx="8" stroke="#34d399" stroke-width="1.5" width="80" x="316" y="92"></rect><text fill="#9ca3af" font-size="10" text-anchor="middle" x="356" y="113">💾 memória</text>
+<rect fill="#1f2937" height="28" rx="8" stroke="#34d399" stroke-width="1.5" width="80" x="200" y="150"></rect><text fill="#9ca3af" font-size="10" text-anchor="middle" x="240" y="168">📏 regras</text>
+<!-- ligacoes -->
+<line stroke="#34d399" stroke-width="1.5" x1="164" x2="210" y1="109" y2="115"></line>
+<line stroke="#34d399" stroke-width="1.5" x1="316" x2="270" y1="109" y2="115"></line>
+<line stroke="#34d399" stroke-width="1.5" x1="240" x2="240" y1="148" y2="150"></line>
+</svg>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">A IA é o motor (⚙️). O harness é o carro inteiro: ferramentas, memória e regras montadas em volta. Bom harness faz um motor comum render muito mais.</figcaption>
+</figure>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Dica prática</h3>
+<p class="text-neutral-300">Quando alguém disser que "essa IA é melhor que aquela", desconfie um pouco: muitas vezes a diferença não está no motor, e sim no <strong>harness</strong> em volta. A mesma IA num carro melhor anda muito mais longe.</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Conceitos-chave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Harness = chassi em volta da IA</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Junta ferramentas + memória + regras</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 IA = motor; harness = carro</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Bom harness multiplica o resultado</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-1-4#topico-5" id="topico-5">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">🧭 Não deixar se perder</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-4-t5-p1">Em tarefas longas, o maior risco não é a IA "errar uma conta" — é ela <strong class="text-emerald-400">se enrolar</strong>: dar voltas, esquecer o objetivo, refazer o que já estava pronto. Três coisas simples evitam isso: <strong>objetivo claro</strong>, <strong>passos pequenos</strong> e <strong>checagens no caminho</strong>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-4-t5-p2">É a mesma lógica de uma viagem: você diz o destino (objetivo), quebra em trechos (passos pequenos) e confere o mapa de tempos em tempos (checagens). Assim o agente não corre o risco de se perder no meio do caminho.</p>
+<div class="space-y-5 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">🎯 Objetivo claro</h4><p class="text-neutral-300 text-sm">Diga onde quer chegar e como saberá que chegou. Sem destino, o agente vagueia.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">🪜 Passos pequenos</h4><p class="text-neutral-300 text-sm">Uma tarefa grande quebrada em etapas curtas é mais fácil de acompanhar — e de corrigir.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">3</span></div>
+<div class="flex-1 bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl p-5 border border-emerald-500/30"><h4 class="font-semibold mb-1 text-emerald-400">✅ Checagens no caminho</h4><p class="text-neutral-300 text-sm">Peça pra ela parar e conferir: "isso ainda atende o objetivo?". É o GPS da tarefa.</p></div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Dica prática</h3>
+<p class="text-neutral-300">Numa tarefa comprida, peça à IA pra <strong>fazer um plano em passos antes de começar</strong>. Você lê o plano, ajusta, e só então deixa ela executar. Um plano combinado é a melhor cerca contra o "se perder".</p>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3 text-sm">Conceitos-chave</h4>
+<div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Risco real = <strong>se enrolar</strong>, não errar conta</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Objetivo claro = destino</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Passos pequenos = trechos</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Checagens = conferir o mapa</div>
+</div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-1-4#topico-6" id="topico-6">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div class="flex items-center space-x-4">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">✅ Boas práticas pra leigos</h2>
+</div>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-4-t6-p1">Você não precisa entender o motor por dentro pra dirigir bem. Três hábitos pequenos resolvem 90% dos problemas de contexto: <strong class="text-emerald-400">uma conversa por tarefa</strong>, <strong class="text-emerald-400">dar exemplos</strong> e <strong class="text-emerald-400">recomeçar limpo quando embolar</strong>.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Faça assim</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Uma conversa para cada tarefa</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Dê um exemplo do resultado que quer</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Recomece limpo quando embolar</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Diga o objetivo logo no começo</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Evite isso</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Misturar 4 assuntos no mesmo chat</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Insistir numa conversa já bagunçada</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Pedir tudo de uma vez, sem exemplo</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Achar que ela "deveria lembrar" do que saiu da janela</span></li>
+</ul>
+</div>
+</div>
+<!-- CODE BOX (copy-run) -->
+<div class="bg-dark-800 border border-emerald-500/30 rounded-xl p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-2 flex items-center"><span class="mr-2">🧪</span> Experimente agora: dar bom contexto (3 minutos)</h3>
+<p class="text-neutral-300 text-sm mb-2"><strong>Objetivo:</strong> aprender a abrir uma tarefa com bom contexto, em vez de jogar um pedido vago. Cole o texto abaixo no Claude ou no ChatGPT, trocando os trechos entre &lt; &gt;.</p>
+<pre class="bg-dark-900 border border-dark-600 rounded-lg p-4 overflow-x-auto text-sm font-mono text-neutral-200 whitespace-pre-wrap">Antes de responder, confirme que entendeu, repetindo de volta:
+- meu objetivo é &lt;o que você quer no final&gt;
+- o contexto é &lt;quem vai usar, situação, restrições&gt;
+- o formato que eu quero é &lt;ex: lista, 1 página, e-mail&gt;
+
+Se algo estiver faltando, me faça até 3 perguntas curtas
+antes de começar. Só depois disso, mãos à obra.</pre>
+<p class="text-neutral-400 text-sm mt-3"><strong>Como saber que deu certo:</strong> a IA deve <em>repetir seu objetivo com as palavras dela</em> e, se faltar algo, perguntar antes de sair fazendo. Quando ela confirma o contexto, você já garantiu metade do resultado.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Dica prática</h3>
+<p class="text-neutral-300">Pequenos hábitos melhoram muito o resultado. Comece com um só: <strong>"uma conversa por tarefa"</strong>. Só isso já elimina boa parte da confusão de contexto, sem você precisar entender nada por baixo.</p>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-1-4#q1">
+<p class="font-medium mb-4">✋ Antes de seguir — por que a IA às vezes "esquece" o começo de uma conversa longa?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A) Porque ela é preguiçosa e não quer ler tudo de novo.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">B) Porque a janela de contexto tem tamanho limitado, e o texto antigo é empurrado pra fora.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">C) Porque ela apagou sua memória de longo prazo.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="flex justify-start mt-8">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎓</span> Resumo do módulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Contexto é a memória da conversa</strong><span class="text-neutral-400"> — e bom contexto dá boas respostas.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">A janela de contexto é limitada</strong><span class="text-neutral-400"> — por isso a IA "esquece" o começo de conversas longas.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">A memória vive entre conversas</strong><span class="text-neutral-400"> — é o que faz o Jarvis te conhecer.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">O harness é o carro</strong><span class="text-neutral-400"> — e objetivo + passos + checagens mantêm o agente no rumo.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-emerald-400 mb-2">Próximo módulo:</h3>
+<p class="text-neutral-300">1.5 — 🩺 O diferencial humano: o que só você traz pra mesa — e a IA não consegue copiar.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Voltar para a Trilha</a>
+<a class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors" href="modulo-1-5.html">Próximo: 1.5 O diferencial humano →</a>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>🎼 O Mundo Após o Claude · Módulo 1.4 — <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<script>
+    function toggleTopic(button){
+      var topicItem=button.closest('.topic-item');
+      var explanation=topicItem.querySelector('.topic-explanation');
+      var moduleCard=button.closest('.bg-dark-800')||document;
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(function(exp){ if(exp!==explanation) exp.classList.remove('active'); });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active')?'true':'false');
+    }
+    (function(){
+      var themeToggle=document.getElementById('theme-toggle');
+      var d=document.getElementById('theme-toggle-dark-icon');
+      var l=document.getElementById('theme-toggle-light-icon');
+      var html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ l.classList.remove('hidden'); d.classList.add('hidden'); } else { d.classList.remove('hidden'); l.classList.add('hidden'); } }
+      sync();
+      themeToggle.addEventListener('click',function(){
+        html.classList.toggle('dark');
+        var isDark=html.classList.contains('dark');
+        localStorage.setItem('theme', isDark?'dark':'light');
+        try{ var p=JSON.parse(localStorage.getItem('inema.prefs')||'{}'); p.theme=isDark?'inema-dark':'claro'; localStorage.setItem('inema.prefs',JSON.stringify(p)); }catch(e){}
+        html.style.colorScheme=isDark?'dark':'light';
+        if(isDark) html.removeAttribute('data-theme');
+        sync();
+      });
+    })();
+    function openModal(id){ var m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(function(m){ m.classList.add('hidden'); }); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+  </script>
+<script src="../../assets/learn.js"></script>
+<script>
+    if(window.INEMA&&typeof window.INEMA.init==='function'){ window.INEMA.init(); }
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-1-4#q1', {
+          answer: 1,
+          explain: {
+            0: 'Não — a IA não é preguiçosa. O texto antigo simplesmente não cabe mais na janela de contexto.',
+            1: 'Isso! A janela de contexto é limitada; conversa longa empurra o começo pra fora, e o que sai a IA não vê mais.',
+            2: 'Não — memória de longo prazo é outra camada, guardada entre conversas. O "esquecer" aqui é a janela de contexto enchendo.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
