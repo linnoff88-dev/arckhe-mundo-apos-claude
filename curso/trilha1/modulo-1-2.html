@@ -177,14 +177,14 @@
 <div class="grid lg:grid-cols-[220px_1fr] gap-10">
 <!-- TOC -->
 <nav aria-label="Índice do módulo" class="hidden lg:block sticky top-24 self-start" data-inema-toc="">
-<p class="text-sm text-neutral-400 mb-3">Seção <span class="inema-toc-pos">1</span> de <span class="inema-toc-total">6</span></p>
+<p class="text-sm text-neutral-400 mb-3">Seçêo <span class="inema-toc-pos">1</span> de <span class="inema-toc-total">6</span></p>
 <ul class="space-y-1.5 text-sm">
 <li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-1">1. Agente vs. chatbot</a></li>
 <li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-2">2. Como ele "pensa"</a></li>
-<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-3">3. Ferramentas: as mãos</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-3">3. Ferramentas: as mêos</a></li>
 <li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-4">4. O loop: tenta de novo</a></li>
 <li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-5">5. Quando o agente erra</a></li>
-<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-6">6. Agente vs. automação</a></li>
+<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-6">6. Agente vs. automaçêo</a></li>
 </ul>
 </nav>
 <main class="min-w-0 inema-prose" id="conteudo">
@@ -193,7 +193,7 @@
 <h2 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Novo aqui? Três palavras antes de começar</h2>
 <ul class="space-y-2 text-neutral-300 text-sm">
 <li><strong class="text-primary">Agente</strong> — uma IA que recebe um <em>objetivo</em> e executa os passos sozinha até concluir, em vez de só responder uma mensagem.</li>
-<li><strong class="text-primary">Ferramenta</strong> — uma ação que o agente consegue fazer no mundo real: buscar na web, abrir um arquivo, rodar um comando.</li>
+<li><strong class="text-primary">Ferramenta</strong> — uma açêo que o agente consegue fazer no mundo real: buscar na web, abrir um arquivo, rodar um comando.</li>
 <li><strong class="text-primary">Loop</strong> — o ciclo em que o agente repete "olhar, decidir, agir" várias vezes até a tarefa ficar pronta.</li>
 </ul>
 </div>
@@ -207,18 +207,18 @@
 <button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
 <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t1-p1">Você já conversou com um <strong class="text-emerald-400">chatbot</strong>: você pergunta uma coisa, ele responde uma coisa, e a conversa para ali. Cada mensagem é um round isolado. Útil pra tirar dúvida — mas a partir daí o trabalho continua sendo seu.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t1-p2">Um <strong class="text-emerald-400">agente</strong> é outra coisa. Você não dá uma pergunta, você dá um <strong>objetivo</strong> — e ele executa os passos sozinho até chegar lá. Ele não para depois de uma resposta: ele continua trabalhando, passo a passo, até a tarefa estar concluída.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t1-p2">Um <strong class="text-emerald-400">agente</strong> é outra coisa. Você nêo dá uma pergunta, você dá um <strong>objetivo</strong> — e ele executa os passos sozinho até chegar lá. Ele nêo para depois de uma resposta: ele continua trabalhando, passo a passo, até a tarefa estar concluída.</p>
 <div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
 <h3 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center"><span class="mr-2">🔑</span> A analogia do atendimento</h3>
 <p class="text-neutral-300 mb-3">Pense em chegar numa loja e em dois tipos de pessoa pra te ajudar:</p>
 <ul class="space-y-2 text-neutral-300">
-<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Chatbot = o atendente do balcão de informações:</strong> "onde fica X?" → ele aponta. Você vai e resolve.</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Chatbot = o atendente do balcêo de informações:</strong> "onde fica X?" → ele aponta. Você vai e resolve.</span></li>
 <li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Agente = o assistente pessoal:</strong> "resolve esse problema pra mim" → ele anda a loja, escolhe, paga, embrulha e te entrega pronto.</span></li>
 </ul>
 </div>
 <figure class="rounded-2xl overflow-hidden border border-emerald-500/30 mb-6">
-<img alt="Ilustração de um agente de IA trabalhando: um núcleo de inteligência repete o ciclo de observar a situação, decidir o próximo passo e agir com suas ferramentas, até concluir a tarefa." class="w-full h-auto" loading="lazy" src="assets/img/agent-loop.png"/>
-<figcaption class="text-xs text-neutral-500 px-4 py-3 bg-dark-800">Um agente não é uma caixa de respostas — é um trabalhador que repete um ciclo até terminar. Vamos destrinchar esse ciclo no próximo tópico.</figcaption>
+<img alt="Ilustraçêo de um agente de IA trabalhando: um núcleo de inteligência repete o ciclo de observar a situaçêo, decidir o próximo passo e agir com suas ferramentas, até concluir a tarefa." class="w-full h-auto" loading="lazy" src="assets/img/agent-loop.png"/>
+<figcaption class="text-xs text-neutral-500 px-4 py-3 bg-dark-800">Um agente nêo é uma caixa de respostas — é um trabalhador que repete um ciclo até terminar. Vamos destrinchar esse ciclo no próximo tópico.</figcaption>
 </figure>
 <div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
 <h4 class="font-semibold text-emerald-400 mb-3 text-sm">Conceitos-chave</h4>
@@ -244,7 +244,7 @@
 </div>
 <button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t2-p1">"Pensar" aqui é só um jeito fácil de falar. Por baixo, o agente repete um ciclo bem simples, três passos que giram em volta: <strong class="text-emerald-400">observar</strong> a situação, <strong class="text-emerald-400">decidir</strong> o próximo passo e <strong class="text-emerald-400">agir</strong>. Aí ele olha o resultado e recomeça.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t2-p1">"Pensar" aqui é só um jeito fácil de falar. Por baixo, o agente repete um ciclo bem simples, três passos que giram em volta: <strong class="text-emerald-400">observar</strong> a situaçêo, <strong class="text-emerald-400">decidir</strong> o próximo passo e <strong class="text-emerald-400">agir</strong>. Aí ele olha o resultado e recomeça.</p>
 <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t2-p2">Cada volta no ciclo aproxima um pouco do objetivo. É a mesma coisa que você faz ao montar um móvel: olha a peça, decide onde encaixa, aparafusa, confere — e parte pra próxima. O agente faz isso muito rápido e sem cansar.</p>
 <!-- SVG PRINCIPAL: ciclo OBSERVAR -> DECIDIR -> AGIR -->
 <figure class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-4 mb-6">
@@ -276,11 +276,11 @@
 <text font-size="16" text-anchor="middle" x="130" y="215">⚙️</text>
 <text fill="#34d399" font-size="12" font-weight="700" text-anchor="middle" x="130" y="255">3. AGIR</text>
 </svg>
-<figcaption class="text-xs text-neutral-500 mt-2 px-1">Siga as setas verdes: <em>observar → decidir → agir → observar de novo</em>. O ciclo só para quando o alvo no centro é atingido. É esse giro que dá a sensação de "está trabalhando".</figcaption>
+<figcaption class="text-xs text-neutral-500 mt-2 px-1">Siga as setas verdes: <em>observar → decidir → agir → observar de novo</em>. O ciclo só para quando o alvo no centro é atingido. É esse giro que dá a sensaçêo de "está trabalhando".</figcaption>
 </figure>
 <div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
 <h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Dica pra fixar</h3>
-<p class="text-neutral-300">Quando você ver o agente "demorando", lembre que ele não travou — ele está dando voltas nesse ciclo. Cada volta é um passinho que ele dá no seu lugar.</p>
+<p class="text-neutral-300">Quando você ver o agente "demorando", lembre que ele nêo travou — ele está dando voltas nesse ciclo. Cada volta é um passinho que ele dá no seu lugar.</p>
 </div>
 <div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
 <h4 class="font-semibold text-emerald-400 mb-3 text-sm">Conceitos-chave</h4>
@@ -300,15 +300,15 @@
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">3</span>
-<h2 class="text-2xl font-bold">🛠️ Ferramentas: as mãos do agente</h2>
+<h2 class="text-2xl font-bold">🛠️ Ferramentas: as mêos do agente</h2>
 </div>
 <button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t3-p1">Sozinha, uma IA só <strong>fala</strong>: ela produz texto. Pra ela <strong class="text-emerald-400">fazer</strong> algo no mundo, precisa de <strong class="text-emerald-400">ferramentas</strong> — ações concretas que alguém deu pra ela usar. Sem ferramentas, é um cérebro sem mãos.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t3-p2">As ferramentas mais comuns são simples de entender: buscar uma informação na web, abrir e editar um arquivo, ou rodar um comando no computador. É a ferramenta que transforma "eu sugeriria fazer X" em "X foi feito".</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t3-p1">Sozinha, uma IA só <strong>fala</strong>: ela produz texto. Pra ela <strong class="text-emerald-400">fazer</strong> algo no mundo, precisa de <strong class="text-emerald-400">ferramentas</strong> — ações concretas que alguém deu pra ela usar. Sem ferramentas, é um cérebro sem mêos.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t3-p2">As ferramentas mais comuns sêo simples de entender: buscar uma informaçêo na web, abrir e editar um arquivo, ou rodar um comando no computador. É a ferramenta que transforma "eu sugeriria fazer X" em "X foi feito".</p>
 <!-- SVG #2: cerebro -> ferramentas -> mundo -->
 <figure class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-4 mb-6">
-<svg aria-label="Diagrama: o cérebro do agente, no centro, se liga a três ferramentas — buscar na web, editar arquivo e rodar comando — que são as mãos que tocam o mundo real." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 200">
+<svg aria-label="Diagrama: o cérebro do agente, no centro, se liga a três ferramentas — buscar na web, editar arquivo e rodar comando — que sêo as mêos que tocam o mundo real." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 480 200">
 <defs>
 <pattern height="20" id="m12dots2" patternunits="userSpaceOnUse" width="20"><circle cx="2" cy="2" fill="#34d399" opacity="0.10" r="1"></circle></pattern>
 <filter height="180%" id="m12soft2" width="180%" x="-40%" y="-40%"><fegaussianblur stddeviation="1.8"></fegaussianblur></filter>
@@ -345,7 +345,7 @@
 <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Abrir/editar arquivo:</strong> pegar sua planilha, corrigir uma coluna e salvar de volta.</span></li>
 <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Rodar um comando:</strong> testar se o site que ele montou abre de verdade.</span></li>
 </ul>
-<p class="text-neutral-400 text-sm mt-3">No módulo 1.3 você vai ver de onde vêm essas ferramentas (skills e MCP). Por ora, basta saber: são as mãos.</p>
+<p class="text-neutral-400 text-sm mt-3">No módulo 1.3 você vai ver de onde vêm essas ferramentas (skills e MCP). Por ora, basta saber: sêo as mêos.</p>
 </div>
 <div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
 <h4 class="font-semibold text-emerald-400 mb-3 text-sm">Conceitos-chave</h4>
@@ -369,8 +369,8 @@
 </div>
 <button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t4-p1">Aqui está a parte que mais surpreende quem é leigo: quando um passo <strong class="text-emerald-400">dá errado</strong>, o agente percebe e <strong class="text-emerald-400">tenta outro caminho</strong> — sem você pedir. Ele não desiste no primeiro tropeço; ele volta ao ciclo, observa o que falhou e ajusta.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t4-p2">É exatamente isso que dá a sensação de que ele "está trabalhando de verdade". Igual a um funcionário: se a primeira porta está trancada, ele não te liga perguntando o que fazer — ele tenta a próxima.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t4-p1">Aqui está a parte que mais surpreende quem é leigo: quando um passo <strong class="text-emerald-400">dá errado</strong>, o agente percebe e <strong class="text-emerald-400">tenta outro caminho</strong> — sem você pedir. Ele nêo desiste no primeiro tropeço; ele volta ao ciclo, observa o que falhou e ajusta.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t4-p2">É exatamente isso que dá a sensaçêo de que ele "está trabalhando de verdade". Igual a um funcionário: se a primeira porta está trancada, ele nêo te liga perguntando o que fazer — ele tenta a próxima.</p>
 <div class="space-y-5 mb-6">
 <div class="flex items-start space-x-4">
 <div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">1</span></div>
@@ -378,11 +378,11 @@
 </div>
 <div class="flex items-start space-x-4">
 <div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">2</span></div>
-<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">⚙️ Tenta o primeiro caminho</h4><p class="text-neutral-300 text-sm">Procura na pasta esperada… o arquivo não está lá.</p></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">⚙️ Tenta o primeiro caminho</h4><p class="text-neutral-300 text-sm">Procura na pasta esperada… o arquivo nêo está lá.</p></div>
 </div>
 <div class="flex items-start space-x-4">
 <div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">3</span></div>
-<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">👀 Percebe a falha e re-decide</h4><p class="text-neutral-300 text-sm">"Não achei aqui. Vou buscar pelo nome em todo o sistema."</p></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold mb-1">👀 Percebe a falha e re-decide</h4><p class="text-neutral-300 text-sm">"Nêo achei aqui. Vou buscar pelo nome em todo o sistema."</p></div>
 </div>
 <div class="flex items-start space-x-4">
 <div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">4</span></div>
@@ -391,14 +391,14 @@
 </div>
 <div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
 <h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">🎯</span> Por que isso importa pra você</h3>
-<p class="text-neutral-300">Esse "tentar de novo sozinho" é o que separa uma ferramenta de um <strong>colega</strong>. Mas atenção: tentar muito não garante acertar. Por isso o próximo tópico é sobre os erros — e por que você ainda confere.</p>
+<p class="text-neutral-300">Esse "tentar de novo sozinho" é o que separa uma ferramenta de um <strong>colega</strong>. Mas atençêo: tentar muito nêo garante acertar. Por isso o próximo tópico é sobre os erros — e por que você ainda confere.</p>
 </div>
 <div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
 <h4 class="font-semibold text-emerald-400 mb-3 text-sm">Conceitos-chave</h4>
 <div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
 <div class="bg-dark-700/50 rounded-lg p-3">📌 Falhou? Ele <strong>re-tenta</strong></div>
 <div class="bg-dark-700/50 rounded-lg p-3">📌 Sem você pedir de novo</div>
-<div class="bg-dark-700/50 rounded-lg p-3">📌 Sensação de "trabalhando"</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Sensaçêo de "trabalhando"</div>
 <div class="bg-dark-700/50 rounded-lg p-3">📌 Persistência ≠ acerto garantido</div>
 </div>
 </div>
@@ -415,15 +415,15 @@
 </div>
 <button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t5-p1">O agente é rápido e persistente — mas não é infalível. Dois erros são comuns. O primeiro é <strong class="text-emerald-400">alucinar</strong>: inventar uma informação com toda a confiança, como se fosse verdade. O segundo é <strong class="text-emerald-400">seguir firme por um caminho errado</strong>, repetindo a mesma decisão ruim com convicção.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t5-p2">Por isso o maestro existe: <strong>quem confere o resultado é você</strong>. Não precisa entender como ele fez — precisa olhar se o que saiu faz sentido. Aprender a "farejar" um resultado suspeito é meio caminho andado.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t5-p1">O agente é rápido e persistente — mas nêo é infalível. Dois erros sêo comuns. O primeiro é <strong class="text-emerald-400">alucinar</strong>: inventar uma informaçêo com toda a confiança, como se fosse verdade. O segundo é <strong class="text-emerald-400">seguir firme por um caminho errado</strong>, repetindo a mesma decisêo ruim com convicçêo.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t5-p2">Por isso o maestro existe: <strong>quem confere o resultado é você</strong>. Nêo precisa entender como ele fez — precisa olhar se o que saiu faz sentido. Aprender a "farejar" um resultado suspeito é meio caminho andado.</p>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
 <h4 class="font-bold text-emerald-400 mb-4">✓ Sinais de bom resultado</h4>
 <ul class="space-y-3 text-neutral-300 text-sm">
 <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Bate com o que você sabe ser verdade</span></li>
 <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Mostra a fonte ou o passo que tomou</span></li>
-<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Admite quando não tem certeza</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Admite quando nêo tem certeza</span></li>
 <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>O resultado abre e funciona de verdade</span></li>
 </ul>
 </div>
@@ -439,13 +439,13 @@
 </div>
 <div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
 <h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Dica prática</h3>
-<p class="text-neutral-300">Diante de um número ou nome que você não conhece, pergunte ao próprio agente: <strong>"de onde você tirou isso? me mostre a fonte."</strong> Se ele empacar ou inventar, era alucinação.</p>
+<p class="text-neutral-300">Diante de um número ou nome que você nêo conhece, pergunte ao próprio agente: <strong>"de onde você tirou isso? me mostre a fonte."</strong> Se ele empacar ou inventar, era alucinaçêo.</p>
 </div>
 <div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6">
 <h4 class="font-semibold text-emerald-400 mb-3 text-sm">Conceitos-chave</h4>
 <div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
 <div class="bg-dark-700/50 rounded-lg p-3">📌 <strong>Alucinar</strong> = inventar com confiança</div>
-<div class="bg-dark-700/50 rounded-lg p-3">📌 Pode errar com convicção</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Pode errar com convicçêo</div>
 <div class="bg-dark-700/50 rounded-lg p-3">📌 <strong>Você</strong> confere o resultado</div>
 <div class="bg-dark-700/50 rounded-lg p-3">📌 Peça a fonte na dúvida</div>
 </div>
@@ -459,39 +459,39 @@
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">6</span>
-<h2 class="text-2xl font-bold">⚙️ Agente vs. automação fixa</h2>
+<h2 class="text-2xl font-bold">⚙️ Agente vs. automaçêo fixa</h2>
 </div>
 <button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t6-p1">"Mas isso não é só uma automação?" Não exatamente. Uma <strong class="text-emerald-400">automação fixa</strong> segue um trilho: faz exatamente os passos que alguém programou, na ordem programada. Se a situação muda, ela quebra ou faz besteira — porque não sabe improvisar.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t6-p2">Um <strong class="text-emerald-400">agente</strong> se adapta. Quando a situação muda, ele percebe e escolhe outro passo. A automação é um trem no trilho; o agente é um motorista que desvia do buraco. Cada um serve pra uma coisa.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t6-p1">"Mas isso nêo é só uma automaçêo?" Nêo exatamente. Uma <strong class="text-emerald-400">automaçêo fixa</strong> segue um trilho: faz exatamente os passos que alguém programou, na ordem programada. Se a situaçêo muda, ela quebra ou faz besteira — porque nêo sabe improvisar.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-2-t6-p2">Um <strong class="text-emerald-400">agente</strong> se adapta. Quando a situaçêo muda, ele percebe e escolhe outro passo. A automaçêo é um trem no trilho; o agente é um motorista que desvia do buraco. Cada um serve pra uma coisa.</p>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
 <h4 class="font-bold text-emerald-400 mb-4">✓ Use um agente quando…</h4>
 <ul class="space-y-3 text-neutral-300 text-sm">
 <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>A tarefa muda de caso pra caso</span></li>
 <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>É preciso decidir no meio do caminho</span></li>
-<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Imprevistos são a regra, não a exceção</span></li>
-<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Você quer descrever o objetivo, não cada passo</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Imprevistos sêo a regra, nêo a exceçêo</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Você quer descrever o objetivo, nêo cada passo</span></li>
 </ul>
 </div>
 <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
-<h4 class="font-bold text-red-400 mb-4">✗ Prefira automação fixa quando…</h4>
+<h4 class="font-bold text-red-400 mb-4">✗ Prefira automaçêo fixa quando…</h4>
 <ul class="space-y-3 text-neutral-300 text-sm">
-<li class="flex items-start gap-2"><span class="text-red-400">→</span><span>Os passos são sempre os mesmos</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">→</span><span>Os passos sêo sempre os mesmos</span></li>
 <li class="flex items-start gap-2"><span class="text-red-400">→</span><span>Você precisa de previsibilidade total</span></li>
 <li class="flex items-start gap-2"><span class="text-red-400">→</span><span>O volume é enorme e repetitivo</span></li>
-<li class="flex items-start gap-2"><span class="text-red-400">→</span><span>Errar não pode acontecer nunca</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">→</span><span>Errar nêo pode acontecer nunca</span></li>
 </ul>
 </div>
 </div>
 <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
 <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Regra de bolso</h3>
-<p class="text-neutral-300">Trilho conhecido e fixo → <strong>automação</strong>. Caminho que muda e exige escolha → <strong>agente</strong>. Na vida real, os dois costumam trabalhar juntos: o agente decide, a automação executa o pedaço repetitivo.</p>
+<p class="text-neutral-300">Trilho conhecido e fixo → <strong>automaçêo</strong>. Caminho que muda e exige escolha → <strong>agente</strong>. Na vida real, os dois costumam trabalhar juntos: o agente decide, a automaçêo executa o pedaço repetitivo.</p>
 </div>
 <!-- CHECAGEM LEVE -->
 <div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-1-2#q1">
-<p class="font-medium mb-4">✋ Antes de seguir — o que torna um <em>agente</em> diferente de um chatbot ou de uma automação fixa?</p>
+<p class="font-medium mb-4">✋ Antes de seguir — o que torna um <em>agente</em> diferente de um chatbot ou de uma automaçêo fixa?</p>
 <div class="inema-check-options space-y-2">
 <button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A) Ele responde mais rápido e com mais palavras bonitas.</button>
 <button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">B) Ele recebe um objetivo, age com ferramentas em ciclo e se adapta quando algo falha.</button>
@@ -502,9 +502,9 @@
 <div class="bg-dark-800 border border-dark-600 rounded-lg p-4 mb-6 mt-8">
 <h4 class="font-semibold text-emerald-400 mb-3 text-sm">Conceitos-chave</h4>
 <div class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-300">
-<div class="bg-dark-700/50 rounded-lg p-3">📌 Automação = <strong>trilho fixo</strong></div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Automaçêo = <strong>trilho fixo</strong></div>
 <div class="bg-dark-700/50 rounded-lg p-3">📌 Agente = <strong>se adapta</strong></div>
-<div class="bg-dark-700/50 rounded-lg p-3">📌 Muda? Agente. Igual sempre? Automação</div>
+<div class="bg-dark-700/50 rounded-lg p-3">📌 Muda? Agente. Igual sempre? Automaçêo</div>
 <div class="bg-dark-700/50 rounded-lg p-3">📌 Juntos trabalham melhor</div>
 </div>
 </div>
@@ -517,9 +517,9 @@
 <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
 <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎓</span> Resumo do módulo</h2>
 <div class="space-y-4 mb-8">
-<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Agente recebe objetivo</strong><span class="text-neutral-400"> — não responde uma coisa, executa até concluir.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Agente recebe objetivo</strong><span class="text-neutral-400"> — nêo responde uma coisa, executa até concluir.</span></div></div>
 <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Ele gira num ciclo</strong><span class="text-neutral-400"> — observar → decidir → agir, repetindo.</span></div></div>
-<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Ferramentas são as mãos</strong><span class="text-neutral-400"> — é com elas que ele faz, não só fala.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Ferramentas sêo as mêos</strong><span class="text-neutral-400"> — é com elas que ele faz, nêo só fala.</span></div></div>
 <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Tenta de novo sozinho — mas erra</strong><span class="text-neutral-400"> — por isso você confere.</span></div></div>
 </div>
 <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
@@ -578,9 +578,9 @@
         INEMA.registerCheck('modulo-1-2#q1', {
           answer: 1,
           explain: {
-            0: 'Não — velocidade e estilo não definem um agente. Um chatbot também responde rápido.',
+            0: 'Nêo — velocidade e estilo nêo definem um agente. Um chatbot também responde rápido.',
             1: 'Isso! Objetivo + ferramentas + ciclo que se adapta quando algo falha: essa é a anatomia do agente.',
-            2: 'Não — seguir sempre os mesmos passos fixos é justamente a automação, o oposto do agente.'
+            2: 'Nêo — seguir sempre os mesmos passos fixos é justamente a automaçêo, o oposto do agente.'
           }
         });
       }

@@ -365,27 +365,27 @@
 <div class="bg-dark-800 border border-blue-500/30 rounded-xl p-6 mb-6">
 <h3 class="text-lg font-semibold text-blue-400 mb-2 flex items-center"><span class="mr-2">🧪</span> Skill ready to paste (5 minutes)</h3>
 <p class="text-neutral-300 text-sm mb-2"><strong>Goal:</strong> having a meeting summary always in the same format. Paste the text below into Claude (or ChatGPT), replacing the parts between &lt; &gt;, and include your notes.</p>
-<pre class="bg-dark-900 border border-dark-600 rounded-lg p-4 overflow-x-auto text-sm font-mono text-neutral-200 whitespace-pre-wrap">SKILL: Resumo de reunião
+<pre class="bg-dark-900 border border-dark-600 rounded-lg p-4 overflow-x-auto text-sm font-mono text-neutral-200 whitespace-pre-wrap">SKILL: Resumo de reuniêo
 
-OBJETIVO: transformar minhas anotações soltas de uma reunião
+OBJETIVO: transformar minhas anotações soltas de uma reuniêo
 em um resumo curto, padronizado e fácil de repassar.
 
 QUANDO USAR (gatilho): sempre que eu disser
-"resuma esta reunião" e colar minhas anotações.
+"resuma esta reuniêo" e colar minhas anotações.
 
 PASSOS:
-1. Leia as anotações de &lt;cole aqui suas anotações da reunião&gt;.
+1. Leia as anotações de &lt;cole aqui suas anotações da reuniêo&gt;.
 2. Escreva no máximo 5 linhas de "Decisões tomadas".
 3. Liste as "Tarefas", cada uma no formato:
    - [responsável] o que fazer — até &lt;prazo&gt;.
 4. Aponte em "Pendências" o que ficou sem resposta.
 5. Use o tom &lt;formal ou informal&gt; e escreva em português.
 
-NÃO FAÇA: não invente decisões que não estão nas anotações;
+NêO FAÇA: nêo invente decisões que nêo estêo nas anotações;
 se algo estiver vago, marque com "(confirmar)".
 
 COMO VERIFICAR (deu certo se):
-- O resumo cabe em uma tela, sem enrolação.
+- O resumo cabe em uma tela, sem enrolaçêo.
 - Toda tarefa tem responsável E prazo.
 - Nada foi inventado além do que estava nas anotações.</pre>
 <p class="text-neutral-400 text-sm mt-3"><strong>How to know it worked:</strong> the result should have the three sections (Decisions, Tasks, Open Items), every task with an owner and deadline, and nothing made up. If anything is missing, it’s time for topic 4 — test and adjust.</p>
@@ -610,9 +610,9 @@ COMO VERIFICAR (deu certo se):
         INEMA.registerCheck('modulo-2-2#q1', {
           answer: 1,
           explain: {
-            0: 'Não — skill não é infraestrutura. É só texto em português; nada de banco de dados ou servidor.',
-            1: 'Isso! Toda skill tem um gatilho (quando usar) e instruções (como fazer, com a verificação no fim).',
-            2: 'Não — você não precisa programar. A skill é escrita em linguagem simples, sem código nem planilha.'
+            0: 'Nêo — skill nêo é infraestrutura. É só texto em português; nada de banco de dados ou servidor.',
+            1: 'Isso! Toda skill tem um gatilho (quando usar) e instruções (como fazer, com a verificaçêo no fim).',
+            2: 'Nêo — você nêo precisa programar. A skill é escrita em linguagem simples, sem código nem planilha.'
           }
         });
       }
