@@ -4,28 +4,28 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="mundo-apos-claude" name="inema-course"/>
+<meta content="mundo-apos-claude" name="ARCKHÉ-course"/>
 <title>3.4 Agentes e workflows prontos | O Mundo Após o Claude</title>
 <script>
   (function () {
     try {
       var html = document.documentElement;
-      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'purple' };
+      var DEF = { theme: 'ARCKHÉ-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'purple' };
       function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
       var p = clone(DEF);
       try {
-        var raw = localStorage.getItem('inema.prefs');
+        var raw = localStorage.getItem('ARCKHÉ.prefs');
         if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
-        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='ARCKHÉ-dark'; }
       } catch (e) { p = clone(DEF); }
-      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
-      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      var THEMES = { 'ARCKHÉ-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['ARCKHÉ-dark'];
       if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
       if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
       html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark')?'dark':'light'));
       html.setAttribute('data-font', p.font||'inter'); html.setAttribute('data-accent', p.accent||'purple');
       var s=html.style, scale=(+p.fontScale||100);
-      s.setProperty('--inema-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
+      s.setProperty('--ARCKHÉ-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
       s.setProperty('--measure',(+p.lineWidth||68)+'ch'); s.setProperty('--lh-body',(+p.leading||1.7).toString());
       var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
       s.setProperty('--font-body', fam);
@@ -90,7 +90,7 @@
     html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
   </style>
 <link href="../../assets/learn.css" rel="stylesheet"/>
-<script data-inema-manifest="" type="application/json">
+<script data-ARCKHÉ-manifest="" type="application/json">
   {
     "course": "mundo-apos-claude",
     "tracks": [
@@ -119,8 +119,8 @@
     ]
   }
   </script>
-<link href="https://inematds.github.io/mundo-apos-claude/curso/trilha3/modulo-3-4.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/en/curso/trilha3/modulo-3-4.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/es/curso/trilha3/modulo-3-4.html" hreflang="es" rel="alternate"/></head>
-<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="modulo-3-4.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">PT</a><a href="../../en/curso/trilha3/modulo-3-4.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="../../es/curso/trilha3/modulo-3-4.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<link href="https://linnoff88-dev.github.io/arckhe-/curso/trilha3/modulo-3-4.html" hreflang="pt-BR" rel="alternate"/><link href="https://linnoff88-dev.github.io/arckhe-/en/curso/trilha3/modulo-3-4.html" hreflang="en" rel="alternate"/><link href="https://linnoff88-dev.github.io/arckhe-/es/curso/trilha3/modulo-3-4.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="ARCKHÉ-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="modulo-3-4.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">PT</a><a href="../../en/curso/trilha3/modulo-3-4.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="../../es/curso/trilha3/modulo-3-4.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
 <a class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-lg" href="#conteudo">Pular para o conteudo</a>
 <!-- NAV -->
 <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
@@ -131,13 +131,13 @@
 <span class="text-2xl">🎼</span><span class="font-bold text-lg hidden sm:inline">O Mundo Após o Claude</span>
 </a>
 <span class="text-neutral-600">|</span>
-<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://ARCKHÉ AI" target="_blank">ARCKHÉ AI</a>
 </div>
 <div class="flex items-center space-x-1 sm:space-x-2">
 <a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
 <a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Prática</span></a>
 <a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="index.html"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Jarvis</span></a>
-<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-inema-journey-open="" type="button"><span aria-hidden="true">◷</span><span>Minha jornada</span><span class="hidden" data-inema-journey-badge=""></span></button>
+<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-ARCKHÉ-journey-open="" type="button"><span aria-hidden="true">◷</span><span>Minha jornada</span><span class="hidden" data-ARCKHÉ-journey-badge=""></span></button>
 <button aria-label="Alternar tema claro/escuro" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" id="theme-toggle">
 <svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
 <svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
@@ -167,27 +167,27 @@
 <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Prática</div><div class="text-xs text-neutral-400">Tipo</div></div>
 </div>
 <div class="mt-6 max-w-md">
-<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progresso deste módulo</span><span class="text-sm font-bold text-purple-400"><span class="inema-meter-pct">0%</span></span></div>
-<div aria-label="Progresso do modulo 3.4" aria-valuemax="100" aria-valuemin="0" class="inema-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-inema-meter="modulo:3-4" role="progressbar"><div class="h-full bg-purple-500 rounded-full transition-all" data-inema-meter-fill="" style="width:0%"></div></div>
-<p class="text-xs text-neutral-500 mt-1.5"><span class="inema-meter-count">0 de 6</span> seções lidas</p>
+<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progresso deste módulo</span><span class="text-sm font-bold text-purple-400"><span class="ARCKHÉ-meter-pct">0%</span></span></div>
+<div aria-label="Progresso do modulo 3.4" aria-valuemax="100" aria-valuemin="0" class="ARCKHÉ-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-ARCKHÉ-meter="modulo:3-4" role="progressbar"><div class="h-full bg-purple-500 rounded-full transition-all" data-ARCKHÉ-meter-fill="" style="width:0%"></div></div>
+<p class="text-xs text-neutral-500 mt-1.5"><span class="ARCKHÉ-meter-count">0 de 6</span> seções lidas</p>
 </div>
 </div>
 </header>
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 <div class="grid lg:grid-cols-[220px_1fr] gap-10">
 <!-- TOC -->
-<nav aria-label="Índice do módulo" class="hidden lg:block sticky top-24 self-start" data-inema-toc="">
-<p class="text-sm text-neutral-400 mb-3">Seçêo <span class="inema-toc-pos">1</span> de <span class="inema-toc-total">6</span></p>
+<nav aria-label="Índice do módulo" class="hidden lg:block sticky top-24 self-start" data-ARCKHÉ-toc="">
+<p class="text-sm text-neutral-400 mb-3">Seçêo <span class="ARCKHÉ-toc-pos">1</span> de <span class="ARCKHÉ-toc-total">6</span></p>
 <ul class="space-y-1.5 text-sm">
-<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-1">1. O que é um workflow</a></li>
-<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-2">2. Templates de subagentes</a></li>
-<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-3">3. Workflow de pesquisa</a></li>
-<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-4">4. Workflow de conteúdo</a></li>
-<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-5">5. Adaptar um template</a></li>
-<li><a class="inema-toc-link text-neutral-400 hover:text-purple-400" href="#topico-6">6. Encadear com segurança</a></li>
+<li><a class="ARCKHÉ-toc-link text-neutral-400 hover:text-purple-400" href="#topico-1">1. O que é um workflow</a></li>
+<li><a class="ARCKHÉ-toc-link text-neutral-400 hover:text-purple-400" href="#topico-2">2. Templates de subagentes</a></li>
+<li><a class="ARCKHÉ-toc-link text-neutral-400 hover:text-purple-400" href="#topico-3">3. Workflow de pesquisa</a></li>
+<li><a class="ARCKHÉ-toc-link text-neutral-400 hover:text-purple-400" href="#topico-4">4. Workflow de conteúdo</a></li>
+<li><a class="ARCKHÉ-toc-link text-neutral-400 hover:text-purple-400" href="#topico-5">5. Adaptar um template</a></li>
+<li><a class="ARCKHÉ-toc-link text-neutral-400 hover:text-purple-400" href="#topico-6">6. Encadear com segurança</a></li>
 </ul>
 </nav>
-<main class="min-w-0 inema-prose" id="conteudo">
+<main class="min-w-0 ARCKHÉ-prose" id="conteudo">
 <!-- "Novo aqui?" -->
 <div class="bg-primary/10 border border-primary/30 rounded-2xl p-6 mb-12">
 <h2 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Novo aqui? Três palavras antes de começar</h2>
@@ -198,16 +198,16 @@
 </ul>
 </div>
 <!-- TOPICO 1 -->
-<section class="mb-16" data-inema-topic="modulo-3-4#topico-1" id="topico-1">
+<section class="mb-16" data-ARCKHÉ-topic="modulo-3-4#topico-1" id="topico-1">
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
 <h2 class="text-2xl font-bold">🔄 O que é um workflow: passos encadeados</h2>
 </div>
-<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t1-p1">Uma skill é uma <strong class="text-purple-400">peça</strong>: ela faz uma coisa bem feita. Um workflow é a <strong class="text-purple-400">receita</strong>: ele encadeia várias peças numa ordem, e o resultado de um passo vira a entrada do próximo. Em vez de você ficar copiando o resultado de um lugar pro outro, o fluxo faz isso sozinho.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t1-p2">Pense num pedido de comida por app: você toca uma vez e, nos bastidores, acontece uma fila de passos — confirma o pagamento, avisa a cozinha, chama o entregador, te manda o status. Você nêo empurra cada etapa. Um workflow de IA é a mesma ideia, só que pra trabalho: <strong>buscar → conferir → resumir</strong>, ou <strong>ideia → texto → imagem</strong>, encadeados.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m3-4-t1-p1">Uma skill é uma <strong class="text-purple-400">peça</strong>: ela faz uma coisa bem feita. Um workflow é a <strong class="text-purple-400">receita</strong>: ele encadeia várias peças numa ordem, e o resultado de um passo vira a entrada do próximo. Em vez de você ficar copiando o resultado de um lugar pro outro, o fluxo faz isso sozinho.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m3-4-t1-p2">Pense num pedido de comida por app: você toca uma vez e, nos bastidores, acontece uma fila de passos — confirma o pagamento, avisa a cozinha, chama o entregador, te manda o status. Você nêo empurra cada etapa. Um workflow de IA é a mesma ideia, só que pra trabalho: <strong>buscar → conferir → resumir</strong>, ou <strong>ideia → texto → imagem</strong>, encadeados.</p>
 <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
 <h3 class="text-lg font-semibold text-purple-400 mb-4 flex items-center"><span class="mr-2">🔑</span> A ideia central</h3>
 <p class="text-neutral-300 mb-3">A diferença entre <strong>uma tarefa</strong> e <strong>um trabalho</strong>:</p>
@@ -253,22 +253,22 @@
 </div>
 </div>
 <div class="flex justify-start mt-6">
-<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
-<span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span>
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-ARCKHÉ-read-toggle="" type="button">
+<span aria-hidden="true" class="ARCKHÉ-read-icon">○</span><span class="ARCKHÉ-read-label">Marcar como lido</span>
 </button>
 </div>
 </section>
 <!-- TOPICO 2 -->
-<section class="mb-16" data-inema-topic="modulo-3-4#topico-2" id="topico-2">
+<section class="mb-16" data-ARCKHÉ-topic="modulo-3-4#topico-2" id="topico-2">
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
 <h2 class="text-2xl font-bold">🧩 Templates de subagentes prontos</h2>
 </div>
-<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t2-p1">Um subagente é uma IA <strong class="text-purple-400">com um papel só</strong>. Em vez de pedir tudo pra uma IA genérica, você monta um pequeno time: um que <em>só</em> pesquisa, um que <em>só</em> revisa, um que <em>só</em> escreve. Cada um faz melhor a sua parte porque tem uma instruçêo estreita e clara.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t2-p2">A boa notícia: você nêo precisa inventar esses papéis. Existem <strong>templates prontos</strong> — descrições padrêo de "o que esse agente é, o que faz e o que nêo faz". Você copia o template, ajusta um detalhe ou outro, e já tem o membro do time.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m3-4-t2-p1">Um subagente é uma IA <strong class="text-purple-400">com um papel só</strong>. Em vez de pedir tudo pra uma IA genérica, você monta um pequeno time: um que <em>só</em> pesquisa, um que <em>só</em> revisa, um que <em>só</em> escreve. Cada um faz melhor a sua parte porque tem uma instruçêo estreita e clara.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m3-4-t2-p2">A boa notícia: você nêo precisa inventar esses papéis. Existem <strong>templates prontos</strong> — descrições padrêo de "o que esse agente é, o que faz e o que nêo faz". Você copia o template, ajusta um detalhe ou outro, e já tem o membro do time.</p>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 <div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
 <h4 class="font-bold text-purple-400 mb-4">✓ Um bom template de subagente</h4>
@@ -303,20 +303,20 @@
 </div>
 </div>
 <div class="flex justify-start mt-6">
-<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-ARCKHÉ-read-toggle="" type="button"><span aria-hidden="true" class="ARCKHÉ-read-icon">○</span><span class="ARCKHÉ-read-label">Marcar como lido</span></button>
 </div>
 </section>
 <!-- TOPICO 3 -->
-<section class="mb-16" data-inema-topic="modulo-3-4#topico-3" id="topico-3">
+<section class="mb-16" data-ARCKHÉ-topic="modulo-3-4#topico-3" id="topico-3">
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
 <h2 class="text-2xl font-bold">🔬 Um workflow de pesquisa pronto</h2>
 </div>
-<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t3-p1">O fluxo de pesquisa é o "ovo de Colombo" dos workflows: três passos simples que, juntos, te poupam horas. <strong class="text-purple-400">Buscar</strong> as fontes, <strong class="text-purple-400">conferir</strong> se sêo confiáveis e batem entre si, e <strong class="text-purple-400">resumir</strong> num relatório com as fontes anotadas. Cada passo tem um trabalho claro.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t3-p2">O passo do meio — conferir — é o que separa pesquisa de boato. É ali que o fluxo descarta o que nêo tem fonte e marca o que está em dúvida. Sem ele, você só tem um resumo bonito de coisa que pode estar errada.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m3-4-t3-p1">O fluxo de pesquisa é o "ovo de Colombo" dos workflows: três passos simples que, juntos, te poupam horas. <strong class="text-purple-400">Buscar</strong> as fontes, <strong class="text-purple-400">conferir</strong> se sêo confiáveis e batem entre si, e <strong class="text-purple-400">resumir</strong> num relatório com as fontes anotadas. Cada passo tem um trabalho claro.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m3-4-t3-p2">O passo do meio — conferir — é o que separa pesquisa de boato. É ali que o fluxo descarta o que nêo tem fonte e marca o que está em dúvida. Sem ele, você só tem um resumo bonito de coisa que pode estar errada.</p>
 <!-- CODE BOX copy-run (obrigatorio) -->
 <div class="bg-dark-800 border border-purple-500/30 rounded-xl p-6 mb-6">
 <h3 class="text-lg font-semibold text-purple-400 mb-2 flex items-center"><span class="mr-2">🧪</span> Workflow pronto pra copiar (pesquisa em 3 passos)</h3>
@@ -352,20 +352,20 @@ PASSO 3 — RESUMIR: escreva um relatório de 1 página com:
 </div>
 </div>
 <div class="flex justify-start mt-6">
-<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-ARCKHÉ-read-toggle="" type="button"><span aria-hidden="true" class="ARCKHÉ-read-icon">○</span><span class="ARCKHÉ-read-label">Marcar como lido</span></button>
 </div>
 </section>
 <!-- TOPICO 4 -->
-<section class="mb-16" data-inema-topic="modulo-3-4#topico-4" id="topico-4">
+<section class="mb-16" data-ARCKHÉ-topic="modulo-3-4#topico-4" id="topico-4">
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
 <h2 class="text-2xl font-bold">🎨 Um workflow de conteúdo pronto</h2>
 </div>
-<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t4-p1">Criar conteúdo do nada cansa. Um workflow transforma isso numa <strong class="text-purple-400">linha de produçêo</strong>: <strong>ideia → roteiro → texto → imagem</strong>. Cada estágio entrega algo concreto que o próximo usa — o roteiro guia o texto, o texto sugere a imagem. Você dá a ideia e revisa nos pontos de troca.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t4-p2">A imagem abaixo é a planta dessa linha. Repare que nêo é mágica: é a mesma lógica de encadeamento do tópico 1, só aplicada a um trabalho criativo. O valor é nêo recomeçar do zero a cada post.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m3-4-t4-p1">Criar conteúdo do nada cansa. Um workflow transforma isso numa <strong class="text-purple-400">linha de produçêo</strong>: <strong>ideia → roteiro → texto → imagem</strong>. Cada estágio entrega algo concreto que o próximo usa — o roteiro guia o texto, o texto sugere a imagem. Você dá a ideia e revisa nos pontos de troca.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m3-4-t4-p2">A imagem abaixo é a planta dessa linha. Repare que nêo é mágica: é a mesma lógica de encadeamento do tópico 1, só aplicada a um trabalho criativo. O valor é nêo recomeçar do zero a cada post.</p>
 <!-- IMG obrigatoria em figure -->
 <figure class="rounded-2xl overflow-hidden border border-purple-500/30 mb-6">
 <img alt="Ilustraçêo de uma esteira de produçêo de conteúdo: uma ideia entra de um lado e sai como roteiro, texto e imagem encadeados, representando um workflow pronto." class="w-full h-auto" loading="lazy" src="assets/img/workflows.png"/>
@@ -391,20 +391,20 @@ PASSO 3 — RESUMIR: escreva um relatório de 1 página com:
 </div>
 </div>
 <div class="flex justify-start mt-6">
-<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-ARCKHÉ-read-toggle="" type="button"><span aria-hidden="true" class="ARCKHÉ-read-icon">○</span><span class="ARCKHÉ-read-label">Marcar como lido</span></button>
 </div>
 </section>
 <!-- TOPICO 5 -->
-<section class="mb-16" data-inema-topic="modulo-3-4#topico-5" id="topico-5">
+<section class="mb-16" data-ARCKHÉ-topic="modulo-3-4#topico-5" id="topico-5">
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
 <h2 class="text-2xl font-bold">🪡 Adaptar um template ao seu fluxo</h2>
 </div>
-<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t5-p1">O template é o <strong class="text-purple-400">esqueleto</strong>; você põe a carne. Adaptar é trocar três coisas: as <strong>ferramentas</strong> (onde ele busca, onde salva), os <strong>passos</strong> (tira o que nêo te serve, acrescenta o que falta) e a <strong>entrega</strong> (o formato que você quer no fim). Nêo precisa reescrever o fluxo — só ajustar essas peças.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t5-p2">Regra de ouro: <strong>mude uma coisa por vez e teste</strong>. Se você trocar tudo de uma vez e quebrar, nêo sabe qual mudança foi a culpada. Pequenos ajustes, um de cada vez, mantêm o controle nas suas mêos.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m3-4-t5-p1">O template é o <strong class="text-purple-400">esqueleto</strong>; você põe a carne. Adaptar é trocar três coisas: as <strong>ferramentas</strong> (onde ele busca, onde salva), os <strong>passos</strong> (tira o que nêo te serve, acrescenta o que falta) e a <strong>entrega</strong> (o formato que você quer no fim). Nêo precisa reescrever o fluxo — só ajustar essas peças.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m3-4-t5-p2">Regra de ouro: <strong>mude uma coisa por vez e teste</strong>. Se você trocar tudo de uma vez e quebrar, nêo sabe qual mudança foi a culpada. Pequenos ajustes, um de cada vez, mantêm o controle nas suas mêos.</p>
 <div class="space-y-5 mb-6">
 <div class="flex items-start space-x-4">
 <div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">1</span></div>
@@ -457,20 +457,20 @@ PASSO 3 — RESUMIR: escreva um relatório de 1 página com:
 </div>
 </div>
 <div class="flex justify-start mt-6">
-<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-ARCKHÉ-read-toggle="" type="button"><span aria-hidden="true" class="ARCKHÉ-read-icon">○</span><span class="ARCKHÉ-read-label">Marcar como lido</span></button>
 </div>
 </section>
 <!-- TOPICO 6 -->
-<section class="mb-16" data-inema-topic="modulo-3-4#topico-6" id="topico-6">
+<section class="mb-16" data-ARCKHÉ-topic="modulo-3-4#topico-6" id="topico-6">
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
 <h2 class="text-2xl font-bold">🔒 Encadear com segurança</h2>
 </div>
-<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t6-p1">Quanto mais longo o fluxo, mais lugares pra um errinho virar bola de neve. O remédio é simples: <strong class="text-purple-400">pontos de conferência</strong> entre os passos. Antes de uma açêo que mexe no mundo real — mandar um e-mail, apagar um arquivo, gastar dinheiro — o fluxo para e pede o seu OK.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-4-t6-p2">A regra prática: passos que <strong>só leem ou rascunham</strong> podem rodar sozinhos; passos que <strong>mudam algo de verdade</strong> pedem confirmaçêo. Assim o workflow continua rápido, mas nada irreversível acontece sem você ver.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m3-4-t6-p1">Quanto mais longo o fluxo, mais lugares pra um errinho virar bola de neve. O remédio é simples: <strong class="text-purple-400">pontos de conferência</strong> entre os passos. Antes de uma açêo que mexe no mundo real — mandar um e-mail, apagar um arquivo, gastar dinheiro — o fluxo para e pede o seu OK.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m3-4-t6-p2">A regra prática: passos que <strong>só leem ou rascunham</strong> podem rodar sozinhos; passos que <strong>mudam algo de verdade</strong> pedem confirmaçêo. Assim o workflow continua rápido, mas nada irreversível acontece sem você ver.</p>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 <div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
 <h4 class="font-bold text-purple-400 mb-4">✓ Pode rodar sozinho</h4>
@@ -505,17 +505,17 @@ PASSO 3 — RESUMIR: escreva um relatório de 1 página com:
 </div>
 </div>
 <!-- CHECAGEM LEVE -->
-<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-3-4#q1">
+<div class="ARCKHÉ-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-ARCKHÉ-check="modulo-3-4#q1">
 <p class="font-medium mb-4">✋ Antes de seguir — o que separa um workflow de uma skill solta?</p>
-<div class="inema-check-options space-y-2">
-<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A) O workflow é só uma skill com nome mais bonito.</button>
-<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">B) O workflow encadeia vários passos — a saída de um vira a entrada do próximo — pra fazer um trabalho inteiro.</button>
-<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">C) O workflow precisa rodar sem nenhuma conferência sua.</button>
+<div class="ARCKHÉ-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-check-option="0" type="button">A) O workflow é só uma skill com nome mais bonito.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-check-option="1" type="button">B) O workflow encadeia vários passos — a saída de um vira a entrada do próximo — pra fazer um trabalho inteiro.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-check-option="2" type="button">C) O workflow precisa rodar sem nenhuma conferência sua.</button>
 </div>
-<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+<div aria-live="polite" class="mt-4 text-sm" data-ARCKHÉ-check-feedback="" role="status"></div>
 </div>
 <div class="flex justify-start mt-8">
-<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-ARCKHÉ-read-toggle="" type="button"><span aria-hidden="true" class="ARCKHÉ-read-icon">○</span><span class="ARCKHÉ-read-label">Marcar como lido</span></button>
 </div>
 </section>
 <!-- RESUMO -->
@@ -543,7 +543,7 @@ PASSO 3 — RESUMIR: escreva um relatório de 1 página com:
 </div>
 <footer class="border-t border-dark-600 py-8 mt-8">
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
-<p>🎼 O Mundo Após o Claude · Módulo 3.4 — <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a> · 2026</p>
+<p>🎼 O Mundo Após o Claude · Módulo 3.4 — <a class="text-sky-400 hover:text-sky-300" href="https://ARCKHÉ AI" target="_blank">ARCKHÉ AI</a> · 2026</p>
 </div>
 </footer>
 <script>
@@ -566,7 +566,7 @@ PASSO 3 — RESUMIR: escreva um relatório de 1 página com:
         html.classList.toggle('dark');
         var isDark=html.classList.contains('dark');
         localStorage.setItem('theme', isDark?'dark':'light');
-        try{ var p=JSON.parse(localStorage.getItem('inema.prefs')||'{}'); p.theme=isDark?'inema-dark':'claro'; localStorage.setItem('inema.prefs',JSON.stringify(p)); }catch(e){}
+        try{ var p=JSON.parse(localStorage.getItem('ARCKHÉ.prefs')||'{}'); p.theme=isDark?'ARCKHÉ-dark':'claro'; localStorage.setItem('ARCKHÉ.prefs',JSON.stringify(p)); }catch(e){}
         html.style.colorScheme=isDark?'dark':'light';
         if(isDark) html.removeAttribute('data-theme');
         sync();
@@ -578,10 +578,10 @@ PASSO 3 — RESUMIR: escreva um relatório de 1 página com:
   </script>
 <script src="../../assets/learn.js"></script>
 <script>
-    if(window.INEMA&&typeof window.INEMA.init==='function'){ window.INEMA.init(); }
+    if(window.ARCKHÉ&&typeof window.ARCKHÉ.init==='function'){ window.ARCKHÉ.init(); }
     window.addEventListener('DOMContentLoaded', function () {
-      if (window.INEMA && INEMA.registerCheck) {
-        INEMA.registerCheck('modulo-3-4#q1', {
+      if (window.ARCKHÉ && ARCKHÉ.registerCheck) {
+        ARCKHÉ.registerCheck('modulo-3-4#q1', {
           answer: 1,
           explain: {
             0: 'Nêo — nêo é só nome. O workflow encadeia vários passos numa ordem; a skill faz uma tarefa só.',

@@ -6,9 +6,9 @@
 </div>
 
 
-Curso gratuito **INEMA.CLUB** ê¢â¬â de usuêÂ¡rio a maestro: pare de sêÂ³ conversar com a IA e comece a comandêÂ¡-la para construir qualquer coisa, atêÂ© montar o seu prêÂ³prio Jarvis.
+Curso gratuito **ARCKHÉ AI** ê¢â¬â de usuêÂ¡rio a maestro: pare de sêÂ³ conversar com a IA e comece a comandêÂ¡-la para construir qualquer coisa, atêÂ© montar o seu prêÂ³prio Jarvis.
 
-**Acesse:** https://inematds.github.io/mundo-apos-claude/
+**Acesse:** https://linnoff88-dev.github.io/arckhe-/
 
 ## Trilhas
 

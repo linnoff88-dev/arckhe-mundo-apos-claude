@@ -4,28 +4,28 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="mundo-apos-claude" name="inema-course"/>
+<meta content="mundo-apos-claude" name="ARCKHÉ-course"/>
 <title>1.5 O diferencial humano | O Mundo Após o Claude</title>
 <script>
   (function () {
     try {
       var html = document.documentElement;
-      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      var DEF = { theme: 'ARCKHÉ-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
       function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
       var p = clone(DEF);
       try {
-        var raw = localStorage.getItem('inema.prefs');
+        var raw = localStorage.getItem('ARCKHÉ.prefs');
         if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
-        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='ARCKHÉ-dark'; }
       } catch (e) { p = clone(DEF); }
-      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
-      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      var THEMES = { 'ARCKHÉ-dark':{dark:true,attr:null,cs:'dark'}, 'claro':{dark:false,attr:null,cs:'light'}, 'sepia':{dark:false,attr:'sepia',cs:'light'}, 'foco':{dark:null,attr:'foco',cs:null}, 'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['ARCKHÉ-dark'];
       if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
       if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
       html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark')?'dark':'light'));
       html.setAttribute('data-font', p.font||'inter'); html.setAttribute('data-accent', p.accent||'emerald');
       var s=html.style, scale=(+p.fontScale||100);
-      s.setProperty('--inema-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
+      s.setProperty('--ARCKHÉ-font-scale',(scale/100).toString()); s.setProperty('font-size',scale+'%');
       s.setProperty('--measure',(+p.lineWidth||68)+'ch'); s.setProperty('--lh-body',(+p.leading||1.7).toString());
       var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
       s.setProperty('--font-body', fam);
@@ -90,7 +90,7 @@
     html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
   </style>
 <link href="../../assets/learn.css" rel="stylesheet"/>
-<script data-inema-manifest="" type="application/json">
+<script data-ARCKHÉ-manifest="" type="application/json">
   {
     "course": "mundo-apos-claude",
     "tracks": [
@@ -119,8 +119,8 @@
     ]
   }
   </script>
-<link href="https://inematds.github.io/mundo-apos-claude/curso/trilha1/modulo-1-5.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/en/curso/trilha1/modulo-1-5.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/mundo-apos-claude/es/curso/trilha1/modulo-1-5.html" hreflang="es" rel="alternate"/></head>
-<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="modulo-1-5.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">PT</a><a href="../../en/curso/trilha1/modulo-1-5.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="../../es/curso/trilha1/modulo-1-5.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<link href="https://linnoff88-dev.github.io/arckhe-/curso/trilha1/modulo-1-5.html" hreflang="pt-BR" rel="alternate"/><link href="https://linnoff88-dev.github.io/arckhe-/en/curso/trilha1/modulo-1-5.html" hreflang="en" rel="alternate"/><link href="https://linnoff88-dev.github.io/arckhe-/es/curso/trilha1/modulo-1-5.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="ARCKHÉ-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="modulo-1-5.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">PT</a><a href="../../en/curso/trilha1/modulo-1-5.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="../../es/curso/trilha1/modulo-1-5.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
 <a class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-emerald-600 focus:text-white focus:rounded-lg" href="#conteudo">Pular para o conteudo</a>
 <!-- NAV -->
 <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
@@ -131,13 +131,13 @@
 <span class="text-2xl">🎼</span><span class="font-bold text-lg hidden sm:inline">O Mundo Após o Claude</span>
 </a>
 <span class="text-neutral-600">|</span>
-<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://ARCKHÉ AI" target="_blank">ARCKHÉ AI</a>
 </div>
 <div class="flex items-center space-x-1 sm:space-x-2">
 <a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10" href="index.html"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
 <a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Prática</span></a>
 <a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Jarvis</span></a>
-<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-inema-journey-open="" type="button"><span aria-hidden="true">◷</span><span>Minha jornada</span><span class="hidden" data-inema-journey-badge=""></span></button>
+<button class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm ml-1" data-ARCKHÉ-journey-open="" type="button"><span aria-hidden="true">◷</span><span>Minha jornada</span><span class="hidden" data-ARCKHÉ-journey-badge=""></span></button>
 <button aria-label="Alternar tema claro/escuro" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" id="theme-toggle">
 <svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
 <svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
@@ -167,27 +167,27 @@
 <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Prática</div><div class="text-xs text-neutral-400">Tipo</div></div>
 </div>
 <div class="mt-6 max-w-md">
-<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progresso deste módulo</span><span class="text-sm font-bold text-emerald-400"><span class="inema-meter-pct">0%</span></span></div>
-<div aria-label="Progresso do modulo 1.5" aria-valuemax="100" aria-valuemin="0" class="inema-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-inema-meter="modulo:1-5" role="progressbar"><div class="h-full bg-emerald-500 rounded-full transition-all" data-inema-meter-fill="" style="width:0%"></div></div>
-<p class="text-xs text-neutral-500 mt-1.5"><span class="inema-meter-count">0 de 6</span> seções lidas</p>
+<div class="flex items-center justify-between mb-1.5"><span class="text-sm text-neutral-400">Progresso deste módulo</span><span class="text-sm font-bold text-emerald-400"><span class="ARCKHÉ-meter-pct">0%</span></span></div>
+<div aria-label="Progresso do modulo 1.5" aria-valuemax="100" aria-valuemin="0" class="ARCKHÉ-meter h-2 rounded-full bg-dark-600 overflow-hidden" data-ARCKHÉ-meter="modulo:1-5" role="progressbar"><div class="h-full bg-emerald-500 rounded-full transition-all" data-ARCKHÉ-meter-fill="" style="width:0%"></div></div>
+<p class="text-xs text-neutral-500 mt-1.5"><span class="ARCKHÉ-meter-count">0 de 6</span> seções lidas</p>
 </div>
 </div>
 </header>
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 <div class="grid lg:grid-cols-[220px_1fr] gap-10">
 <!-- TOC -->
-<nav aria-label="Índice do módulo" class="hidden lg:block sticky top-24 self-start" data-inema-toc="">
-<p class="text-sm text-neutral-400 mb-3">Seçêo <span class="inema-toc-pos">1</span> de <span class="inema-toc-total">6</span></p>
+<nav aria-label="Índice do módulo" class="hidden lg:block sticky top-24 self-start" data-ARCKHÉ-toc="">
+<p class="text-sm text-neutral-400 mb-3">Seçêo <span class="ARCKHÉ-toc-pos">1</span> de <span class="ARCKHÉ-toc-total">6</span></p>
 <ul class="space-y-1.5 text-sm">
-<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-1">1. Médico vs. farmacêutico</a></li>
-<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-2">2. A restriçêo primeiro</a></li>
-<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-3">3. KPI: o número-alvo</a></li>
-<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-4">4. Conferir se funcionou</a></li>
-<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-5">5. Prova &gt; diploma</a></li>
-<li><a class="inema-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-6">6. O prazo de validade</a></li>
+<li><a class="ARCKHÉ-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-1">1. Médico vs. farmacêutico</a></li>
+<li><a class="ARCKHÉ-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-2">2. A restriçêo primeiro</a></li>
+<li><a class="ARCKHÉ-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-3">3. KPI: o número-alvo</a></li>
+<li><a class="ARCKHÉ-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-4">4. Conferir se funcionou</a></li>
+<li><a class="ARCKHÉ-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-5">5. Prova &gt; diploma</a></li>
+<li><a class="ARCKHÉ-toc-link text-neutral-400 hover:text-emerald-400" href="#topico-6">6. O prazo de validade</a></li>
 </ul>
 </nav>
-<main class="min-w-0 inema-prose" id="conteudo">
+<main class="min-w-0 ARCKHÉ-prose" id="conteudo">
 <!-- "Novo aqui?" -->
 <div class="bg-primary/10 border border-primary/30 rounded-2xl p-6 mb-12">
 <h2 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Novo aqui? Três palavras antes de começar</h2>
@@ -198,16 +198,16 @@
 </ul>
 </div>
 <!-- TOPICO 1 -->
-<section class="mb-16" data-inema-topic="modulo-1-5#topico-1" id="topico-1">
+<section class="mb-16" data-ARCKHÉ-topic="modulo-1-5#topico-1" id="topico-1">
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">1</span>
 <h2 class="text-2xl font-bold">🩺 Médico vs. farmacêutico</h2>
 </div>
-<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t1-p1">O <strong class="text-emerald-400">farmacêutico</strong> entrega o que você <strong>pede</strong>: você chega com a receita na mêo, ele te dá a caixa. O <strong class="text-emerald-400">médico</strong> faz outra coisa — ele descobre o que você <strong>precisa</strong>. Você chega dizendo "tô com dor de cabeça" e ele investiga: pressêo? Visêo? Estresse? Só depois receita.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t1-p2">Nêo por acaso, o médico ganha bem mais que o farmacêutico. A diferença nêo é a remédio — é <strong>quem descobre o problema certo</strong>. No mundo após o Claude, a IA é o farmacêutico turbinado: pediu, ela entrega. Seu valor nêo está em executar (ela faz isso melhor e mais barato). Está em <strong class="text-emerald-400">diagnosticar</strong>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m1-5-t1-p1">O <strong class="text-emerald-400">farmacêutico</strong> entrega o que você <strong>pede</strong>: você chega com a receita na mêo, ele te dá a caixa. O <strong class="text-emerald-400">médico</strong> faz outra coisa — ele descobre o que você <strong>precisa</strong>. Você chega dizendo "tô com dor de cabeça" e ele investiga: pressêo? Visêo? Estresse? Só depois receita.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m1-5-t1-p2">Nêo por acaso, o médico ganha bem mais que o farmacêutico. A diferença nêo é a remédio — é <strong>quem descobre o problema certo</strong>. No mundo após o Claude, a IA é o farmacêutico turbinado: pediu, ela entrega. Seu valor nêo está em executar (ela faz isso melhor e mais barato). Está em <strong class="text-emerald-400">diagnosticar</strong>.</p>
 <div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
 <h3 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center"><span class="mr-2">🔑</span> A ideia central</h3>
 <p class="text-neutral-300 mb-3">Qualquer um consegue pedir um remédio. Poucos sabem qual é a doença. A IA derrubou o preço de "pedir o remédio" — entêo o valor inteiro migrou pra <strong>descobrir a doença</strong>.</p>
@@ -280,22 +280,22 @@
 </div>
 </div>
 <div class="flex justify-start mt-6">
-<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
-<span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span>
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-ARCKHÉ-read-toggle="" type="button">
+<span aria-hidden="true" class="ARCKHÉ-read-icon">○</span><span class="ARCKHÉ-read-label">Marcar como lido</span>
 </button>
 </div>
 </section>
 <!-- TOPICO 2 -->
-<section class="mb-16" data-inema-topic="modulo-1-5#topico-2" id="topico-2">
+<section class="mb-16" data-ARCKHÉ-topic="modulo-1-5#topico-2" id="topico-2">
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">2</span>
 <h2 class="text-2xl font-bold">🚧 A restriçêo primeiro: ache o gargalo</h2>
 </div>
-<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t2-p1">Com a IA, dá pra automatizar <em>qualquer coisa</em>. E é exatamente essa a armadilha: você gasta um fim de semana automatizando algo que nêo muda nada no fim. O segredo nêo é automatizar muito — é achar o <strong class="text-emerald-400">gargalo</strong>, o ponto que está segurando o resultado.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t2-p2">Pense numa mangueira amassada: a água só volta a correr quando você desamassa o ponto certo. Esfregar o resto da mangueira nêo adianta. <strong>Resolver o gargalo certo</strong> é o que destrava o resultado — todo o resto é movimento que parece trabalho mas nêo é.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m1-5-t2-p1">Com a IA, dá pra automatizar <em>qualquer coisa</em>. E é exatamente essa a armadilha: você gasta um fim de semana automatizando algo que nêo muda nada no fim. O segredo nêo é automatizar muito — é achar o <strong class="text-emerald-400">gargalo</strong>, o ponto que está segurando o resultado.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m1-5-t2-p2">Pense numa mangueira amassada: a água só volta a correr quando você desamassa o ponto certo. Esfregar o resto da mangueira nêo adianta. <strong>Resolver o gargalo certo</strong> é o que destrava o resultado — todo o resto é movimento que parece trabalho mas nêo é.</p>
 <div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
 <h3 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center"><span class="mr-2">🔑</span> Exemplo real</h3>
 <p class="text-neutral-300 mb-3">Uma loja quer vender mais. Onde está o gargalo?</p>
@@ -318,20 +318,20 @@
 </div>
 </div>
 <div class="flex justify-start mt-6">
-<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-ARCKHÉ-read-toggle="" type="button"><span aria-hidden="true" class="ARCKHÉ-read-icon">○</span><span class="ARCKHÉ-read-label">Marcar como lido</span></button>
 </div>
 </section>
 <!-- TOPICO 3 -->
-<section class="mb-16" data-inema-topic="modulo-1-5#topico-3" id="topico-3">
+<section class="mb-16" data-ARCKHÉ-topic="modulo-1-5#topico-3" id="topico-3">
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">3</span>
 <h2 class="text-2xl font-bold">📊 KPI: escolha o número-alvo ANTES</h2>
 </div>
-<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t3-p1">KPI assusta porque parece coisa de consultoria cara. Mas é simples: <strong class="text-emerald-400">KPI é só um número-alvo</strong>. A sigla é "indicador-chave", mas pra você o que importa é: qual número diz se deu certo? Tempo economizado, vendas a mais, erros a menos.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t3-p2">O pulo do gato é escolher o número <strong>antes de construir</strong>. Se você decide só depois, sempre vai dar pra inventar uma desculpa de que "funcionou". Com o número escolhido na largada, ou ele mexeu ou nêo mexeu. <strong>Sem número, ninguém vê o valor</strong> — nem seu chefe, nem seu cliente, nem você.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m1-5-t3-p1">KPI assusta porque parece coisa de consultoria cara. Mas é simples: <strong class="text-emerald-400">KPI é só um número-alvo</strong>. A sigla é "indicador-chave", mas pra você o que importa é: qual número diz se deu certo? Tempo economizado, vendas a mais, erros a menos.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m1-5-t3-p2">O pulo do gato é escolher o número <strong>antes de construir</strong>. Se você decide só depois, sempre vai dar pra inventar uma desculpa de que "funcionou". Com o número escolhido na largada, ou ele mexeu ou nêo mexeu. <strong>Sem número, ninguém vê o valor</strong> — nem seu chefe, nem seu cliente, nem você.</p>
 <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
 <h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">📊</span> A lacuna que vira oportunidade</h3>
 <ul class="space-y-2 text-neutral-300">
@@ -359,20 +359,20 @@
 </div>
 </div>
 <div class="flex justify-start mt-6">
-<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-ARCKHÉ-read-toggle="" type="button"><span aria-hidden="true" class="ARCKHÉ-read-icon">○</span><span class="ARCKHÉ-read-label">Marcar como lido</span></button>
 </div>
 </section>
 <!-- TOPICO 4 -->
-<section class="mb-16" data-inema-topic="modulo-1-5#topico-4" id="topico-4">
+<section class="mb-16" data-ARCKHÉ-topic="modulo-1-5#topico-4" id="topico-4">
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">4</span>
 <h2 class="text-2xl font-bold">🔍 Conferir se funcionou (fechar o loop)</h2>
 </div>
-<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t4-p1">Você diagnosticou (tópico 1), achou o gargalo (2), escolheu o número (3) e construiu. Falta o passo que quase todo mundo pula: <strong class="text-emerald-400">conferir se o número mexeu de verdade</strong>. Isso se chama "fechar o loop" — voltar ao alvo que você definiu e medir.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t4-p2"><strong>"Parece que funcionou" nêo é prova.</strong> A IA pode ter entregado algo bonito que nêo move o número. Só medindo você sabe. E é esse passo que separa quem "fez um projeto de IA" de quem <strong>resolveu um problema</strong> — porque agora você tem o resultado em mêos.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m1-5-t4-p1">Você diagnosticou (tópico 1), achou o gargalo (2), escolheu o número (3) e construiu. Falta o passo que quase todo mundo pula: <strong class="text-emerald-400">conferir se o número mexeu de verdade</strong>. Isso se chama "fechar o loop" — voltar ao alvo que você definiu e medir.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m1-5-t4-p2"><strong>"Parece que funcionou" nêo é prova.</strong> A IA pode ter entregado algo bonito que nêo move o número. Só medindo você sabe. E é esse passo que separa quem "fez um projeto de IA" de quem <strong>resolveu um problema</strong> — porque agora você tem o resultado em mêos.</p>
 <!-- SVG do fluxo: restriçêo → KPI → construir → conferir -->
 <figure class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-4 mb-6">
 <svg aria-label="O ciclo de quatro passos: primeiro achar a restricao (gargalo), depois definir o KPI (numero-alvo), depois construir com a IA, e por fim conferir se o numero mexeu - uma seta volta do conferir para a restricao, fechando o loop." class="w-full h-auto" font-family="Inter, sans-serif" role="img" viewbox="0 0 520 170">
@@ -445,20 +445,20 @@
 </div>
 </div>
 <div class="flex justify-start mt-6">
-<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-ARCKHÉ-read-toggle="" type="button"><span aria-hidden="true" class="ARCKHÉ-read-icon">○</span><span class="ARCKHÉ-read-label">Marcar como lido</span></button>
 </div>
 </section>
 <!-- TOPICO 5 -->
-<section class="mb-16" data-inema-topic="modulo-1-5#topico-5" id="topico-5">
+<section class="mb-16" data-ARCKHÉ-topic="modulo-1-5#topico-5" id="topico-5">
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">5</span>
 <h2 class="text-2xl font-bold">🏅 Prova &gt; diploma: mostre o que você fez</h2>
 </div>
-<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t5-p1">Diploma diz que você <em>estudou</em> uma coisa. Prova mostra que você <strong class="text-emerald-400">fez</strong> uma coisa. Num mundo onde construir ficou fácil, a pergunta que decide tudo deixou de ser "que curso você fez?" e virou: <strong>"o que você já construiu?"</strong>.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t5-p2">A boa notícia: você nêo precisa de permissêo pra ter prova. Cada coisinha que você resolve com IA — uma planilha que economiza tempo, uma automaçêo que mandou pro grupo — é uma prova. <strong>Construa em público</strong> (poste, mostre o antes/depois) e <strong>guarde as provas</strong>. Elas viram seu currículo de verdade.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m1-5-t5-p1">Diploma diz que você <em>estudou</em> uma coisa. Prova mostra que você <strong class="text-emerald-400">fez</strong> uma coisa. Num mundo onde construir ficou fácil, a pergunta que decide tudo deixou de ser "que curso você fez?" e virou: <strong>"o que você já construiu?"</strong>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m1-5-t5-p2">A boa notícia: você nêo precisa de permissêo pra ter prova. Cada coisinha que você resolve com IA — uma planilha que economiza tempo, uma automaçêo que mandou pro grupo — é uma prova. <strong>Construa em público</strong> (poste, mostre o antes/depois) e <strong>guarde as provas</strong>. Elas viram seu currículo de verdade.</p>
 <!-- EXPERIMENTE AGORA (copy-run) -->
 <div class="bg-dark-800 border border-emerald-500/30 rounded-xl p-6 mb-6">
 <h3 class="text-lg font-semibold text-emerald-400 mb-2 flex items-center"><span class="mr-2">🧪</span> Experimente agora (5 minutos)</h3>
@@ -506,20 +506,20 @@ NêO me dê soluçêo ainda. Primeiro:
 </div>
 </div>
 <div class="flex justify-start mt-6">
-<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-ARCKHÉ-read-toggle="" type="button"><span aria-hidden="true" class="ARCKHÉ-read-icon">○</span><span class="ARCKHÉ-read-label">Marcar como lido</span></button>
 </div>
 </section>
 <!-- TOPICO 6 -->
-<section class="mb-16" data-inema-topic="modulo-1-5#topico-6" id="topico-6">
+<section class="mb-16" data-ARCKHÉ-topic="modulo-1-5#topico-6" id="topico-6">
 <div class="flex items-start justify-between gap-4 mb-6">
 <div class="flex items-center space-x-4">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">6</span>
 <h2 class="text-2xl font-bold">⏳ O prazo de validade da vantagem</h2>
 </div>
-<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-inema-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
+<button aria-pressed="false" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-doubt-toggle="" title="Marcar dúvida neste tópico" type="button"><span aria-hidden="true">?</span><span class="hidden sm:inline">Tenho dúvida</span></button>
 </div>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t6-p1">Vale ser honesto: a vantagem de "saber IA" tem <strong class="text-emerald-400">prazo de validade</strong>. Em alguns anos, dirigir IA será o básico de todo mundo — do jeito que hoje todo contador usa Excel e ninguém mais põe "sei Excel" no currículo como se fosse mágica.</p>
-<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-5-t6-p2">Isso <strong>nêo</strong> significa que a oportunidade é fake — significa o contrário: ela é real <em>agora</em>, justamente porque a maioria ainda nêo chegou lá. A janela está aberta, mas nêo fica aberta pra sempre. Quem diagnostica, mede e tem prova <strong>antes</strong> de virar commodity sai na frente — e quando o resto chegar, você já estará num degrau acima.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m1-5-t6-p1">Vale ser honesto: a vantagem de "saber IA" tem <strong class="text-emerald-400">prazo de validade</strong>. Em alguns anos, dirigir IA será o básico de todo mundo — do jeito que hoje todo contador usa Excel e ninguém mais põe "sei Excel" no currículo como se fosse mágica.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-ARCKHÉ-block="m1-5-t6-p2">Isso <strong>nêo</strong> significa que a oportunidade é fake — significa o contrário: ela é real <em>agora</em>, justamente porque a maioria ainda nêo chegou lá. A janela está aberta, mas nêo fica aberta pra sempre. Quem diagnostica, mede e tem prova <strong>antes</strong> de virar commodity sai na frente — e quando o resto chegar, você já estará num degrau acima.</p>
 <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
 <h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">📊</span> O paralelo do Excel</h3>
 <ul class="space-y-2 text-neutral-300">
@@ -535,17 +535,17 @@ NêO me dê soluçêo ainda. Primeiro:
 <div class="flex items-start gap-3 bg-dark-800 border border-dark-600 rounded-lg p-4"><span class="text-purple-400 text-xl">🚀</span><div><strong class="text-purple-400">A jogada:</strong> <span class="text-neutral-300 text-sm">aproveitar a janela agora — construir provas enquanto a maioria ainda nêo chegou.</span></div></div>
 </div>
 <!-- CHECAGEM LEVE -->
-<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-1-5#q1">
+<div class="ARCKHÉ-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-ARCKHÉ-check="modulo-1-5#q1">
 <p class="font-medium mb-4">✋ Antes de seguir — qual é o verdadeiro diferencial humano deste módulo?</p>
-<div class="inema-check-options space-y-2">
-<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A) Saber operar a ferramenta de IA melhor que os outros.</button>
-<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">B) Diagnosticar o problema certo, definir um número-alvo e provar que mexeu.</button>
-<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">C) Automatizar o máximo de coisas possível, o mais rápido possível.</button>
+<div class="ARCKHÉ-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-check-option="0" type="button">A) Saber operar a ferramenta de IA melhor que os outros.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-check-option="1" type="button">B) Diagnosticar o problema certo, definir um número-alvo e provar que mexeu.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-ARCKHÉ-check-option="2" type="button">C) Automatizar o máximo de coisas possível, o mais rápido possível.</button>
 </div>
-<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+<div aria-live="polite" class="mt-4 text-sm" data-ARCKHÉ-check-feedback="" role="status"></div>
 </div>
 <div class="flex justify-start mt-8">
-<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button"><span aria-hidden="true" class="inema-read-icon">○</span><span class="inema-read-label">Marcar como lido</span></button>
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-ARCKHÉ-read-toggle="" type="button"><span aria-hidden="true" class="ARCKHÉ-read-icon">○</span><span class="ARCKHÉ-read-label">Marcar como lido</span></button>
 </div>
 </section>
 <!-- RESUMO -->
@@ -573,7 +573,7 @@ NêO me dê soluçêo ainda. Primeiro:
 </div>
 <footer class="border-t border-dark-600 py-8 mt-8">
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
-<p>🎼 O Mundo Após o Claude · Módulo 1.5 — <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a> · 2026</p>
+<p>🎼 O Mundo Após o Claude · Módulo 1.5 — <a class="text-sky-400 hover:text-sky-300" href="https://ARCKHÉ AI" target="_blank">ARCKHÉ AI</a> · 2026</p>
 </div>
 </footer>
 <script>
@@ -596,7 +596,7 @@ NêO me dê soluçêo ainda. Primeiro:
         html.classList.toggle('dark');
         var isDark=html.classList.contains('dark');
         localStorage.setItem('theme', isDark?'dark':'light');
-        try{ var p=JSON.parse(localStorage.getItem('inema.prefs')||'{}'); p.theme=isDark?'inema-dark':'claro'; localStorage.setItem('inema.prefs',JSON.stringify(p)); }catch(e){}
+        try{ var p=JSON.parse(localStorage.getItem('ARCKHÉ.prefs')||'{}'); p.theme=isDark?'ARCKHÉ-dark':'claro'; localStorage.setItem('ARCKHÉ.prefs',JSON.stringify(p)); }catch(e){}
         html.style.colorScheme=isDark?'dark':'light';
         if(isDark) html.removeAttribute('data-theme');
         sync();
@@ -608,10 +608,10 @@ NêO me dê soluçêo ainda. Primeiro:
   </script>
 <script src="../../assets/learn.js"></script>
 <script>
-    if(window.INEMA&&typeof window.INEMA.init==='function'){ window.INEMA.init(); }
+    if(window.ARCKHÉ&&typeof window.ARCKHÉ.init==='function'){ window.ARCKHÉ.init(); }
     window.addEventListener('DOMContentLoaded', function () {
-      if (window.INEMA && INEMA.registerCheck) {
-        INEMA.registerCheck('modulo-1-5#q1', {
+      if (window.ARCKHÉ && ARCKHÉ.registerCheck) {
+        ARCKHÉ.registerCheck('modulo-1-5#q1', {
           answer: 1,
           explain: {
             0: 'Nêo — operar a ferramenta vira o básico de todo mundo (como o Excel). Isso tem prazo de validade.',
